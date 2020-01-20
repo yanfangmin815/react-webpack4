@@ -40,15 +40,33 @@ const listMainRouters = [
         children: [
             {
                 path: '/home',
-                component: loadable('index/list/sub-item/view1')
+                component: loadable('index/list/sub-item/view1'),
+                children: [
+                    {
+                        path:`/home-children`,
+                        component:loadable('index/list/sub-item/view1'),
+                        children: [
+                            {
+                                 // view2
+                                path:`/sub-home-children`,
+                                component:loadable('index/list/sub-item/view2'),
+                                title: 'sub-home-children'
+                            }
+                        ],
+                        title: 'home-children'
+                    }
+                ],
+                title: 'home'
             },
             {
                 path: '/about',
-                component: loadable('index/list/sub-item/view1')
+                component: loadable('index/list/sub-item/view1'),
+                title: 'about'
             },
             {
                 path: '/topics',
-                component: loadable('index/list/sub-item/view1')
+                component: loadable('index/list/sub-item/view1'),
+                title: 'topics'
             }
         ],
         title: 'view1'
