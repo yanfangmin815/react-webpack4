@@ -1,0 +1,16 @@
+{
+  "api":[
+    {
+      "url":"/api/test/api1",
+      "path":"/api/api1.json"
+    },
+    {
+      "url":"/api/test/api2",
+      "path":"/api/api2.json"
+    },
+    {
+      "url":"/api/test/api3",
+      "path":"/api/api3.json"
+    }
+  ]
+}

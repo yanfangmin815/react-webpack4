@@ -1,0 +1,150 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+.App{
+    position: absolute;
+    bottom: 0;
+    top: 30px;
+    left: 30px;
+    right: 30px;
+}
+
+
+/* View Style */
+.book-table{
+    width: 100%;
+    border-spacing: 0;
+}
+.book-table tr{
+    height: 35px;
+}
+.book-table tr:first-child{
+    background: Gainsboro;
+    color: white;
+    font-weight: bold;
+    font-style: oblique;
+}
+.book-table td{
+    border: 1px #CCC solid;
+    padding-left: 5px;
+    border-bottom: none;
+}
+.book-table td:first-child{
+    border-right: none;
+}
+.book-table tr:last-child td{
+    border-bottom: 1px #CCC solid;
+}
+
+
+/* subHeader */
+.subHeader {
+    padding: 5px 10px;
+    background: rgba(144,238,144,0.8);
+    color: white;
+    font-weight: bold;
+    /* margin: 0 -10px 0 -10px; */
+    margin-top: 20px;
+}
+
+pre{
+    background: #282c34;
+    color: #fff;
+    white-space: pre-line;
+    padding: 15px;
+    line-height: 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    overflow: auto;
+}
+pre ul{
+    margin: 0;
+}
+
+.container-rotuer .container{
+    border: 1px #00BFFF solid;
+    height: auto;
+    margin-top: 10px;
+    padding: 10px;
+    word-break: break-all;
+}
+
+.color-green {
+    color: rgba(144,238,144,1);
+}
+.color-red{
+    color: Crimson;
+}
+.navigation a {
+    word-break: break-all;
+    display: inline-block;
+    margin: 8px;
+}
+
+/* routerSidebar */
+.navigation-main{
+    height: 150px;
+    display: flex;
+}
+.navigation-main aside{
+    background-color: rgb(47, 48, 48);
+}
+.navigation-main main{
+    border: 1px #DCDCDC solid;
+    flex: 1;
+    padding: 5px;
+}
+.navigation-main aside p{
+    width: 100px;
+    text-align: center;
+    letter-spacing: 2px;
+    margin: 0;
+    padding: 5px 0;
+}
+.navigation-main aside p a{
+    color: white;
+}
+
+
+.fade-exit{
+    opacity: 0;
+}
+.fade-enter {
+  opacity: 0;
+  z-index: 1;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 250ms ease-in;
+}
+
+
+.box-center{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+}
+.app-container {
+    display: flex;
+    height: 100%;
+}
+.app-container .list{
+    padding-left: 20px;
+    padding-right: 20px;
+    flex: 2;
+    height: 100%;
+    overflow: auto;
+    box-shadow: 3px 5px 15px #CCC;
+}
+.app-container .list+*{
+    box-shadow: 3px 5px 15px #CCC;
+    overflow: auto;
+    flex: 5;
+    padding: 30px 100px 30px 100px;
+}

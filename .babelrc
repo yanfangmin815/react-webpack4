@@ -1,0 +1,14 @@
+{
+    "presets": ["@babel/react","@babel/env", "react-app"],
+    "plugins": [
+        "@babel/plugin-transform-runtime",
+        "@babel/plugin-syntax-dynamic-import",
+        "react-hot-loader/babel",
+        "@babel/plugin-proposal-function-bind",
+        ["import", {
+            "libraryName": "antd",
+            "libraryDirectory": "es",
+            "style": "css"
+        }]
+    ]
+}
