@@ -13,6 +13,7 @@ import {
 } from 'react-router-dom'
 import { rootRouters } from '@/router/index/router'
 import { RouterGuard } from '@/component/index'
+let routerList = []
 
 /*//平台、设备和操作系统 ，返回ture或false,true表示是移动端，false表示不是移动端
 function ismobile() {
@@ -45,25 +46,44 @@ class App extends React.Component {
   }
 
   componentDidMount () {
-    // console.log(1 << 2)
-    // let toggle = true
-    // console.log(toggle ^= 100)
+    // routerList = []
   }
 
+   // 处理所有路由
   handleConfig = (routers) => {
-      // let
-      console.log(routers, 'router')
-      
+    routers.map((item, index) => {
+      let routerMap = {}
+      routerMap.path = item.path
+      routerMap.component = item.component
+      routerMap.title = item.title
+      routerList.push(routerMap)
+      if (item.children) {
+        item.children.forEach((subItem, subIndex) => {
+          let subRouterMap = {}
+          let subRouterList = []
+          subRouterMap.path = item.path + subItem.path
+          subRouterMap.component = subItem.component
+          subRouterMap.title = subItem.title
+          if (subItem.children) {
+            subRouterMap.children = subItem.children
+          }
+          subRouterList.push(subRouterMap)
+          // 递归处理子路由
+          this.handleConfig(subRouterList)
+        })
+      }
+    }) 
+    return routerList
   }
 
   render() {
-    this.handleConfig(rootRouters)
+    let routers = this.handleConfig(rootRouters)
     return (
       <div className="App">
         <Router>
           <Switch>
               {
-                  <RouterGuard config={rootRouters}/>
+                  <RouterGuard config={routers}/>
               }
           </Switch>
         </Router>
