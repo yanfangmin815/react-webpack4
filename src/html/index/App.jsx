@@ -44,11 +44,7 @@ class App extends React.Component {
       })
   }
 
-  componentDidMount () {
-    // console.log(1 << 2)
-    // let toggle = true
-    // console.log(toggle ^= 100)
-  }
+  componentDidMount () {}
 
   handleConfig = (routers) => {
       // let
