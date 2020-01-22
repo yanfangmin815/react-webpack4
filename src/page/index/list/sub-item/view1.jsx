@@ -4,10 +4,7 @@ import {
 }from 'react-router-dom'
 import {hot} from 'react-hot-loader'
 
-import {SubHeader} from '@/component/index'
-import { RouterGuard } from '@/component/index'
-import { rootRouters } from '@/router/index/router'
-
+import { SubHeader } from '@/component/index'
 
 //Home
 class Home extends React.Component {
@@ -72,7 +69,28 @@ class Topic extends React.Component {
     }
 }
 
-
+class ChildRouter extends React.Component {
+    render () {
+        return (
+                [
+                    {
+                        path: '/react-router-example/view1/home',
+                        loader: Home
+                    },
+                    {
+                        path: '/react-router-example/view1/about',
+                        loader: About
+                    },
+                    {
+                        path: '/react-router-example/view1/topics',
+                        loader: Topics
+                    }
+            ].map((item, index) => {
+                    return  <Route key={index} path={item.path} component={item.loader}></Route>
+            }) 
+        )
+    } 
+}
 
 class View1 extends React.Component {
     constructor(props) {
@@ -82,10 +100,8 @@ class View1 extends React.Component {
     }
     componentDidMount() {
         const { url } = this.props.match
-        const routes = rootRouters.find((v) => v.path == url)
         this.setState({
-            match_url: url,
-            rt: routes.children
+            match_url: url
         });
     }
     render() {
@@ -93,16 +109,16 @@ class View1 extends React.Component {
         return(
             <Router>
                 <div className='router'>
-                <Switch>
-                    {
-                        <RouterGuard config={this.state.rt}/>
-                    }
-                </Switch>
                     <SubHeader title='1、React-Router基本匹配 => npm i react-router-dom 模块 /2、路由的动态配置（模糊匹配）'/>
                     <div className='container-rotuer'>
                         <div className='container'>
                             {/* <pre>
-                                <div>&emsp;&emsp;使用路由，需要安装react 依赖的路由模块:react-router. 当然在React 4.0 版本中，我们推荐安装得是react-router-dom 模块。相比react-router，react-router-dom 增加了浏览器运行的一些环境以及新增的其他标签，如Link 标签......</div><br/>
+                                <div>
+                                    &emsp;&emsp;使用路由，需要安装react 依赖的路由模块:react-router. 当然在React 4.0 版本中，
+                                    我们推荐安装得是react-router-dom 模块。相比react-router，
+                                    react-router-dom 增加了浏览器运行的一些环境以及新增的其他标签，如Link 标签......
+                                </div>
+                                <br/>
                                 <code>
                                     <div className='color-green'>路由的匹配模式：</div>
                                     <div>&emsp;&emsp;&lt;Link to='/user'&gt;Home&lt;/Link&gt;</div>
@@ -117,15 +133,14 @@ class View1 extends React.Component {
                                 </code>
                             </pre> */}
                             <ul>
-                                <li><Link to='/home' replace>Home</Link></li>
-                                <li><Link to='/about' replace>About</Link></li>
-                                <li><Link to='/topics' replace>Topics</Link></li>
+                                <li><Link to='/react-router-example/view1/home' replace>Home</Link></li>
+                                <li><Link to='/react-router-example/view1/about' replace>About</Link></li>
+                                <li><Link to='/react-router-example/view1/topics' replace>Topics</Link></li>
                             </ul>
-                            {console.log(this.state.rt)}
-                            
-                            {/* <Route exact path='/' component={Home}></Route>
-                            <Route path='/about' component={About}></Route>
-                            <Route path='/topics' component={Topics}></Route> */}
+                            <ChildRouter />
+                            {/* <Route exact path='/react-router-example/view1/home' component={Home}></Route> */}
+                            {/* <Route path='/react-router-example/view1/about' component={About}></Route> */}
+                            {/* <Route path='/topics' component={Topics}></Route> */}
                         </div>
                     </div>
                 </div>

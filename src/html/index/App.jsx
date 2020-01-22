@@ -49,7 +49,7 @@ class App extends React.Component {
     // routerList = []
   }
 
-   // 处理所有路由
+  // 处理所有路由
   handleConfig = (routers) => {
     routers.map((item, index) => {
       let routerMap = {}
@@ -77,6 +77,7 @@ class App extends React.Component {
   }
 
   render() {
+    // 处理所有路由
     let routers = this.handleConfig(rootRouters)
     return (
       <div className="App">

@@ -13,7 +13,7 @@ class Home extends React.Component {
     render() {
         return(
             <div>
-                <strong>Home</strong>
+                <strong>Home-subs</strong>
             </div>
         )
     }
