@@ -11,7 +11,7 @@ class RouterGuard extends React.Component{
         const { location, config } = this.props;
         const { pathname } = location;
         const targetRouterConfig = config.find((v) => v.path === pathname);
-        // console.log(config, 'coming into main')
+        console.log(config, 'coming into main')
         if(targetRouterConfig){
             // 全局路由守卫
             document.title = targetRouterConfig.title || '默认title';

@@ -49,7 +49,7 @@ const listMainRouters = [
                             {
                                  // view2
                                 path:`/sub-home-children`,
-                                component:loadable('index/list/sub-item/view2'),
+                                component:loadable('index/list/sub-item/view1'),
                                 title: 'sub-home-children'
                             }
                         ],

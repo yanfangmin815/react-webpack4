@@ -11,6 +11,7 @@ const Loading = components('loading/loading.js');
 const RouterGuard = components('router-guard/router-guard.js');
 const RouterGuardMulti = components('router-guard-multi/router-guard-multi.js');
 const Commutation = components('commutation/commutation.jsx');
+const Home = components('Home/Home.jsx');
 
 
 export {
@@ -18,5 +19,6 @@ export {
     Loading,
     RouterGuard,
     RouterGuardMulti,
-    Commutation
+    Commutation,
+    Home
 }
