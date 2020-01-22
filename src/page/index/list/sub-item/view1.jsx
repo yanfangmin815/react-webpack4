@@ -72,19 +72,20 @@ class Topic extends React.Component {
 class ChildRouter extends React.Component {
     render () {
         return (
-            [
-                {
-                    path: '/react-router-example/view1/home',
-                    loader: Home
-                },
-                {
-                    path: '/react-router-example/view1/about',
-                    loader: About
-                },
-                {
-                    path: '/react-router-example/view1/topics',
-                    loader: Topics
-                }].map((item, index) => {
+                [
+                    {
+                        path: '/react-router-example/view1/home',
+                        loader: Home
+                    },
+                    {
+                        path: '/react-router-example/view1/about',
+                        loader: About
+                    },
+                    {
+                        path: '/react-router-example/view1/topics',
+                        loader: Topics
+                    }
+            ].map((item, index) => {
                     return  <Route key={index} path={item.path} component={item.loader}></Route>
             }) 
         )
