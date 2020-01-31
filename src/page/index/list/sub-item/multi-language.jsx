@@ -1,7 +1,5 @@
 import intl from 'react-intl-universal';
 import React, { Component } from 'react';
-import enUS from '@/locales/en-US.json';
-import zhCN from '@/locales/zh-CN.json';
  
 const SUPPOER_LOCALES = [
   {
@@ -13,15 +11,12 @@ const SUPPOER_LOCALES = [
     value: 'zh-CN'
   }
 ];
-// const locales = {
-//   'en-US': enUS,
-//   'zh-CN': zhCN
-// };
  
 class MultiLanguage extends Component {
   constructor(props) {
     super(props);
     this.onSelectLocale = this.onSelectLocale.bind(this);
+    this.state = { lang: localStorage.getItem('lang_type') || 'en-US' };
   }
  
   renderLocaleSelector() {

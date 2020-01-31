@@ -1,4 +1,8 @@
 {
     "hotel_title": "Property Management",
-    "homename": "Homepage"
+    "homename": "Homepage",
+    "route_redirection": "Route redirection",
+    "route_parameters": "React route parameters",
+    "react_route": "The basic configuration of react route and the realization of fuzzy matching (dynamic route, nested route)",
+    "react_hash": "The way to realize the route of react hash mode"
 }

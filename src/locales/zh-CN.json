@@ -1,4 +1,8 @@
 {
     "hotel_title": "酒店智能管理系统",
-    "homename": "首页"
+    "homename": "首页",
+    "route_redirection": "路由重定向",
+    "route_parameters": "React 路由参数",
+    "react_route": "React Route 路由的基本配置 以及 实现路由的模糊匹配（动态路由，嵌套路由）",
+    "react_hash": "React hash 模式路由实现的手段"
 }

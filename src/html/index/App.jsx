@@ -22,7 +22,7 @@ const locales = {
   'zh-CN': zhCN
 };
 
-/*//平台、设备和操作系统 ，返回ture或false,true表示是移动端，false表示不是移动端
+/*//平台、设备和操作系统 ，返回ture或false,true表示移动端，false表示非移动端
 function ismobile() {
     var mobileArry = ["iPhone", "iPad", "Android", "Windows Phone", "BB10; Touch", "BB10; Touch", "PlayBook", "Nokia"];
     var ua = navigator.userAgent;
@@ -37,7 +37,7 @@ class App extends React.Component {
     super(props);
     this.state = { 
       initDone: false,
-      lang: localStorage.getItem('lang_type') || 'en-US' 
+      lang: localStorage.getItem('lang_type') || 'zh-CN' 
     }
     //定义状态构造函数，传递给useConcent
     const iState = () => ({
@@ -71,7 +71,7 @@ class App extends React.Component {
       })
       .then(() => {
         // After loading CLDR locale data, start to render
-        this.setState({ initDone: true });
+        // this.setState({ initDone: true });
       });
   }
 
@@ -94,7 +94,7 @@ class App extends React.Component {
             subRouterMap.children = subItem.children
           }
           subRouterList.push(subRouterMap)
-          // 递归处理子路由
+          // 递归子路由
           this.handleConfig(subRouterList)
         })
       }
