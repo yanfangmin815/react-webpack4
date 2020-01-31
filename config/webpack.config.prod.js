@@ -39,6 +39,12 @@ const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 const publicUrl = publicPath.slice(0, -1);
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
+const { NODE_ENV } = process.env
+const mode = (NODE_ENV === 'development' ? NODE_ENV : 'production');
+// 调试项目启动添加错误
+// console.log(env, 'env')
+// 1/a0
+// 调试项目启动添加错误
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -66,7 +72,7 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
 module.exports = merge(baseConfig, {
-  mode: 'production',
+  mode,
   bail: true,
   devtool: shouldUseSourceMap ? 'source-map' : false,
   output: {
@@ -115,7 +121,7 @@ module.exports = merge(baseConfig, {
           // Process JS with Babel.
           {
             test: /\.(js|jsx|mjs)$/,
-            include: paths.appSrc,
+            include: [paths.appSrc,resolve('node_modules/antd')],
             exclude: /node_modules/,
             loader: require.resolve('babel-loader'),
             options: {
@@ -201,45 +207,45 @@ module.exports = merge(baseConfig, {
 
     new webpack.DefinePlugin(env.stringified),
     // Minify the code.
-    new ParallelUglifyPlugin({
-      uglifyJS: {
-        warnings: false,
-        compress: {
-          comparisons: false,
-        },
-        output: {
-          /*
-           是否输出可读性较强的代码，即会保留空格和制表符，默认为输出，为了达到更好的压缩效果，
-           可以设置为false
-          */
-          beautify: false,
-          /*
-           是否保留代码中的注释，默认为保留，为了达到更好的压缩效果，可以设置为false
-          */
-          comments: false
-        }
-      }
-    }),
-    /*new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        // Disabled because of an issue with Uglify breaking seemingly valid code:
-        // https://github.com/facebookincubator/create-react-app/issues/2376
-        // Pending further investigation:
-        // https://github.com/mishoo/UglifyJS2/issues/2011
-        comparisons: false,
-      },
-      mangle: {
-        safari10: true,
-      },
-      output: {
-        comments: false,
-        // Turned on because emoji and regex is not minified properly using default
-        // https://github.com/facebookincubator/create-react-app/issues/2488
-        ascii_only: true,
-      },
-      sourceMap: shouldUseSourceMap,
-    }),*/
+    // new ParallelUglifyPlugin({
+    //   uglifyJS: {
+    //     warnings: false,
+    //     compress: {
+    //       comparisons: false,
+    //     },
+    //     output: {
+    //       /*
+    //        是否输出可读性较强的代码，即会保留空格和制表符，默认为输出，为了达到更好的压缩效果，
+    //        可以设置为false
+    //       */
+    //       beautify: false,
+    //       /*
+    //        是否保留代码中的注释，默认为保留，为了达到更好的压缩效果，可以设置为false
+    //       */
+    //       comments: false
+    //     }
+    //   }
+    // }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: {
+    //     warnings: false,
+    //     // Disabled because of an issue with Uglify breaking seemingly valid code:
+    //     // https://github.com/facebookincubator/create-react-app/issues/2376
+    //     // Pending further investigation:
+    //     // https://github.com/mishoo/UglifyJS2/issues/2011
+    //     comparisons: false,
+    //   },
+    //   mangle: {
+    //     safari10: true,
+    //   },
+    //   output: {
+    //     comments: false,
+    //     // Turned on because emoji and regex is not minified properly using default
+    //     // https://github.com/facebookincubator/create-react-app/issues/2488
+    //     ascii_only: true,
+    //   },
+    //   sourceMap: shouldUseSourceMap,
+    // }),
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
     new ExtractTextPlugin({
       filename: cssFilename,

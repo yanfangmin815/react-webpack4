@@ -42,6 +42,10 @@ class List extends React.Component {
         getMockDataGood()
     }
 
+    componentDidUpdate() {
+        // console.log('list updated.....')
+    }
+
     pushGoods = () => {
         const { changeGood } = this.props;
         changeGood('this is pushed str...')

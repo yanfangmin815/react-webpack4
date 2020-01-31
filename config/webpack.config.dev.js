@@ -20,13 +20,16 @@ const paths = require('./paths');
 const publicPath = '/';
 const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
-
+const { NODE_ENV } = process.env
+const mode = (NODE_ENV === 'development' ? NODE_ENV : 'production');
+// console.log(NODE_ENV, 'envc')
+// 1/a0
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 // console.log('coming into...');
 module.exports = merge(baseConfig, {
-  mode: 'development', // webpack4
+  mode, // webpack4
   // 更改multiple-in
   output: {
     path: paths.appBuild,
