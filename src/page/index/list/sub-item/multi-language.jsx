@@ -13,19 +13,19 @@ const SUPPOER_LOCALES = [
     value: 'zh-CN'
   }
 ];
-const locales = {
-  'en-US': enUS,
-  'zh-CN': zhCN
-};
+// const locales = {
+//   'en-US': enUS,
+//   'zh-CN': zhCN
+// };
  
 class MultiLanguage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      initDone: false
-    };
+    // this.state = {
+    //   initDone: false
+    // };
     this.onSelectLocale = this.onSelectLocale.bind(this);
-    this.state = { lang: localStorage.getItem('lang_type') || 'en-US' };
+    // this.state = { lang: localStorage.getItem('lang_type') || 'en-US' };
   }
  
   renderLocaleSelector() {
@@ -56,23 +56,23 @@ class MultiLanguage extends Component {
     );
   }
  
-  componentDidMount() {
-    this.loadLocales();
-  }
+  // componentDidMount() {
+  //   this.loadLocales();
+  // }
  
-  loadLocales() {
-    intl
-      .init({
-        // init method will load CLDR locale data according to currentLocale
-        // react-intl-universal is singleton, so you should init it only once in your app
-        currentLocale: this.state.lang, // TODO: determine locale here
-        locales
-      })
-      .then(() => {
-        // After loading CLDR locale data, start to render
-        this.setState({ initDone: true });
-      });
-  }
+  // loadLocales() {
+  //   intl
+  //     .init({
+  //       // init method will load CLDR locale data according to currentLocale
+  //       // react-intl-universal is singleton, so you should init it only once in your app
+  //       currentLocale: this.state.lang, // TODO: determine locale here
+  //       locales
+  //     })
+  //     .then(() => {
+  //       // After loading CLDR locale data, start to render
+  //       this.setState({ initDone: true });
+  //     });
+  // }
 }
  
 export default MultiLanguage;
