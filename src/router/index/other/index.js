@@ -34,6 +34,15 @@ const otherMainRouters = [
         }),
         title: 'hooks-1页面'
     },
+    {
+        // 多语言测试页面
+        path:'/multi-language',
+        component:Loadable({
+            loader:() => import('@/page/index/list/sub-item/multi-language.jsx'),
+            loading:() => ('')
+        }),
+        title: '多语言测试页面'
+    },
 ];
 
 /**
