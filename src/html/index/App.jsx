@@ -1,7 +1,11 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component, PropTypes} from 'react'
 import {hot} from 'react-hot-loader'
 import {connect} from 'react-redux'
-import { run, useConcent } from 'concent';
+import { run, useConcent } from 'concent'
+import intl from 'react-intl-universal'
+import enUS from '@/locales/en-US.json'
+import zhCN from '@/locales/zh-CN.json'
+import clCN from '@/locales/cl-CN.json'
 
 import {
   BrowserRouter as Router,
@@ -14,8 +18,13 @@ import {
 import { rootRouters } from '@/router/index/router'
 import { RouterGuard } from '@/component/index'
 let routerList = []
+const locales = {
+  'en-US': enUS,
+  'zh-CN': zhCN,
+  'cl-CN': clCN
+};
 
-/*//平台、设备和操作系统 ，返回ture或false,true表示是移动端，false表示不是移动端
+/*//平台、设备和操作系统 ，返回ture或false,true表示移动端，false表示非移动端
 function ismobile() {
     var mobileArry = ["iPhone", "iPad", "Android", "Windows Phone", "BB10; Touch", "BB10; Touch", "PlayBook", "Nokia"];
     var ua = navigator.userAgent;
@@ -28,25 +37,44 @@ function ismobile() {
 class App extends React.Component {
   constructor(props) {
     super(props);
-      //定义状态构造函数，传递给useConcent
-      const iState = () => ({
-          products:[],
-          type: "",
-          sex: "",
-          addr: "",
-          keyword: "",
-          tag: "" ,
-          title: ''});
-      run({
-          product:{
-              //这里复用刚才的状态生成函数
-              state: iState()
-          }
-      })
+    this.state = { 
+      initDone: false,
+      lang: localStorage.getItem('lang_type') || 'zh-CN' 
+    }
+    //定义状态构造函数，传递给useConcent
+    const iState = () => ({
+        products:[],
+        type: "",
+        sex: "",
+        addr: "",
+        keyword: "",
+        tag: "" ,
+        title: ''});
+    run({
+        product:{
+            //这里复用刚才的状态生成函数
+            state: iState()
+        }
+    })
   }
 
   componentDidMount () {
     // routerList = []
+    this.loadLocales();
+  }
+ 
+  loadLocales() {
+    intl
+      .init({
+        // init method will load CLDR locale data according to currentLocale
+        // react-intl-universal is singleton, so you should init it only once in your app
+        currentLocale: this.state.lang, // TODO: determine locale here
+        locales
+      })
+      .then(() => {
+        // After loading CLDR locale data, start to render
+        // this.setState({ initDone: true });
+      });
   }
 
   // 处理所有路由
@@ -68,7 +96,7 @@ class App extends React.Component {
             subRouterMap.children = subItem.children
           }
           subRouterList.push(subRouterMap)
-          // 递归处理子路由
+          // 递归子路由
           this.handleConfig(subRouterList)
         })
       }

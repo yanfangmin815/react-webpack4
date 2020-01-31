@@ -56,8 +56,11 @@ export const getMockDataGood = () => {
         try {
             dispatch(loadingStatus(true))
             const response = await reqMockDataGood()
+            console.log(response, 'response')
             dispatch(loadingStatus(false))
-            dispatch(receiveMockDataGood(response.data.data))
+            setTimeout(() => {
+                dispatch(receiveMockDataGood(response.data.data))
+            },2000)
         } catch (e) {
             dispatch(loadingStatus(false))
         }

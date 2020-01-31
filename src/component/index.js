@@ -12,6 +12,7 @@ const RouterGuard = components('router-guard/router-guard.js');
 const RouterGuardMulti = components('router-guard-multi/router-guard-multi.js');
 const Commutation = components('commutation/commutation.jsx');
 const Home = components('Home/Home.jsx');
+const Content = components('with-router/with-router.jsx');
 
 
 export {
@@ -20,5 +21,6 @@ export {
     RouterGuard,
     RouterGuardMulti,
     Commutation,
-    Home
+    Home,
+    Content
 }

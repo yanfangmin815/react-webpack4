@@ -71,12 +71,12 @@ class View2 extends React.Component {
 
                             </pre>
                             <strong>Account</strong>
-                            <ul>
+                            {/* <ul>
                                 <li><Link to='/components/accountJD' replace>京东</Link></li>
                                 <li><Link to='/components/accountZFB' replace>支付宝</Link></li>
 
                                 <Route exact path='/components/:applicationId' component={Components}></Route>
-                            </ul>
+                            </ul> */}
                         </div>
                     </div>
                 </div>
