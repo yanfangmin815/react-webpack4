@@ -10,7 +10,7 @@ import request from './file'
 const domains = React.$domains
 const { NODE_ENV } = process.env
 const ENV = environmentSwitch(NODE_ENV) // 获取环境
-// console.log(domains[ENV].baseUrl, 'domains')
+// console.log(domains[ENV], 'domains')
 
 export const reqMockDataGood = (type) => {
     return ajax({
