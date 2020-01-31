@@ -34,7 +34,11 @@ class List extends React.Component {
                 {
                   name: '简体中文',
                   value: 'zh-CN'
-                }
+                },
+                {
+                    name: '文言文',
+                    value: 'cl-CN'
+                  }
               ] 
         }
     }

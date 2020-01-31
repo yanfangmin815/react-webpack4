@@ -1,10 +1,11 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component, PropTypes} from 'react'
 import {hot} from 'react-hot-loader'
 import {connect} from 'react-redux'
-import { run, useConcent } from 'concent';
-import intl from 'react-intl-universal';
-import enUS from '@/locales/en-US.json';
-import zhCN from '@/locales/zh-CN.json';
+import { run, useConcent } from 'concent'
+import intl from 'react-intl-universal'
+import enUS from '@/locales/en-US.json'
+import zhCN from '@/locales/zh-CN.json'
+import clCN from '@/locales/cl-CN.json'
 
 import {
   BrowserRouter as Router,
@@ -19,7 +20,8 @@ import { RouterGuard } from '@/component/index'
 let routerList = []
 const locales = {
   'en-US': enUS,
-  'zh-CN': zhCN
+  'zh-CN': zhCN,
+  'cl-CN': clCN
 };
 
 /*//平台、设备和操作系统 ，返回ture或false,true表示移动端，false表示非移动端

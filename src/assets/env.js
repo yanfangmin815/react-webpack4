@@ -26,7 +26,7 @@ const environmentMap = {
 }
 
 // 环境切换
-function environmentSwitch (NODE_ENV) {
+function environmentSwitch (NODE_ENV = 'development') {
   return environmentMap[NODE_ENV]
 }
 
