@@ -63,6 +63,7 @@ class App extends React.Component {
     this.loadLocales();
   }
  
+  // 国际化
   loadLocales() {
     intl
       .init({
