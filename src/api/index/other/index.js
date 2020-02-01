@@ -1,6 +1,7 @@
 
 /*
-包含所有ajax请求方法的模块
+ author: yfm
+ 包含所有ajax请求方法的模块
  */
 import React from 'react';
 import ajax from '@/assets/utils/ajax'
