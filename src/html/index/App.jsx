@@ -7,6 +7,8 @@ import enUS from '@/locales/en-US.json'
 import zhCN from '@/locales/zh-CN.json'
 import clCN from '@/locales/cl-CN.json'
 
+import * as logic from '@/assets/utils/logic';
+
 import {
   BrowserRouter as Router,
   Route,
@@ -53,7 +55,8 @@ class App extends React.Component {
     run({
         product:{
             //这里复用刚才的状态生成函数
-            state: iState()
+            state: iState(),
+            reducer: logic
         }
     })
   }
