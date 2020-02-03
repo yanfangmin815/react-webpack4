@@ -53,7 +53,7 @@ class App extends React.Component {
     run({
         product:{
             //这里复用刚才的状态生成函数
-            state: iState()
+            state: iState(),
         }
     })
   }
@@ -63,6 +63,7 @@ class App extends React.Component {
     this.loadLocales();
   }
  
+  // 国际化
   loadLocales() {
     intl
       .init({
