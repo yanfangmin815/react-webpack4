@@ -22,7 +22,7 @@ const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
 const { NODE_ENV } = process.env
 const mode = (NODE_ENV === 'development' ? NODE_ENV : 'production');
-// console.log(NODE_ENV, 'envc')
+// console.log(process.env, 'envc')
 // 1/a0
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
