@@ -12,6 +12,7 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin'); // webpack4 进度显示
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const baseConfig = require('./webpack.base.conf.js');
+const fs = require('fs')
 
 const getClientEnvironment = require('./env');
 const utils = require('./utils');

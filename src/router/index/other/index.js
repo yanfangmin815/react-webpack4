@@ -43,6 +43,15 @@ const otherMainRouters = [
         }),
         title: '多语言测试页面'
     },
+    {
+        // 多语言测试页面
+        path:'/ast-test-1',
+        component:Loadable({
+            loader:() => import('@/page/index/pages/sub-main/ast-test-1.jsx'),
+            loading:() => ('')
+        }),
+        title: 'ast-test-1'
+    }
 ];
 
 /**
