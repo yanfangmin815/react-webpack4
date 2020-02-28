@@ -5,14 +5,18 @@ const parse = require('@babel/parser').parse;
 const t = require('@babel/types');
 const generate = require('@babel/generator').default;
 const traverse = require('@babel/traverse').default
-const code = `
-       const obj = {
-           a: 'a',
-           b: 'b'
-       }
-       function A() {
-           console.log(...arguments)
-       }`;
+const code = `let p = new Promise(function(reslove,reject){
+                // reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
+                reject('失败')  //状态由等待变为失败，传的参数作为then函数中失败函数的实参
+            })
+            //then中有2个参数，第一个参数是状态变为成功后应该执行的回调函数，第二个参数是状态变为失败后应该执行的回调函数。
+            p.then((data)=>{
+                console.log('成功'+data)
+            },(err)=>{
+                console.log('失败'+err)
+            }).catch(err => {
+                console.log('fail')
+            }) `;
 const ast = parse(code);
 const setup = ctx => {
     //实例级别的计算函数
@@ -180,9 +184,9 @@ const setup = ctx => {
         const tryStatement = generateTryStatement()
 
         // 将内容放入body中
-        ast.program.body.push(content);
-        ast.program.body.push(variableDeclaration);
-        ast.program.body.push(tryStatement);
+        // ast.program.body.push(content);
+        // ast.program.body.push(variableDeclaration);
+        // ast.program.body.push(tryStatement);
 
         // 改 - 向数组中添加属性
         const property = t.objectProperty(t.identifier('c'), t.stringLiteral('c'));
@@ -196,24 +200,35 @@ const setup = ctx => {
                         compact:false,
                         concise: true
                     });
-                    // console.log(output, '>>>>>>>>>>>>')
+                    // console.log(path, '>>>>>>>>>>>>')
                 }
             },
             ObjectExpression(path) {
                 // console.log(path, 'ObjectExpression');
-                if (path.parent.id.name == 'obj') {
-                    path.pushContainer('properties', property);
-                }
+                // if (path.parent.id.name == 'obj') {
+                //     path.pushContainer('properties', property);
+                // }
                 // path.pushContainer('properties', property);
             },
             FunctionDeclaration(path) {
-                // console.log(path, 'FunctionDeclaration');
-                const number = t.numericLiteral(1);
-                path.pushContainer('params', number);
-                // path.pushContainer('body', number);
+                console.log(path.node.body.body, 'FunctionDeclaration');
+                const types = path.node.body.body.map((item, index) => {
+                    return item.type
+                })
+                console.log(types)
+                // const number = t.numericLiteral(1);
+                // path.pushContainer('params', number);
             },
             VariableDeclaration(path) {
                 // console.log(path, 'VariableDeclaration');
+            },
+            // 使用相应type来快速访问节点，这里快速来到二元表达式节点，即 1 + 1
+            // 并使用path.replaceWith() 将节点 1 + 1替换
+            ExpressionStatement(path) {
+                // console.log(path,'??????????????????')
+            },
+            BlockStatement(path) {
+                // console.log(path.node.body, '>>>>???????')
             }
         });
     }

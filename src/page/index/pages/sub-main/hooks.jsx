@@ -1,7 +1,8 @@
 import React, { useReducer, useEffect } from 'react';
 import { run, useConcent } from 'concent';
 import * as logic from '@/assets/utils/logic';
-import './hooks.css'
+import { Dialog, Toast, Table, Paging  } from 'mayfly-design';
+import './hooks.scss'
 
 const setup = ctx => {
     /*ctx.watch("keyword", () => {
@@ -17,15 +18,17 @@ const setup = ctx => {
 
     const testPromise = () => {
         let p = new Promise(function(reslove,reject){
-            reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
-            // reject('失败')  //状态由等待变为失败，传的参数作为then函数中失败函数的实参
+            // reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
+            reject('失败')  //状态由等待变为失败，传的参数作为then函数中失败函数的实参
         })
         //then中有2个参数，第一个参数是状态变为成功后应该执行的回调函数，第二个参数是状态变为失败后应该执行的回调函数。
         p.then((data)=>{
             console.log('成功'+data)
         },(err)=>{
             console.log('失败'+err)
-        })
+        }).catch(err => {
+            console.log('fail')
+        }) 
     }
 
     ctx.effect((title) => {
@@ -73,31 +76,8 @@ const setup = ctx => {
         // changeType: ctx.sync('type'),
         updateType: e=> ctx.invoke(logic.complexUpdate, e.currentTarget.value),
         clickTitle: e=> ctx.invoke(logic.complexUpdateTitle, e.currentTarget.innerHTML),
-        /*updateTypeAndTitle: e=> {
-            // 为了配合这个演示，我们另开两个key存type，sex^_^
-            const {tmpType, tmpSex} = ctx.state;
-            ctx.invoke(logic.updateTypeAndTitle,
-                {type: tmpType,
-                    title: tmpSex});
-        }*/
     }
 };
-
-/*//定义状态构造函数，传递给useConcent
-const iState = () => ({
-    products:[],
-    type: "",
-    sex: "",
-    addr: "",
-    keyword: "",
-    tag: "" ,
-    title: ''});
-run({
-    product:{
-        //这里复用刚才的状态生成函数
-        state: iState()
-    }
-})*/
 
 const ConcentFnPage = React.memo(function({ tag: propTag }) {
     // run()
@@ -105,11 +85,61 @@ const ConcentFnPage = React.memo(function({ tag: propTag }) {
     const { state, settings, sync } = useConcent({ setup, module:'product' });
     const { products, type, sex, addr, keyword, tag } = state;
     const { fetchProducts, updateType, clickTitle } = settings;
-
+    const dataset = [{
+        id: 1,
+        name: 'Apple',
+        height: 178
+    }, {
+        id: 2,
+        name: 'Boy',
+        height: 177
+    }, {
+        id: 3,
+        name: 'Cat',
+        height: 176
+    }]
+    const dataconf = [{
+        title: 'ID',
+        name: 'id',
+        width: '25%'
+    }, {
+        title: '姓名',
+        name: 'name',
+        width: '25%'
+    }, {
+        title: '身高',
+        name: 'height',
+        width: '25%'
+    }, {
+        title: '',
+        width: '25%',
+        name: 'action2',
+        type: 'action',
+        handles: [
+            {
+                name: '配置',
+                btnType: 'text',
+                handle: (data) => {
+                    alert('配置')
+                    console.log(data);
+                }
+            }, {
+                name: '备注',
+                btnType: 'text',handle: (data) => {
+                    alert('备注')
+                    console.log(data);
+                }
+            }]
+    }]
+    const pageInfo = {
+        total: 119,
+        maxToShow: 20
+    }
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
         <div className="conditionArea">
+            <Table dataconf={dataconf} dataset={dataset}  />
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>

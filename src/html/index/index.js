@@ -10,7 +10,6 @@ import {Provider} from 'react-redux'
 import domains from '@/assets/invoker/invoker'
 import '@/style/public.css'
 import store from '@/redux/store'
-
 // 绑定在React全局
 React.$domains = domains
 

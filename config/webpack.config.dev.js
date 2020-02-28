@@ -13,6 +13,8 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin'); // webpack4 è¿
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const baseConfig = require('./webpack.base.conf.js');
 const fs = require('fs')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const getClientEnvironment = require('./env');
 const utils = require('./utils');
@@ -59,6 +61,7 @@ module.exports = merge(baseConfig, {
         include: paths.appSrc,
         exclude: /node_modules/ // webpack4
       },
+     
       {
         oneOf: [
           {
@@ -76,9 +79,14 @@ module.exports = merge(baseConfig, {
             loader: require.resolve('babel-loader'),
             options: {
               cacheDirectory: true,
-              plugins: ['react-hot-loader/babel', 'lodash', '@babel/plugin-syntax-dynamic-import'],
+              plugins: [
+                'react-hot-loader/babel', 
+                'lodash', 
+                '@babel/plugin-transform-runtime',
+                '@babel/plugin-syntax-dynamic-import'],
             },
           },
+         
           {
             test: /\.css$/,
             use: [
@@ -110,6 +118,10 @@ module.exports = merge(baseConfig, {
             ],
           },
           {
+            test: /\.scss$/,
+            loaders: ['style-loader', 'css-loader', 'sass-loader'],
+          },
+          {
             exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/],
             loader: require.resolve('file-loader'),
             options: {
@@ -118,10 +130,16 @@ module.exports = merge(baseConfig, {
           },
         ],
       },
+      
     ],
   },
   devtool: 'cheap-module-source-map',
   plugins: [
+    new BundleAnalyzerPlugin({
+        analyzerMode: 'static',
+        openAnalyzer: false,
+        logLevel: 'info'
+    }),
     new ProgressBarPlugin({
       format: 'build [:bar] :percent (:elapsed seconds)',
       clear: false,
