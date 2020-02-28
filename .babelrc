@@ -6,7 +6,7 @@
         "react-hot-loader/babel",
         "@babel/plugin-proposal-function-bind",
         ["import", {
-            "libraryName": " mayfly-design  ",
+            "libraryName": "mayfly-design",
             "libraryDirectory": "lib/component"
         }]
     ]
