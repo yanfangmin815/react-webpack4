@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect } from 'react';
 import { run, useConcent } from 'concent';
 import * as logic from '@/assets/utils/logic';
-import { Dialog, Toast, Table, Paging  } from 'mayfly-design';
+import { Dialog, Toast, Table, Paging  } from 'i-mayfly';
 import './hooks.scss'
 
 

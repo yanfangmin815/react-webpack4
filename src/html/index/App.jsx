@@ -6,7 +6,7 @@ import intl from 'react-intl-universal'
 import enUS from '@/locales/en-US.json'
 import zhCN from '@/locales/zh-CN.json'
 import clCN from '@/locales/cl-CN.json'
-// import "mayfly-design/lib/sass/normal.scss";
+// import "i-mayfly/lib/sass/normal.scss";
 
 import {
   BrowserRouter as Router,
