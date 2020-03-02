@@ -18,7 +18,7 @@ module.exports = function(proxy, allowedHost) {
     disableHostCheck:
       !proxy || process.env.DANGEROUSLY_DISABLE_HOST_CHECK === 'true',
     compress: true,
-    clientLogLevel: 'none',
+    clientLogLevel: 'error',
     contentBase: paths.appPublic,
     watchContentBase: true,
     hot: true,
@@ -31,7 +31,12 @@ module.exports = function(proxy, allowedHost) {
     host: host,
     stats: {
       // 添加警告
-      warnings: true,
+      warnings: false,
+        // 添加构建模块信息
+      modules: true,
+      builtAt: true,
+      // 添加资源信息
+      assets: true,
     },
     overlay: false,
     historyApiFallback: {

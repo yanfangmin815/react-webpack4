@@ -7,10 +7,10 @@ import './hooks.scss'
 
 const setup = ctx => {
     //实例级别的计算函数
-    const fetchProducts = ({type, sex, addr, keyword}) => {
-        console.log(type, 'STATE')
+    const fetchProducts = ({type, sex, addr}) => {
+        console.log('STATE')
         setTimeout(() => {
-            console.log('request coming back......')
+            console.log('request coming back...')
         }, 1000)
     }
 
@@ -23,7 +23,7 @@ const setup = ctx => {
         p.then((data)=>{
             console.log('成功'+data)
         },(err)=>{
-            console.log('失败'+err)
+            // console.log('失败'+err)
         }).catch(err => {
             console.log('fail')
         }) 
@@ -133,11 +133,7 @@ const ConcentFnPage = React.memo(function({ tag: propTag }) {
             <br/><br/>
             <input data-key="addr" value={addr} onChange={sync('addr')} />
             <input data-key="keyword" value={keyword} onChange={sync('keyword')} />
-            <button onClick={fetchProducts}>refresh</button>
-            {/*{products.map((v, idx)=><div key={idx}>name:{v.name} author:{v.author}</div>)}*/}
         </div>
-
-
     );
 });
 

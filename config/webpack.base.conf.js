@@ -28,6 +28,7 @@ const baseConfig = {
         runtimeChunk: {
             name: "manifest"
         },
+        mergeDuplicateChunks: true,
         // 拆分公共包
         splitChunks: {
             cacheGroups: {

@@ -16,6 +16,8 @@ const fs = require('fs')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+//引入模块
+const Jarvis = require("webpack-jarvis");
 const getClientEnvironment = require('./env');
 const utils = require('./utils');
 const paths = require('./paths');
@@ -25,12 +27,15 @@ const publicUrl = '';
 const env = getClientEnvironment(publicUrl);
 const { NODE_ENV } = process.env
 const mode = (NODE_ENV === 'development' ? NODE_ENV : 'production');
-// console.log(process.env, 'envc')
+
 // 1/a0
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
-// console.log('coming into...');
+function test() {
+  console.log(345342534523452345345234)
+  return false
+}
 module.exports = merge(baseConfig, {
   mode, // webpack4
   // 更改multiple-in
@@ -46,21 +51,21 @@ module.exports = merge(baseConfig, {
   module: {
     strictExportPresence: true,
     rules: [
-      {
-        test: /\.(js|jsx|mjs)$/,
-        enforce: 'pre',
-        use: [
-          {
-            options: {
-              formatter: eslintFormatter,
-              eslintPath: require.resolve('eslint'),
-            },
-            loader: require.resolve('eslint-loader'),
-          },
-        ],
-        include: paths.appSrc,
-        exclude: /node_modules/ // webpack4
-      },
+      // {
+      //   test: /\.(js|jsx|mjs)$/,
+      //   enforce: 'pre',
+      //   use: [
+      //     {
+      //       options: {
+      //         // formatter: eslintFormatter,
+      //         eslintPath: require.resolve('eslint'),
+      //       },
+      //       loader: require.resolve('eslint-loader'),
+      //     },
+      //   ],
+      //   include: paths.appSrc,
+      //   exclude: /node_modules/ // webpack4
+      // },
      
       {
         oneOf: [
@@ -135,6 +140,9 @@ module.exports = merge(baseConfig, {
   },
   devtool: 'cheap-module-source-map',
   plugins: [
+    new Jarvis({
+      port: 1337 // optional: set a port
+    }),
     new BundleAnalyzerPlugin({
         analyzerMode: 'static',
         openAnalyzer: false,
