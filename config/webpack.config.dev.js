@@ -32,10 +32,6 @@ const mode = (NODE_ENV === 'development' ? NODE_ENV : 'production');
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
-function test() {
-  console.log(345342534523452345345234)
-  return false
-}
 module.exports = merge(baseConfig, {
   mode, // webpack4
   // 更改multiple-in
