@@ -193,6 +193,7 @@ const setup = ctx => {
         traverse(ast, {
              Program: {
                 exit(path) {
+                    console.log(ast, '>>>>>>>>>>>>')
                      // 设置输出格式
                     const output = generate(ast, { 
                         quotes: 'single', 
@@ -211,11 +212,11 @@ const setup = ctx => {
                 // path.pushContainer('properties', property);
             },
             FunctionDeclaration(path) {
-                console.log(path.node.body.body, 'FunctionDeclaration');
-                const types = path.node.body.body.map((item, index) => {
-                    return item.type
-                })
-                console.log(types)
+                // console.log(path.node.body.body, 'FunctionDeclaration');
+                // const types = path.node.body.body.map((item, index) => {
+                //     return item.type
+                // })
+                // console.log(types)
                 // const number = t.numericLiteral(1);
                 // path.pushContainer('params', number);
             },
@@ -233,8 +234,61 @@ const setup = ctx => {
         });
     }
 
+    const testExtends = () => {
+        setTimeout(function() {
+            console.log('timeout1');
+        })
+        
+        new Promise(function(resolve) {
+            console.log('promise1');
+            for(var i = 0; i < 1000; i++) {
+                i == 99 && resolve();
+            }
+            console.log('promise2');
+        }).then(function() {
+            console.log('then1');
+        })
+        
+        console.log('global1');
+        // function Father(name) {
+        //      this.name = name
+        //      this.arr = [1,2,3]
+        //      this.fun = function() {
+        //         console.log(334234564564564564565436)
+        //      }
+        //     }
+        //      
+        //     Father.prototype.getName = function() {
+        //      console.log(this.name)
+        //     }
+        //     new Father(function() {fun()})
+        //     function Son(name, age) {
+        //      Father.call(this)
+        //      this.age = age
+        //      this.name = name
+        //     }
+        //      
+        //     Son.prototype = new Father()
+        //     Son.prototype.constructor = Son
+        //     Son.prototype.getAge = function() {
+        //      console.log(this.age)
+        //     }
+            //  
+            // var son1 = new Son("小名", 23)
+            // son1.arr.push(4)
+            // console.log(son1.arr) //1,2,3,4
+            // son1.getName()    //小名
+            // son1.getAge()     //23
+            //  
+            // var son2 = new Son("一灯", 24)
+            // console.log(son2.arr) //1,2,3
+            // son2.getName() //一灯
+            // son2.getAge()
+    }
+
     ctx.effect(({state}) => {
-        testPromise()
+        // testPromise()
+        testExtends()
     }, []);//这里只需要传key名称就可以了
 
     ctx.effect(() => {
@@ -266,7 +320,13 @@ const ConcentFnPage = React.memo(function({ tag: propTag }) {
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
         <div className="conditionArea">
-            <h1>concent setup compnent</h1>
+            <h1 style={{
+                overflow : 'hidden',
+                textOverflow: 'ellipsis',
+            width: '200px', 
+            display: '-webkit-box',
+            WebkitBoxOrient:'vertical',
+            WebLineClamp:2}}>concent setup compnentkdfhjsdkafhjasjfasdjfkljds;fjdsfkjdsalkjflkdsajfdas</h1>
         </div>
     );
 });

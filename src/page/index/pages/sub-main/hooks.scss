@@ -1,3 +1,10 @@
 select, input {
     border:1px solid red;
 }
+.demo {
+    width: 0;
+    height: 0;
+    border-width: 20px;
+    border-style: solid;
+    border-color: transparent transparent red transparent;
+    }

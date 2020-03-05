@@ -1,7 +1,7 @@
 {
     "presets": ["@babel/react","@babel/env", "react-app"],
     "plugins": [
-        ["remove-console-ingenious", {}],
+        // ["remove-console-ingenious", {}],
         "@babel/plugin-transform-runtime",
         "@babel/plugin-syntax-dynamic-import",
         "react-hot-loader/babel",

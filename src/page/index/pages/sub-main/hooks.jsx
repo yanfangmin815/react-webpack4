@@ -15,18 +15,27 @@ const setup = ctx => {
     }
 
     const testPromise = () => {
-        let p = new Promise(function(reslove,reject){
-            // reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
-            reject('失败')  //状态由等待变为失败，传的参数作为then函数中失败函数的实参
-        })
-        //then中有2个参数，第一个参数是状态变为成功后应该执行的回调函数，第二个参数是状态变为失败后应该执行的回调函数。
-        p.then((data)=>{
-            console.log('成功'+data)
-        },(err)=>{
-            // console.log('失败'+err)
-        }).catch(err => {
-            console.log('fail')
-        }) 
+        var newArr = [3,4,5,3,3,4].reduce(function (prev, cur) {
+            !prev[cur] ? prev[cur] = 1 : prev[cur]++
+            return prev;
+        },{});
+        // console.log([].concat(123))
+        var arr = [1,2,3,4,5,6,7,8,9,'v'];
+        arr.sort(function(){return Math.random()-0.5});
+        console.log(arr)
+        // console.log(newArr)
+        // let p = new Promise(function(reslove,reject){
+        //     // reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
+        //     reject('失败')  //状态由等待变为失败，传的参数作为then函数中失败函数的实参
+        // })
+        // //then中有2个参数，第一个参数是状态变为成功后应该执行的回调函数，第二个参数是状态变为失败后应该执行的回调函数。
+        // p.then((data)=>{
+        //     console.log('成功'+data)
+        // },(err)=>{
+        //     // console.log('失败'+err)
+        // }).catch(err => {
+        //     console.log('fail')
+        // }) 
     }
 
     ctx.effect((title) => {
@@ -119,6 +128,7 @@ const ConcentFnPage = React.memo(function({ tag: propTag }) {
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
         <div className="conditionArea">
+            <div className='demo'></div>
             <Table dataconf={dataconf} dataset={dataset}  />
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <select value={type} onChange={updateType}>
