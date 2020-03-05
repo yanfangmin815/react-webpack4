@@ -23,6 +23,8 @@ const setup = ctx => {
         var arr = [1,2,3,4,5,6,7,8,9,'v'];
         arr.sort(function(){return Math.random()-0.5});
         console.log(arr)
+
+        
         // console.log(newArr)
         // let p = new Promise(function(reslove,reject){
         //     // reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
