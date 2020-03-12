@@ -1,9 +1,8 @@
 import React, { useReducer, useEffect } from 'react';
 import { run, useConcent } from 'concent';
 import * as logic from '@/assets/utils/logic';
-import { Dialog, Toast, Table, Paging  } from 'i-mayfly';
+import { Dialog, Toast, Table, Tree } from 'i-mayfly';
 import './hooks.scss'
-
 
 const setup = ctx => {
     //实例级别的计算函数
@@ -14,15 +13,18 @@ const setup = ctx => {
         }, 1000)
     }
 
-    const testPromise = () => {
-        var newArr = [3,4,5,3,3,4].reduce(function (prev, cur) {
-            !prev[cur] ? prev[cur] = 1 : prev[cur]++
-            return prev;
-        },{});
-        // console.log([].concat(123))
-        var arr = [1,2,3,4,5,6,7,8,9,'v'];
-        arr.sort(function(){return Math.random()-0.5});
-        console.log(arr)
+    const testPromise = (...arg) => {
+        function AAA() {
+            this.gender = 'AA'
+        }
+        console.log(AAA.gender)
+        console.log(...arg)
+        // var newArr = [3,4,5,3,3,4].reduce(function (prev, cur) {
+        //     !prev[cur] ? prev[cur] = 1 : prev[cur]++
+        //     return prev;
+        // },{});
+        // var arr = [1,2,3,4,5,6,7,8,9,'v'];
+        // arr.sort(function(){return Math.random()-0.5});
         // console.log(newArr)
         // let p = new Promise(function(reslove,reject){
         //     // reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
@@ -47,7 +49,7 @@ const setup = ctx => {
     }, ["type", "sex", "addr", "keyword"]);//这里只需要传key名称就可以了
 
     ctx.effect(({state}) => {
-        testPromise()
+        testPromise(123)
     }, []);//这里只需要传key名称就可以了
 
     ctx.effect(() => {
@@ -128,7 +130,6 @@ const ConcentFnPage = React.memo(function({ tag: propTag }) {
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
         <div className="conditionArea">
-            <div className='demo'></div>
             <Table dataconf={dataconf} dataset={dataset}  />
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <select value={type} onChange={updateType}>

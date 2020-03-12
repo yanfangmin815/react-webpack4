@@ -1,21 +1,15 @@
 import React, { useReducer, useEffect } from 'react';
 import { run, useConcent } from 'concent';
 import * as logic from '@/assets/utils/logic';
+import { AAAAAA } from './math'
 const parse = require('@babel/parser').parse;
 const t = require('@babel/types');
 const generate = require('@babel/generator').default;
 const traverse = require('@babel/traverse').default
 const code = `let p = new Promise(function(reslove,reject){
                 // reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
+                console.log(run())
                 reject('失败')  //状态由等待变为失败，传的参数作为then函数中失败函数的实参
-            })
-            //then中有2个参数，第一个参数是状态变为成功后应该执行的回调函数，第二个参数是状态变为失败后应该执行的回调函数。
-            p.then((data)=>{
-                console.log('成功'+data)
-            },(err)=>{
-                console.log('失败'+err)
-            }).catch(err => {
-                console.log('fail')
             }) `;
 const ast = parse(code);
 const setup = ctx => {
@@ -287,8 +281,8 @@ const setup = ctx => {
     }
 
     ctx.effect(({state}) => {
-        // testPromise()
-        testExtends()
+        testPromise()
+        // testExtends()
     }, []);//这里只需要传key名称就可以了
 
     ctx.effect(() => {
@@ -306,9 +300,7 @@ const setup = ctx => {
         clickTitle: e=> ctx.invoke(logic.complexUpdateTitle, e.currentTarget.innerHTML),
     }
 };
-
-
-
+// console.log(67657865786, AAAAAA)
 const ConcentFnPage = React.memo(function({ tag: propTag }) {
     // run()
     // useConcent返回ctx，这里直接解构ctx，拿想用的对象或方法

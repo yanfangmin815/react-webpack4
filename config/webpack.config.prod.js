@@ -126,7 +126,7 @@ module.exports = merge(baseConfig, {
             loader: require.resolve('babel-loader'),
             options: {
               compact: true,
-              cacheDirectory:true //利用缓存，提高性能，babel is slow
+              // cacheDirectory:true //利用缓存，提高性能，babel is slow
             },
           },
           {
