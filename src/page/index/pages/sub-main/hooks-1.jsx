@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import { run, useConcent } from 'concent';
 import * as logic from '@/assets/utils/logic';
 import './hooks.css'
@@ -11,23 +11,27 @@ const ConcentFnPage = React.memo(function(props) {
     const { state, settings, sync } = useConcent({ setup, state: iState });
     const { products, type, sex, addr, keyword, tag } = state;
     const { fetchProducts, updateType, clickTitle, resetButton } = settings;
+    const [value,setValue] = useState('MMMMMMM')
 
     useEffect(() => {
-        console.log('repeat render......', props)
-    },[])
+        // console.log('repeat render......', props)
+    },['tag'])
+
+    const refreshButon = () => {
+        setValue(100)
+    }
 
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
         <div className="conditionArea">
             <h1 onClick={clickTitle}>concent setup compnent</h1>
-            <span>{tag}</span>
+            <span>{tag}------{value}</span>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>
             </select>
             <br/><br/>
-
             <select data-key="sex" value={sex} onChange={sync('sex')}>
                 <option value="1">male</option>
                 <option value="0">female</option>
@@ -35,7 +39,7 @@ const ConcentFnPage = React.memo(function(props) {
             <br/><br/>
             <input data-key="addr" value={addr} onChange={sync('addr')} />
             <input data-key="keyword" value={keyword} onChange={sync('keyword')} />
-            <button onClick={fetchProducts}>refresh</button>
+            <button onClick={refreshButon.bind(this)}>refresh</button>
             <button onClick={resetButton.bind(this,'BBBBBBBB')}>button</button>
         </div>
     );
