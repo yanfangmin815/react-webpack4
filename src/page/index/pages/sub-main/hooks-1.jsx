@@ -14,7 +14,7 @@ const ConcentFnPage = React.memo(function(props) {
     const [value,setValue] = useState('MMMMMMM')
 
     useEffect(() => {
-        // console.log('repeat render......', props)
+        console.log('repeat render......', props)
     },['tag'])
 
     const refreshButon = () => {
