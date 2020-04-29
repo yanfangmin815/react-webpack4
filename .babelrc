@@ -1,7 +1,6 @@
 {
     "presets": ["@babel/react","@babel/env", "react-app"],
     "plugins": [
-        // ["rm-con", {}],
         "@babel/plugin-transform-runtime",
         "@babel/plugin-syntax-dynamic-import",
         "react-hot-loader/babel",

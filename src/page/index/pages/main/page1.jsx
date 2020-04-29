@@ -3,10 +3,14 @@ import {connect} from 'react-redux'
 import {hot} from 'react-hot-loader'
 import {getMovie} from '@/redux/index/other/actions'
 import { Loading } from '@/component/index'
+import ConcentFnPage from '../sub-main/hooks-1'
 
 class Match1 extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            title: 'hooks title'
+        }
     }
 
     componentWillMount() {
@@ -21,6 +25,7 @@ class Match1 extends React.Component {
             <div>
                 <p>this is the test-page and other page!!</p>
                 <Loading show={loading}/>
+                <ConcentFnPage title={this.state.title}/>
             </div>
         )
     }

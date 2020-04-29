@@ -1,16 +1,21 @@
 import React, { useReducer, useEffect } from 'react';
 import { run, useConcent } from 'concent';
 import * as logic from '@/assets/utils/logic';
+
+// import { Dialog, Toast, Table, Tree } from 'i-mayfly';
+// import Table from 'i-mayfly/lib/component/table';
+// import 'i-mayfly/lib/component/table/style/css';
+
 import { AAAAAA } from './math'
 const parse = require('@babel/parser').parse;
 const t = require('@babel/types');
 const generate = require('@babel/generator').default;
 const traverse = require('@babel/traverse').default
-const code = `let p = new Promise(function(reslove,reject){
-                // reslove('成功')  //状态由等待变为成功，传的参数作为then函数中成功函数的实参
-                console.log(run())
-                reject('失败')  //状态由等待变为失败，传的参数作为then函数中失败函数的实参
-            }) `;
+const code = `
+
+    124
+
+`;
 const ast = parse(code);
 const setup = ctx => {
     //实例级别的计算函数
@@ -165,6 +170,8 @@ const setup = ctx => {
     }
 
     const testPromise = () => {
+        console.log(ast, '>>>>>>>>>>>>')
+
         /**
          * 便于理解我一步步拆解，这个其实就是拆解代码的逆过程
          * 刚接触的话可以根据ast explore中生成的语法树中的type,
@@ -187,7 +194,6 @@ const setup = ctx => {
         traverse(ast, {
              Program: {
                 exit(path) {
-                    console.log(ast, '>>>>>>>>>>>>')
                      // 设置输出格式
                     const output = generate(ast, { 
                         quotes: 'single', 
@@ -281,7 +287,7 @@ const setup = ctx => {
     }
 
     ctx.effect(({state}) => {
-        testPromise()
+        // testPromise()
         // testExtends()
     }, []);//这里只需要传key名称就可以了
 
@@ -300,7 +306,7 @@ const setup = ctx => {
         clickTitle: e=> ctx.invoke(logic.complexUpdateTitle, e.currentTarget.innerHTML),
     }
 };
-// console.log(67657865786, AAAAAA)
+console.log(67657865786)
 const ConcentFnPage = React.memo(function({ tag: propTag }) {
     // run()
     // useConcent返回ctx，这里直接解构ctx，拿想用的对象或方法
