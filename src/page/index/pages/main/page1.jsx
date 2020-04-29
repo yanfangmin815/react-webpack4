@@ -14,9 +14,13 @@ class Match1 extends React.Component {
     }
 
     componentWillMount() {
-        console.log(this.props, 'props');
+        // console.log(this.props, 'props');
         const {getMovie} = this.props;
         getMovie(100);
+    }
+
+    changeData = () => {
+        console.log('parent method...')
     }
 
     render() {
@@ -25,7 +29,7 @@ class Match1 extends React.Component {
             <div>
                 <p>this is the test-page and other page!!</p>
                 <Loading show={loading}/>
-                <ConcentFnPage title={this.state.title}/>
+                <ConcentFnPage title={this.state.title} changeData={this.changeData}/>
             </div>
         )
     }

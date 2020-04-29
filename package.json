@@ -3,12 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "npm run mock & node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "integrate": "node scripts/integrate.js",
-    "mock": "node mock/start.js",
-    "mockdev": "npm run mock & npm start"
+    "mock": "node mock/start.js"
   },
   "dependencies": {
     "@babel/core": "^7.6.2",

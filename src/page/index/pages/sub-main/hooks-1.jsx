@@ -5,7 +5,6 @@ import './hooks.css'
 
 const setup = ctx => {
     ctx.watch("sex", () => {
-        console.log('keyword changed...')
         ctx.setState({tag: 'AAAAAAAAAA'})
     });
     //实例级别的计算函数
@@ -27,7 +26,7 @@ const setup = ctx => {
 
     ctx.effect(({state}) => {
         fetchProducts(state);
-    }, ["type", "sex", "addr", "keyword"]); // 这里只需要传key名称
+    }, ["type", "sex", "addr", "keyword", "tag"]); // 这里只需要传key名称
 
     ctx.effect(() => {
         return () => {
@@ -60,7 +59,10 @@ const ConcentFnPage = React.memo(function(props) {
     const { products, type, sex, addr, keyword, tag } = state;
     const { fetchProducts, updateType, clickTitle, resetButton } = settings;
 
-    console.log('repeat render......', props)
+    useEffect(() => {
+        console.log('repeat render......', props)
+    },[])
+
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
