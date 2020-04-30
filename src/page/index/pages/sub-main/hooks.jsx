@@ -1,9 +1,11 @@
 import React, { useReducer, useEffect } from 'react';
 import { run, useConcent } from 'concent';
 import * as logic from '@/assets/utils/logic';
-import { Dialog, Toast, Table, Tree } from 'i-mayfly';
+import { Dialog, Toast, Table } from 'i-mayfly';
+// import Table from 'i-mayfly/lib/component/table';
+// import 'i-mayfly/lib/component/table/style/css';
 import './hooks.scss'
-
+const path = require('path');
 const setup = ctx => {
     //实例级别的计算函数
     const fetchProducts = ({type, sex, addr}) => {
@@ -14,11 +16,12 @@ const setup = ctx => {
     }
 
     const testPromise = (...arg) => {
-        function AAA() {
-            this.gender = 'AA'
-        }
-        console.log(AAA.gender)
-        console.log(...arg)
+        const str = 'Ast'
+        // function AAA() {
+        //     this.gender = 'AA'
+        // }
+        // console.log(AAA.gender)
+        // console.log(...arg)
         // var newArr = [3,4,5,3,3,4].reduce(function (prev, cur) {
         //     !prev[cur] ? prev[cur] = 1 : prev[cur]++
         //     return prev;

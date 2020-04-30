@@ -1,69 +1,32 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import { run, useConcent } from 'concent';
 import * as logic from '@/assets/utils/logic';
 import './hooks.css'
+import setup from './public'
 
-const setup = ctx => {
-    /*ctx.watch("keyword", () => {
-        console.log('keyword changed...')
-    });*/
-    //实例级别的计算函数
-    const fetchProducts = ({type, sex, addr, keyword}) => {
-        console.log(sex, 'STATE')
-        setTimeout(() => {
-            console.log('request coming back......')
-        }, 1000)
-    }
-
-    ctx.effect((title) => {
-        console.log(title, 'title changed...')
-    }, ['title'])
-
-    ctx.effect(({state}) => {
-        fetchProducts(state);
-    }, ["type", "sex", "addr", "keyword"]); // 这里只需要传key名称
-
-    ctx.effect(() => {
-        return () => {
-            // 返回一个清理函数
-            // 等价于componentWillUnmout, 这里搞清理事情
-        };
-    }, []);
-
-    ctx.effectProps(() => {
-        // 对props上的变更书写副作用，注意这里不同于ctx.effect，ctx.effect是针对state写副作用
-        const curTag = ctx.props.tag;
-        if (curTag !== ctx.prevProps.tag) ctx.setState({ tag: curTag });
-    }, ["tag"]);//这里只需要传key名称就可以了
-
-
-    return {// 返回结果收集在ctx.settings里
-        fetchProducts,
-        //推荐使用此方式，把方法定义在settings里，下面示例故意直接使用sync语法糖函数
-        // changeType: ctx.sync('type'),
-        updateType: e=> ctx.invoke(logic.complexUpdate, e.currentTarget.value),
-        clickTitle: e=> ctx.invoke(logic.complexUpdateTitle, e.currentTarget.innerHTML),
-        /*updateTypeAndTitle: e=> {
-            // 为了配合这个演示，我们另开两个key存type，sex^_^
-            const {tmpType, tmpSex} = ctx.state;
-            ctx.invoke(logic.updateTypeAndTitle,
-                {type: tmpType,
-                    title: tmpSex});
-        }*/
-    }
-};
-
-const ConcentFnPage = React.memo(function({ tag: propTag }) {
+const ConcentFnPage = React.memo(function(props) {
+    //定义状态构造函数，传递给useConcent
+    const iState = () => ({ products:[], type: "", sex: "male", addr: "", keyword: "", tag: "B-B" });
     // useConcent返回ctx，这里直接解构ctx，拿想用的对象或方法
-    const { state, settings, sync } = useConcent({ setup, module:'product' });
+    const { state, settings, sync } = useConcent({ setup, state: iState });
     const { products, type, sex, addr, keyword, tag } = state;
-    const { fetchProducts, updateType, clickTitle } = settings;
+    const { fetchProducts, updateType, clickTitle, resetButton } = settings;
+    const [value,setValue] = useState('MMMMMMM')
+
+    useEffect(() => {
+        console.log('repeat render......', props)
+    },['tag'])
+
+    const refreshButon = () => {
+        setValue(100)
+    }
 
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
         <div className="conditionArea">
             <h1 onClick={clickTitle}>concent setup compnent</h1>
+            <span>{tag}------{value}</span>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -76,11 +39,9 @@ const ConcentFnPage = React.memo(function({ tag: propTag }) {
             <br/><br/>
             <input data-key="addr" value={addr} onChange={sync('addr')} />
             <input data-key="keyword" value={keyword} onChange={sync('keyword')} />
-            <button onClick={fetchProducts}>refresh</button>
-            {/*{products.map((v, idx)=><div key={idx}>name:{v.name} author:{v.author}</div>)}*/}
+            <button onClick={refreshButon.bind(this)}>refresh</button>
+            <button onClick={resetButton.bind(this,'BBBBBBBB')}>button</button>
         </div>
-
-
     );
 });
 
