@@ -1,0 +1,1 @@
+import '../../../sass/paging/index.scss'
