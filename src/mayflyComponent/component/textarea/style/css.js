@@ -1,0 +1,1 @@
+import '../../../sass/textarea/index.scss'

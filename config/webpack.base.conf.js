@@ -17,7 +17,7 @@ const baseConfig = {
         extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx'],
         alias: {
             '@': resolve('src'),
-            'react-native': 'react-native-web',
+            'react-native': 'react-native-web'
         },
         plugins: [
             new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),

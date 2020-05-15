@@ -8,6 +8,13 @@ const setup = ctx => {
     const fetchProducts = ({type, sex, addr, keyword}) => {
         console.log(sex, 'STATE')
         setTimeout(() => {
+            function speak(sentence) {
+                const utterance = new SpeechSynthesisUtterance(sentence)
+                window.speechSynthesis.speak(utterance)
+            }
+  
+      // test
+      speak('hello world');
             console.log('request coming back......')
         }, 1000)
     }
