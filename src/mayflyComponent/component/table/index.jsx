@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Loading from '../loading'
 
 export default class Table extends Component {
     constructor() {
@@ -72,7 +73,9 @@ export default class Table extends Component {
                     {
                         this.props.loading ? <div className="d-f ac jc table-loading" >
                             {
-                                this.props.loadingOption ? this.props.loadingOption : <div data-loader='circle'></div>
+                                this.props.loadingOption 
+                                ? this.props.loadingOption 
+                                : <Loading />
                             }
                         </div> : null
                     }

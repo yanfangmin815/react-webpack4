@@ -23,6 +23,7 @@ import Details from './component/details';
 import Lrchange from './component/lrChange';
 import Validator from './component/validator';
 import Lib from './component/lib';
+import Loading from './component/loading';
 
 export {
     Dialog,
@@ -49,5 +50,6 @@ export {
     Text,
     Details,
     Lrchange,
-    Lib
+    Lib,
+    Loading
 };
