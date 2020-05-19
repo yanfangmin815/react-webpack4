@@ -80,26 +80,29 @@ export default class Table extends Component {
                         </div> : null
                     }
 
-                    <div className="slucky-table" style={{ 'width': this.props.maxWidth, 'maxHeight': this.props.maxHeight }}>
+                    <div className="slucky-table" 
+                        style={{ 'width': this.props.maxWidth ? this.props.maxWidth : '100%', 
+                                'maxHeight': this.props.maxHeight }}>
                         {/* table header */}
                         <div className={['table-header d-f ac', this.props.fixTitle ? 'table-fix' : ''].join(' ')}>
                             {
                                 this.props.dataconf.map((conf, i) => {
                                     // 全选选项
                                     if (conf.checkbox) {
-                                        return <div key={i} className={['ptb24 d-il ta-l table-title s0', i == 0 ? 'pl20' : ''].join(' ')} style={{ 'width': conf.width }}></div>;
-                                        // return (
-                                        //     <div key={i} className="ptb16 plr6 d-il ta-c table-title s0" style={{ 'width': conf.width }}>
-                                        //         <div className="checkbox-box-normalize">
-                                        //             <input id="checkbox_normalize_title" type="checkbox" name="c_n"
-                                        //                 checked={this.isAllSelect} onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle, this.props.dataset)} />
-                                        //             <span className="checkbox-hook ta-c">
-                                        //                 <span className="checkbox-hook-in fs12 op0">✓</span>
-                                        //             </span>
-                                        //             <label htmlFor="checkbox_normalize_title" className="p-r z10"></label>
-                                        //         </div>
-                                        //     </div>
-                                        // );
+                                        // return <div key={i} className={['ptb24 d-il ta-l table-title s0', i == 0 ? 'pl20' : ''].join(' ')} 
+                                        //             style={{ 'width': conf.width }}></div>;
+                                        return (
+                                            <div key={i} className="ptb16 plr6 d-il ta-c table-title s0" style={{ 'width': conf.width }}>
+                                                <div className="checkbox-box-normalize">
+                                                    <input id="checkbox_normalize_title" type="checkbox" name="c_n"
+                                                        checked={this.isAllSelect} onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle, this.props.dataset)} />
+                                                    <span className="checkbox-hook ta-c">
+                                                        <span className="checkbox-hook-in fs12 op0">✓</span>
+                                                    </span>
+                                                    <label htmlFor="checkbox_normalize_title" className="p-r z10"></label>
+                                                </div>
+                                            </div>
+                                        );
                                     }
                                     return (
                                         !conf.checkbox && conf.title ? <div className={['ptb24 d-il table-title s0', i == 0 ? 'pl20' : '', this.props.textAlign ? this.props.textAlign : 'ta-l'].join(' ')} style={{ 'width': conf.width }} key={i}>{conf.title}</div> : null

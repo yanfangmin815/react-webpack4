@@ -40,7 +40,7 @@ const ConcentFnPage = React.memo(function(props) {
         name: 'Cat',
         height: 176
     }]
-    const dataconf = [{
+    const datacolumn = [{
         title: 'ID',
         name: 'id',
         width: '25%'
@@ -80,7 +80,7 @@ const ConcentFnPage = React.memo(function(props) {
         <div className="conditionArea">
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
-            <Table dataconf={dataconf} dataset={dataset} loading={true} />
+            <Table dataconf={datacolumn} dataset={dataset} loading={false} />
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>
