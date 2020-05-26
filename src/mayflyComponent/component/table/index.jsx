@@ -88,25 +88,26 @@ export default class Table extends Component {
                             {
                                 this.props.dataconf.map((conf, i) => {
                                     // 全选选项
-                                    if (conf.checkbox) {
-                                        // return <div key={i} className={['ptb24 d-il ta-l table-title s0', i == 0 ? 'pl20' : ''].join(' ')} 
-                                        //             style={{ 'width': conf.width }}></div>;
-                                        return (
-                                            <div key={i} className="ptb16 plr6 d-il ta-c table-title s0" style={{ 'width': conf.width }}>
-                                                <div className="checkbox-box-normalize">
-                                                    <input id="checkbox_normalize_title" type="checkbox" name="c_n"
-                                                        checked={this.isAllSelect} onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle, this.props.dataset)} />
-                                                    <span className="checkbox-hook ta-c">
-                                                        <span className="checkbox-hook-in fs12 op0">✓</span>
-                                                    </span>
-                                                    <label htmlFor="checkbox_normalize_title" className="p-r z10"></label>
-                                                </div>
-                                            </div>
-                                        );
-                                    }
+                                    // if (conf.checkbox) {
                                     return (
-                                        !conf.checkbox && conf.title ? <div className={['ptb24 d-il table-title s0', i == 0 ? 'pl20' : '', this.props.textAlign ? this.props.textAlign : 'ta-l'].join(' ')} style={{ 'width': conf.width }} key={i}>{conf.title}</div> : null
+                                        <div key={i} className="ptb16 plr6 d-il ta-c table-title s0" style={{ 'width': conf.width }}>
+                                            <div className="checkbox-box-normalize">
+                                                {i === 0 ? <input id="checkbox_normalize_title" type="checkbox" name="c_n"
+                                                    checked={this.isAllSelect} onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle, this.props.dataset)} /> : null}
+                                                <span className="checkbox-hook ta-c">
+                                                    <span className="checkbox-hook-in fs12">{conf.title}</span>
+                                                </span>
+                                                <label htmlFor="checkbox_normalize_title" className="p-r z10"></label>
+                                            </div>
+                                        </div>
                                     );
+                                    // }
+                                    // return (
+                                    //     !conf.checkbox && conf.title 
+                                    //     ? <div className={['ptb24 d-il table-title s0', i == 0 ? 'pl20' : '', this.props.textAlign ? this.props.textAlign : 'ta-l'].join(' ')} 
+                                    //     style={{ 'width': conf.width }} key={i}>{conf.title}</div> 
+                                    //     : null
+                                    // );
                                 })
                             }
                         </div>
@@ -122,12 +123,13 @@ export default class Table extends Component {
                             {
                                 this.props.dataset.map((data, i) => {
                                     return (
-                                        <div className="table-list d-f ac jc-b p-r" key={i}>
+                                        <div className="table-list d-f ac jc-b p-r h50" key={i}>
                                             {/* 行循环 */}
                                             {
                                                 this.props.dataconf.map((conf, i) => {
                                                     if (conf.progress) {
-                                                        return <progress key={i} className="p-a w-full" style={{ height: conf.progressWidth || 2 + 'px', top: 'unset', bottom: 0 }} max="100" value={conf.progress && conf.progress(data)}
+                                                        return <progress key={i} className="p-a w-full" 
+                                                        style={{ height: conf.progressWidth || 2 + 'px', top: 'unset', bottom: 0 }} max="100" value={conf.progress && conf.progress(data)}
                                                             className="progress-loading-table"></progress>;
                                                     }
                                                     return null;
@@ -137,9 +139,13 @@ export default class Table extends Component {
                                             {
                                                 this.props.dataconf.map((conf, k) => {
                                                     return (
-                                                        <div className={['d-il ptb12 p-r s0 fw-w', k == 0 ? 'pl20' : '', this.props.textAlign ? this.props.textAlign : 'ta-l'].join(' ')} style="cursor:pointer" style={{ 'width': conf.width }} key={k}>
-                                                            {/* Base */}
-
+                                                        <div className={['ptb8 plr6 d-il ta-c table-title s0 h-full', 
+                                                            this.props.textAlign ? this.props.textAlign : 'ta-l', conf.handles ? 'ov-a-x' : ''].join(' ')} 
+                                                             style="cursor:pointer" style={{ 'width': conf.width }} key={k}>
+                                                            {/* checkbox */}
+                                                            {
+                                                                conf.selection ?  <input type='checkbox' /> : null
+                                                            }
                                                             {
                                                                 !conf.handle && !conf.pipe && !conf.textarea && !conf.progress && !conf.tagList && !conf.input ? <span>{data[conf.name]}</span> : null
                                                             }
