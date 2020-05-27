@@ -38,9 +38,11 @@ const ConcentFnPage = React.memo(function(props) {
     }, {
         id: 3,
         name: 'Cat',
-        height: 176
+        height: 176    
     }]
-    const dataconf = [{
+    const datacolumn = [{
+        selection: 'checbox'
+        },{
         title: 'ID',
         name: 'id',
         width: '25%'
@@ -54,7 +56,7 @@ const ConcentFnPage = React.memo(function(props) {
         width: '25%'
     }, {
         title: '',
-        width: '25%',
+        width: '10%',
         name: 'action2',
         type: 'action',
         handles: [
@@ -63,6 +65,12 @@ const ConcentFnPage = React.memo(function(props) {
                 btnType: 'text',
                 handle: (data) => {
                     alert('配置')
+                    console.log(data);
+                }
+            }, {
+                name: '备注',
+                btnType: 'text',handle: (data) => {
+                    alert('备注')
                     console.log(data);
                 }
             }, {
@@ -80,7 +88,7 @@ const ConcentFnPage = React.memo(function(props) {
         <div className="conditionArea">
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
-            <Table dataconf={dataconf} dataset={dataset}  />
+            <Table dataconf={datacolumn} dataset={dataset} loading={false} />
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>
