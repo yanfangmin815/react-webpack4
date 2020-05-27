@@ -55,28 +55,21 @@ const ConcentFnPage = React.memo(function(props) {
         name: 'height',
         width: '25%'
     }, {
-        title: '',
+        title: '操作',
         width: '10%',
         name: 'action2',
         type: 'action',
         handles: [
             {
-                name: '配置',
+                name: 'delete',
                 btnType: 'text',
                 handle: (data) => {
-                    alert('配置')
                     console.log(data);
                 }
             }, {
-                name: '备注',
-                btnType: 'text',handle: (data) => {
-                    alert('备注')
-                    console.log(data);
-                }
-            }, {
-                name: '备注',
-                btnType: 'text',handle: (data) => {
-                    alert('备注')
+                name: 'edit',
+                btnType: 'text',
+                handle: (data) => {
                     console.log(data);
                 }
             }]
