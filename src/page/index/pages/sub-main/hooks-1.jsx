@@ -67,6 +67,34 @@ const ConcentFnPage = React.memo(function(props) {
                     console.log(data);
                 }
             }, {
+                name: 'edit1',
+                btnType: 'text',
+                handle: (data) => {
+                    console.log(data);
+                    
+                }
+            }, {
+                name: 'edit',
+                btnType: 'text',
+                handle: (data) => {
+                    console.log(data);
+                    
+                }
+            }, {
+                name: 'edit',
+                btnType: 'text',
+                handle: (data) => {
+                    console.log(data);
+                    
+                }
+            }, {
+                name: 'edit',
+                btnType: 'text',
+                handle: (data) => {
+                    console.log(data);
+                    
+                }
+            }, {
                 name: 'edit',
                 btnType: 'text',
                 handle: (data) => {

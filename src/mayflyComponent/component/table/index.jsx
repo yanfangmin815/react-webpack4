@@ -141,10 +141,11 @@ export default class Table extends Component {
                                             {
                                                 this.props.dataconf.map((conf, k) => {
                                                     return (
-                                                        <div className={['ptb8 d-f ta-c table-title s0 h-full jc ac', 
+                                                        <div className={['d-f ta-c table-title s0 h50 jc ac', 
                                                             this.props.textAlign ? this.props.textAlign : 'ta-l', 
                                                             conf.selection ? 'plr20' : 'plr6'].join(' ')} 
-                                                            style="cursor:pointer" style={{ 'width': conf.width }} key={k}>
+                                                         
+                                                            style={{ 'width': conf.width, 'cursor': 'pointer' }} key={k}>
                                                             {/* checkbox */}
                                                             {
                                                                 conf.selection ?  <input type='checkbox' /> : null
@@ -155,7 +156,9 @@ export default class Table extends Component {
                                                             {/* 复杂情况，有多种handle */}
                                                             {
                                                                 conf.handles ?
-                                                                    Table.handleActions(this, conf.handles, data, i)
+                                                                <div className='w-full h-full ov-a-x d-f' scrollbar = 'normal'>
+                                                                    {Table.handleActions(this, conf.handles, data, i)}
+                                                                    </div>
                                                                     : null
                                                             }
                                                             {/* Pipe */}
@@ -227,10 +230,10 @@ Table.handleActions = (self_this, handles, data, i) => {
     return handles.map((handleItem, j) => {
         return (
             self_this.handleDisplay(handleItem.display, data, i) ?
-                <div className="pop-box" key={j}>
+                <div className="pop-box d-f ac jc" style={{ width: '90px' }} key={j}>
                     <div className={['pop-toggle ptb4 mlr4', self_this.handleClass(handleItem.btnType)].join(' ')} 
                         onClick={() => handleItem.handle && handleItem.handle(data, i)}>
-                        <span>{handleItem.name}</span>
+                        <span style={{ display: 'inline-block',width: '70px' }} >{handleItem.name}</span>
                         {
                             handleItem.pipe ?
                                 <div className="pop-main pr8" style={{ 'minWidth': handleItem.width }}>
