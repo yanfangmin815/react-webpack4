@@ -32,20 +32,21 @@ export default class Table extends Component {
         this.isAllSelect = e.target.checked;
         if (this.isAllSelect) {
             this.checkboxList = [...this.props.dataset];
-            this.props.dataset.map((item) => {
-                item['checked'] = true
-            });
-            this.forceUpdate();
+            this.changeDataSet(true)
         } else {
             this.checkboxList = [];
-            this.props.dataset.map((item) => {
-                item['checked'] = false
-            });
-            this.forceUpdate();
+            this.changeDataSet(false)
         }
         console.log(this.checkboxList, e.target.checked);
         this.forceUpdate();
         callback && callback(this.checkboxList);
+    }
+
+    changeDataSet = (bool) => {
+        this.props.dataset.map((item) => {
+            item['checked'] = bool
+        });
+        this.forceUpdate();
     }
 
     handleDisplay(callback, data, i) {
@@ -66,8 +67,31 @@ export default class Table extends Component {
         }
     }
 
-    changeCheckState(e) {
-        console.log(e.target.checked)
+    changeCheckState(e, i) {
+        const checked = e.target.checked
+        this.props.dataset.some((item, index) => {
+            if (Number(i) === index) {
+                item['checked'] = checked
+                this.examIsAllChecked()
+                return true
+            }
+        });
+        this.forceUpdate();
+    }
+
+    examIsAllChecked = () => {
+        let isAllSelect = true
+        this.props.dataset.some((item, index) => {
+            if (!item.checked) {
+                isAllSelect = false
+                if (this.isAllSelect) {
+                    this.isAllSelect = !this.isAllSelect
+                }
+            }
+        }); 
+        if (isAllSelect) {
+            this.isAllSelect = true
+        }
     }
 
     render() {
@@ -152,7 +176,8 @@ export default class Table extends Component {
                                                             {/* checkbox */}
                                                             {
                                                                 conf.selection 
-                                                                    ?  <input type='checkbox' checked={data.checked || false} onChange={(e) => this.changeCheckState(e)}/> 
+                                                                    ?  <input type='checkbox' checked={data.checked || false} 
+                                                                        onChange={(e) => this.changeCheckState(e, i)}/> 
                                                                     : null
                                                             }
                                                             {
