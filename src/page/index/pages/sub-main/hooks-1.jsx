@@ -71,6 +71,7 @@ const ConcentFnPage = React.memo(function(props) {
                 btnType: 'text',
                 handle: (data) => {
                     console.log(data);
+                    
                 }
             }]
     }]

@@ -8,7 +8,7 @@ export default class Table extends Component {
         this.isAllSelect = false;
     }
 
-    handleCheckboxChange(data, i, checked, callback) {
+    handleCheckboxChange(data, i, checked, callback) { 
         console.log(checked);
         if (checked) {
             this
