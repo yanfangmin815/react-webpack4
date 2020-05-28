@@ -33,19 +33,15 @@ export default class Table extends Component {
         if (this.isAllSelect) {
             this.checkboxList = [...this.props.dataset];
             this.props.dataset.map((item) => {
-                return {
-                    ...item,
-                    checked: true
-                };
+                item['checked'] = true
             });
-            console.log(this.props.dataset);
             this.forceUpdate();
         } else {
             this.checkboxList = [];
         }
         console.log(this.checkboxList, e.target.checked);
         this.forceUpdate();
-        callback(this.checkboxList);
+        callback && callback(this.checkboxList);
     }
 
     handleDisplay(callback, data, i) {
@@ -64,6 +60,10 @@ export default class Table extends Component {
             default:
                 return 'tag-hollow plr16';
         }
+    }
+
+    changeCheckState(e) {
+
     }
 
     render() {
@@ -95,7 +95,7 @@ export default class Table extends Component {
                                             <div className="checkbox-box-normalize">
                                                 {i === 0 ? <input id="checkbox_normalize_title" type="checkbox" name="c_n"
                                                     checked={this.isAllSelect} 
-                                                    onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle, this.props.dataset)} /> : null}
+                                                    onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle ? conf.handle: null, this.props.dataset)} /> : null}
                                                 <span className="checkbox-hook ta-c">
                                                     <span className="checkbox-hook-in fs12">{conf.title}</span>
                                                 </span>
@@ -143,12 +143,13 @@ export default class Table extends Component {
                                                     return (
                                                         <div className={['d-f ta-c table-title s0 h50 jc ac', 
                                                             this.props.textAlign ? this.props.textAlign : 'ta-l', 
-                                                            conf.selection ? 'plr20' : 'plr6'].join(' ')} 
-                                                         
+                                                            conf.selection ? 'plr20' : 'plr6'].join(' ')}
                                                             style={{ 'width': conf.width, 'cursor': 'pointer' }} key={k}>
                                                             {/* checkbox */}
                                                             {
-                                                                conf.selection ?  <input type='checkbox' /> : null
+                                                                conf.selection 
+                                                                    ?  <input type='checkbox' checked={data.checked || false} onChange={(e) => this.changeCheckState(e)}/> 
+                                                                    : null
                                                             }
                                                             {
                                                                 !conf.handle && !conf.pipe && !conf.textarea && !conf.progress && !conf.tagList && !conf.input ? <span className='va-m'>{data[conf.name]}</span> : null
@@ -156,7 +157,7 @@ export default class Table extends Component {
                                                             {/* 复杂情况，有多种handle */}
                                                             {
                                                                 conf.handles ?
-                                                                <div className='w-full h-full ov-a-x d-f' scrollbar = 'normal'>
+                                                                <div className='w-full h-full ov-a-x d-f ac jc' scrollbar = 'normal'>
                                                                     {Table.handleActions(this, conf.handles, data, i)}
                                                                     </div>
                                                                     : null
@@ -233,7 +234,7 @@ Table.handleActions = (self_this, handles, data, i) => {
                 <div className="pop-box d-f ac jc" style={{ width: '90px' }} key={j}>
                     <div className={['pop-toggle ptb4 mlr4', self_this.handleClass(handleItem.btnType)].join(' ')} 
                         onClick={() => handleItem.handle && handleItem.handle(data, i)}>
-                        <span style={{ display: 'inline-block',width: '70px' }} >{handleItem.name}</span>
+                        <button className='btn-hollow'>{handleItem.name}</button>
                         {
                             handleItem.pipe ?
                                 <div className="pop-main pr8" style={{ 'minWidth': handleItem.width }}>

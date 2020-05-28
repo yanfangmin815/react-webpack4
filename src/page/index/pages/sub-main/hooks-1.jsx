@@ -56,7 +56,7 @@ const ConcentFnPage = React.memo(function(props) {
         width: '25%'
     }, {
         title: '操作',
-        width: '10%',
+        width: '20%',
         name: 'action2',
         type: 'action',
         handles: [
@@ -65,34 +65,6 @@ const ConcentFnPage = React.memo(function(props) {
                 btnType: 'text',
                 handle: (data) => {
                     console.log(data);
-                }
-            }, {
-                name: 'edit1',
-                btnType: 'text',
-                handle: (data) => {
-                    console.log(data);
-                    
-                }
-            }, {
-                name: 'edit',
-                btnType: 'text',
-                handle: (data) => {
-                    console.log(data);
-                    
-                }
-            }, {
-                name: 'edit',
-                btnType: 'text',
-                handle: (data) => {
-                    console.log(data);
-                    
-                }
-            }, {
-                name: 'edit',
-                btnType: 'text',
-                handle: (data) => {
-                    console.log(data);
-                    
                 }
             }, {
                 name: 'edit',
@@ -111,6 +83,7 @@ const ConcentFnPage = React.memo(function(props) {
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
             <Table dataconf={datacolumn} dataset={dataset} loading={false} />
+            <br/>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>
