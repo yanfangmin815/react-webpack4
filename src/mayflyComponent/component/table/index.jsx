@@ -38,6 +38,10 @@ export default class Table extends Component {
             this.forceUpdate();
         } else {
             this.checkboxList = [];
+            this.props.dataset.map((item) => {
+                item['checked'] = false
+            });
+            this.forceUpdate();
         }
         console.log(this.checkboxList, e.target.checked);
         this.forceUpdate();
@@ -63,7 +67,7 @@ export default class Table extends Component {
     }
 
     changeCheckState(e) {
-
+        console.log(e.target.checked)
     }
 
     render() {
