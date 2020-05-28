@@ -84,20 +84,21 @@ export default class Table extends Component {
                         style={{ 'width': this.props.maxWidth ? this.props.maxWidth : '100%', 
                                 'maxHeight': this.props.maxHeight }}>
                         {/* table header */}
-                        <div className={['table-header d-f ac', this.props.fixTitle ? 'table-fix' : ''].join(' ')}>
+                        <div className={['table-header d-f ac jc-b', this.props.fixTitle ? 'table-fix' : ''].join(' ')}>
                             {
                                 this.props.dataconf.map((conf, i) => {
                                     // 全选选项
                                     // if (conf.checkbox) {
                                     return (
-                                        <div key={i} className="ptb16 plr6 d-il ta-c table-title s0" style={{ 'width': conf.width }}>
+                                        <div key={i} className={["ptb16 d-il ta-c table-title s0", i === 0 ? 'plr20' : 'plr6'].join(' ')} 
+                                            style={{ 'width': conf.width }}>
                                             <div className="checkbox-box-normalize">
                                                 {i === 0 ? <input id="checkbox_normalize_title" type="checkbox" name="c_n"
-                                                    checked={this.isAllSelect} onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle, this.props.dataset)} /> : null}
+                                                    checked={this.isAllSelect} 
+                                                    onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle, this.props.dataset)} /> : null}
                                                 <span className="checkbox-hook ta-c">
                                                     <span className="checkbox-hook-in fs12">{conf.title}</span>
                                                 </span>
-                                                <label htmlFor="checkbox_normalize_title" className="p-r z10"></label>
                                             </div>
                                         </div>
                                     );
@@ -114,7 +115,8 @@ export default class Table extends Component {
 
                         <div className="table-content">
                             {
-                                this.props.dataset && this.props.dataset.length == 0 ? <div className="ta-c pt32 pb16 c-hint-b" >
+                                this.props.dataset && this.props.dataset.length == 0 
+                                    ? <div className="ta-c pt32 pb16 c-hint-b" >
                                     <p>暂无数据</p>
                                 </div> : null
                             }
@@ -139,15 +141,16 @@ export default class Table extends Component {
                                             {
                                                 this.props.dataconf.map((conf, k) => {
                                                     return (
-                                                        <div className={['ptb8 plr6 d-il ta-c table-title s0 h-full', 
-                                                            this.props.textAlign ? this.props.textAlign : 'ta-l', conf.handles ? 'ov-a-x' : ''].join(' ')} 
-                                                             style="cursor:pointer" style={{ 'width': conf.width }} key={k}>
+                                                        <div className={['ptb8 d-f ta-c table-title s0 h-full jc ac', 
+                                                            this.props.textAlign ? this.props.textAlign : 'ta-l', 
+                                                            conf.selection ? 'plr20' : 'plr6'].join(' ')} 
+                                                            style="cursor:pointer" style={{ 'width': conf.width }} key={k}>
                                                             {/* checkbox */}
                                                             {
                                                                 conf.selection ?  <input type='checkbox' /> : null
                                                             }
                                                             {
-                                                                !conf.handle && !conf.pipe && !conf.textarea && !conf.progress && !conf.tagList && !conf.input ? <span>{data[conf.name]}</span> : null
+                                                                !conf.handle && !conf.pipe && !conf.textarea && !conf.progress && !conf.tagList && !conf.input ? <span className='va-m'>{data[conf.name]}</span> : null
                                                             }
                                                             {/* 复杂情况，有多种handle */}
                                                             {
@@ -212,12 +215,21 @@ export default class Table extends Component {
     }
 }
 
+/**
+ * self_this  this
+ * handles handles集合
+ * data 单条数据
+ * i index
+ * 
+*/
+
 Table.handleActions = (self_this, handles, data, i) => {
     return handles.map((handleItem, j) => {
         return (
             self_this.handleDisplay(handleItem.display, data, i) ?
                 <div className="pop-box" key={j}>
-                    <div className={['pop-toggle ptb4 mlr4', self_this.handleClass(handleItem.btnType)].join(' ')} onClick={() => handleItem.handle && handleItem.handle(data, i)}>
+                    <div className={['pop-toggle ptb4 mlr4', self_this.handleClass(handleItem.btnType)].join(' ')} 
+                        onClick={() => handleItem.handle && handleItem.handle(data, i)}>
                         <span>{handleItem.name}</span>
                         {
                             handleItem.pipe ?
