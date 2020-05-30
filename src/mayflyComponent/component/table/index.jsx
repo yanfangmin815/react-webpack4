@@ -69,13 +69,8 @@ export default class Table extends Component {
 
     changeCheckState(e, i) {
         const checked = e.target.checked
-        this.props.dataset.some((item, index) => {
-            if (Number(i) === index) {
-                item['checked'] = checked
-                this.examIsAllChecked()
-                return true
-            }
-        });
+        this.props.dataset[i].checked = checked
+        this.examIsAllChecked()
         this.forceUpdate();
     }
 
@@ -92,6 +87,11 @@ export default class Table extends Component {
         if (isAllSelect) {
             this.isAllSelect = true
         }
+    }
+
+    hanleHandle(handleItem, data ,i) {
+        const checked = this.props.dataset[i].checked ? true : false
+        handleItem.handle && handleItem.handle({data, checked})
     }
 
     render() {
@@ -257,12 +257,13 @@ export default class Table extends Component {
 */
 
 Table.handleActions = (self_this, handles, data, i) => {
+    
     return handles.map((handleItem, j) => {
         return (
             self_this.handleDisplay(handleItem.display, data, i) ?
                 <div className="pop-box d-f ac jc" style={{ width: '90px' }} key={j}>
                     <div className={['pop-toggle ptb4 mlr4', self_this.handleClass(handleItem.btnType)].join(' ')} 
-                        onClick={() => handleItem.handle && handleItem.handle(data, i)}>
+                        onClick={() => self_this.hanleHandle(handleItem, data, i)}>
                         <button className='btn-hollow'>{handleItem.name}</button>
                         {
                             handleItem.pipe ?

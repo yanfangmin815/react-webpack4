@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect, useState } from 'react'
 import { run, useConcent } from 'concent'
+import { cloneDeep } from 'lodash'
 import * as logic from '@/assets/utils/logic'
 import { Table } from '@/mayflyComponent'
 import './hooks.css'
@@ -19,15 +20,7 @@ const ConcentFnPage = React.memo(function(props) {
     const { fetchProducts, updateType, clickTitle, resetButton } = settings;
     const [value,setValue] = useState('MMMMMMM')
 
-    useEffect(() => {
-        console.log('repeat render......', props)
-    },['tag'])
-
-    const refreshButon = () => {
-        setValue(100)
-    }
-
-    const dataset = [{
+    const [dataset,setDataset] = useState([{
         id: 1,
         name: 'Apple',
         height: 178
@@ -39,8 +32,9 @@ const ConcentFnPage = React.memo(function(props) {
         id: 3,
         name: 'Cat',
         height: 176    
-    }]
-    const datacolumn = [{
+    }])
+
+    const [datacolumn,setDatacolumn] = useState([{
         selection: 'checbox'
         },{
         title: 'ID',
@@ -63,8 +57,8 @@ const ConcentFnPage = React.memo(function(props) {
             {
                 name: 'delete',
                 btnType: 'text',
-                handle: (data) => {
-                    console.log(data);
+                handle: (data, i) => {
+                    console.log('delete on ...')
                 }
             }, {
                 name: 'edit',
@@ -75,6 +69,18 @@ const ConcentFnPage = React.memo(function(props) {
                 }
             }]
     }]
+)
+
+    let newDataSet = [...dataset]
+
+
+    useEffect(() => {
+        console.log('repeat render......', props)
+    },['tag'])
+
+    const refreshButon = () => {
+        setValue(100)
+    }
 
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
