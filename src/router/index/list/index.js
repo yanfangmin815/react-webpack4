@@ -15,7 +15,7 @@ const listMainRouters = [
         //根路由匹配
         path:'/',
         exact:true,
-        component:() => <Redirect to='/react-router-example'/>,
+        component:() => <Redirect to='/other-hooks-1'/>,
         title: '首页'
     },
     {

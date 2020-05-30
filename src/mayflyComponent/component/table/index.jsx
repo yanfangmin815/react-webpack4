@@ -37,9 +37,8 @@ export default class Table extends Component {
             this.checkboxList = [];
             this.changeDataSet(false)
         }
-        console.log(this.checkboxList, e.target.checked);
         this.forceUpdate();
-        callback && callback(this.checkboxList);
+        // callback && callback(this.checkboxList);
     }
 
     changeDataSet = (bool) => {
@@ -89,12 +88,13 @@ export default class Table extends Component {
         }
     }
 
-    hanleHandle(handleItem, data ,i) {
-        const checked = this.props.dataset[i].checked ? true : false
-        handleItem.handle && handleItem.handle({data, checked})
+    hanleHandle(handles, data , index) {
+        const checked = this.props.dataset[index].checked ? true : false
+        return handles && handles({data, index, checked})
     }
 
     render() {
+
         return (
             <div>
                 <div className="p-r">
@@ -116,27 +116,19 @@ export default class Table extends Component {
                             {
                                 this.props.dataconf.map((conf, i) => {
                                     // 全选选项
-                                    // if (conf.checkbox) {
                                     return (
                                         <div key={i} className={["ptb16 d-il ta-c table-title s0", i === 0 ? 'plr20' : 'plr6'].join(' ')} 
                                             style={{ 'width': conf.width }}>
                                             <div className="checkbox-box-normalize">
                                                 {i === 0 ? <input id="checkbox_normalize_title" type="checkbox" name="c_n"
                                                     checked={this.isAllSelect} 
-                                                    onChange={(e) => this.handleCheckboxTieleChange(e, conf.handle ? conf.handle: null, this.props.dataset)} /> : null}
+                                                    onChange={(e) => this.handleCheckboxTieleChange(e, conf.handles ? conf.handles: null, this.props.dataset)} /> : null}
                                                 <span className="checkbox-hook ta-c">
                                                     <span className="checkbox-hook-in fs12">{conf.title}</span>
                                                 </span>
                                             </div>
                                         </div>
-                                    );
-                                    // }
-                                    // return (
-                                    //     !conf.checkbox && conf.title 
-                                    //     ? <div className={['ptb24 d-il table-title s0', i == 0 ? 'pl20' : '', this.props.textAlign ? this.props.textAlign : 'ta-l'].join(' ')} 
-                                    //     style={{ 'width': conf.width }} key={i}>{conf.title}</div> 
-                                    //     : null
-                                    // );
+                                    )
                                 })
                             }
                         </div>
@@ -250,35 +242,18 @@ export default class Table extends Component {
 
 /**
  * self_this  this
- * handles handles集合
+ * handles handles
  * data 单条数据
  * i index
  * 
 */
 
 Table.handleActions = (self_this, handles, data, i) => {
-    
-    return handles.map((handleItem, j) => {
-        return (
-            self_this.handleDisplay(handleItem.display, data, i) ?
-                <div className="pop-box d-f ac jc" style={{ width: '90px' }} key={j}>
-                    <div className={['pop-toggle ptb4 mlr4', self_this.handleClass(handleItem.btnType)].join(' ')} 
-                        onClick={() => self_this.hanleHandle(handleItem, data, i)}>
-                        <button className='btn-hollow'>{handleItem.name}</button>
-                        {
-                            handleItem.pipe ?
-                                <div className="pop-main pr8" style={{ 'minWidth': handleItem.width }}>
-                                    <div className="pop-content paper bor b-side ptb16 plr12 shadow c-text-b">
-                                        {handleItem.pipe(data, i)}
-                                    </div>
-                                </div>
-                                : null
-                        }
-                    </div>
-                </div>
-                : null
-        );
-    });
+    return (
+        <div className="pop-box d-f ac jc" style={{ width: '90px' }}>
+                {self_this.hanleHandle(handles, data, i)}
+        </div>
+    );
 };
 
 Table.handleProgress = (data, conf) => {

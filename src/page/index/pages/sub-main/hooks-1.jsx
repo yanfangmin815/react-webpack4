@@ -53,26 +53,28 @@ const ConcentFnPage = React.memo(function(props) {
         width: '20%',
         name: 'action2',
         type: 'action',
-        handles: [
-            {
-                name: 'delete',
-                btnType: 'text',
-                handle: (data, i) => {
-                    console.log('delete on ...')
-                }
-            }, {
-                name: 'edit',
-                btnType: 'text',
-                handle: (data) => {
-                    console.log(data);
-                    
-                }
-            }]
-    }]
-)
+        handles: (record) => {
+            return (
+                <div className='pop-box d-f ac jc'>
+                    <button className="btn-hollow mr10" onClick={() => handleDel(record)}>delete</button>
+                    <button className="btn-hollow mr10" onClick={() => handleEdit(record)}>edit</button>
+                </div>
+            )
+        }
+    }])
 
-    let newDataSet = [...dataset]
+    const handleDel = (record) => {
+        const { index } = record
+        dataset.splice(index, 1)
+        // react 渲染机制 引用类型必须声明新变量 否则会被视为无改变
+        const newDataSet = [...dataset]
+        setDataset(newDataSet)
+    }
 
+    const handleEdit = (record) => {
+        console.log(record)
+        
+    }
 
     useEffect(() => {
         console.log('repeat render......', props)
