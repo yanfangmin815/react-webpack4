@@ -38,20 +38,28 @@ const ConcentFnPage = React.memo(function(props) {
         selection: 'checbox'
         },{
         title: 'ID',
-        name: 'id',
+        prop: 'id',
         width: '25%'
     }, {
         title: '姓名',
-        name: 'name',
+        prop: 'name',
         width: '25%'
     }, {
         title: '身高',
-        name: 'height',
-        width: '25%'
+        prop: 'height',
+        width: '25%',
+        handles: (record) => {
+            if (record.isEdit) {
+                return record.customerEditLabel.height()
+            }
+            return (
+                <span>{record.height}</span>
+            )
+        }
     }, {
         title: '操作',
         width: '20%',
-        name: 'action2',
+        prop: 'action2',
         type: 'action',
         handles: (record) => {
             return (
@@ -73,7 +81,26 @@ const ConcentFnPage = React.memo(function(props) {
 
     const handleEdit = (record) => {
         console.log(record)
-        
+        const { index } = record
+        // const newRecord = cloneDeep(record)
+        dataset[index]['isEdit'] = true
+        dataset[index]['customerEditLabel'] = {
+            height: () => {
+                return (
+                    <input type='text' value={record.height} onChange={(e) => changeVal(e, 'height', index)}/>
+                )
+            }
+        }
+        // react 渲染机制 引用类型必须声明新变量 否则会被视为无改变
+        const newDataSet = [...dataset]
+        setDataset(newDataSet)
+    }
+
+    const changeVal = (e, key, index) => {
+        const val = e.target.value
+        dataset[index][key] = val
+        const newDataSet = [...dataset]
+        setDataset(newDataSet)
     }
 
     useEffect(() => {
@@ -90,7 +117,10 @@ const ConcentFnPage = React.memo(function(props) {
         <div className="conditionArea">
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
-            <Table dataconf={datacolumn} dataset={dataset} loading={false} />
+            <Table 
+                dataconf={datacolumn} 
+                dataset={dataset} 
+                loading={false} />
             <br/>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>

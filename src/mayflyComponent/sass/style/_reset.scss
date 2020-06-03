@@ -65,10 +65,6 @@ h6 {
   color: rgba(0, 0, 0, 0.85);
   font-weight: 500;
 }
-p {
-  margin-top: 0;
-  margin-bottom: 1em;
-}
 abbr[title],
 abbr[data-original-title] {
   text-decoration: underline;
@@ -172,8 +168,8 @@ samp {
   font-size: 1em;
 }
 pre {
-  margin-top: 0;
-  margin-bottom: 1em;
+  // margin-top: 0;
+  // margin-bottom: 1em;
   overflow: auto;
 }
 figure {

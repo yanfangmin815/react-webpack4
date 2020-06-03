@@ -1,3 +1,5 @@
 select, input {
-    border:1px solid red;
+    border:1px solid #26a597;
+    border-radius: 3px;
+    outline: none;
 }

@@ -88,13 +88,19 @@ export default class Table extends Component {
         }
     }
 
-    hanleHandle(handles, data , index) {
+    hanleHandle(handles, data, index) {
         const checked = this.props.dataset[index].checked ? true : false
-        return handles && handles({data, index, checked})
+        let newData = {
+            ...data,
+            index: index,
+            checked: checked
+        }
+        return handles && handles(newData)
     }
 
     render() {
 
+        console.log(this.props.dataset, 'render......')
         return (
             <div>
                 <div className="p-r">
@@ -173,7 +179,7 @@ export default class Table extends Component {
                                                                     : null
                                                             }
                                                             {
-                                                                !conf.handle && !conf.pipe && !conf.textarea && !conf.progress && !conf.tagList && !conf.input ? <span className='va-m'>{data[conf.name]}</span> : null
+                                                                !conf.handles && !conf.pipe && !conf.textarea && !conf.progress && !conf.tagList && !conf.input ? <span className='va-m'>{data[conf.prop]}</span> : null
                                                             }
                                                             {/* 复杂情况，有多种handle */}
                                                             {
@@ -192,7 +198,7 @@ export default class Table extends Component {
                                                             {/* Textarea */}
                                                             {
                                                                 conf.textarea ?
-                                                                    <textarea rows="4" className="textarea w-full" value={data[conf.name]} readonly></textarea>
+                                                                    <textarea rows="4" className="textarea w-full" value={data[conf.prop]} readonly></textarea>
                                                                     : null
                                                             }
                                                             {/* Progress */}
@@ -212,7 +218,7 @@ export default class Table extends Component {
                                                                 conf.popup ?
                                                                     <div className="pop-box">
                                                                         <div className="b-theme pop-toggle plr4">
-                                                                            <span className="c-theme">{conf.name || ''}</span>
+                                                                            <span className="c-theme">{conf.prop || ''}</span>
                                                                             <div className="pop-main pl8">
                                                                                 <div className="pop-content p24 bg-b ta-l shadow fs14">
                                                                                     {
@@ -261,7 +267,7 @@ Table.handleProgress = (data, conf) => {
         <div className="d-il">
             {
                 !conf.pipe ?
-                    <span className="p-r z10">{data[conf.name]}</span>
+                    <span className="p-r z10">{data[conf.prop]}</span>
                     : null
             }
             {/* <progress max="100" value={conf.progress && conf.progress(data)}
