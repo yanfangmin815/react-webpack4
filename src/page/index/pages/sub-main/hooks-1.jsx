@@ -87,7 +87,7 @@ const ConcentFnPage = React.memo(function(props) {
         dataset[index]['customerEditLabel'] = {
             height: () => {
                 return (
-                    <input type='text' value={record.height} onChange={(e) => changeVal(e, 'height', index)}/>
+                    <input type='text' value={record.height} onChange={(e) => changeVal(e, record)}/>
                 )
             }
         }
@@ -96,11 +96,12 @@ const ConcentFnPage = React.memo(function(props) {
         setDataset(newDataSet)
     }
 
-    const changeVal = (e, key, index) => {
+    const changeVal = (e, record) => {
         const val = e.target.value
-        dataset[index][key] = val
-        const newDataSet = [...dataset]
-        setDataset(newDataSet)
+        // dataset[index][key] = val
+        record.height = val
+        // const newDataSet = [...dataset]
+        // setDataset(newDataSet)
     }
 
     useEffect(() => {
