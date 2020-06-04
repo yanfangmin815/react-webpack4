@@ -34,6 +34,30 @@ const ConcentFnPage = React.memo(function(props) {
         id: 3,
         sex: 'male',
         height: 176    
+    }, {
+        id: 1,
+        sex: 'female',
+        height: 178
+    }, {
+        id: 2,
+        sex: 'female',
+        height: 177
+    }, {
+        id: 3,
+        sex: 'male',
+        height: 176    
+    }, {
+        id: 1,
+        sex: 'female',
+        height: 178
+    }, {
+        id: 2,
+        sex: 'female',
+        height: 177
+    }, {
+        id: 3,
+        sex: 'male',
+        height: 176    
     }])
 
     const datacolumn = [{
@@ -158,8 +182,7 @@ const ConcentFnPage = React.memo(function(props) {
                                 onChange={(e) => changeVal('female', 'sex', index)}/> 男
                             <input type='radio' value={dataset[index].sex} checked={dataset[index].sex == 'male'}
                                 onChange={(e) => changeVal('male', 'sex', index)}/> 女
-                        </span>
-                      
+                        </span> 
                     )
                 },
                 id: () => {
