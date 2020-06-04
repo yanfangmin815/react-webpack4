@@ -99,8 +99,7 @@ export default class Table extends Component {
     }
 
     render() {
-
-        console.log(this.props.dataset, 'render......')
+        // console.log(23423423)
         return (
             <div>
                 <div className="p-r">
