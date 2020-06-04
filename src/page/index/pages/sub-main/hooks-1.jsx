@@ -19,6 +19,8 @@ const ConcentFnPage = React.memo(function(props) {
     const { products, type, sex, addr, keyword, tag } = state;
     const { fetchProducts, updateType, clickTitle, resetButton } = settings;
     const [value,setValue] = useState('MMMMMMM')
+    const [newRecord,setNewRecord] = useState({})
+    const [isEdit, setIsEdit] = useState(false)
 
     const [dataset,setDataset] = useState([{
         id: 1,
@@ -62,14 +64,41 @@ const ConcentFnPage = React.memo(function(props) {
         prop: 'action2',
         type: 'action',
         handles: (record) => {
+            console.log(isEdit)
             return (
                 <div className='pop-box d-f ac jc'>
                     <button className="btn-hollow mr10" onClick={() => handleDel(record)}>delete</button>
-                    <button className="btn-hollow mr10" onClick={() => handleEdit(record)}>edit</button>
+                    {record.isEdit 
+                    ? <div className='pop-box d-f ac jc'> 
+                        <button className="btn-hollow mr10" onClick={() => handleSave(record)}>save</button> 
+                        <button className="btn-hollow mr10" onClick={() => handleCancel()}>cancel</button>
+                     </div>
+                    : <button className="btn-hollow mr10"
+                        disabled={isEdit}
+                        onClick={() => handleEdit(record)}>edit</button>}
+                   
                 </div>
             )
         }
     }])
+
+    const handleSave = (record) => {
+        const { index } = record
+        dataset[index]['isEdit'] = false
+        setIsEdit(false)
+        const newDataSet = [...dataset]
+        setDataset(newDataSet)
+    }
+
+    const handleCancel = () => {
+        const { index } = newRecord
+        for (let key in newRecord) {
+            dataset[index][key] = newRecord[key]
+        }
+        dataset[index]['isEdit'] = false
+        const newDataSet = [...dataset]
+        setDataset(newDataSet)
+    }
 
     const handleDel = (record) => {
         const { index } = record
@@ -80,20 +109,23 @@ const ConcentFnPage = React.memo(function(props) {
     }
 
     const handleEdit = (record) => {
-        console.log(record)
         const { index } = record
-        // const newRecord = cloneDeep(record)
-        dataset[index]['isEdit'] = true
-        dataset[index]['customerEditLabel'] = {
-            height: () => {
-                return (
-                    <input type='text' value={record.height} onChange={(e) => changeVal(e, 'height', index)}/>
-                )
-            }
-        }
+        setIsEdit(true)
+
+        // dataset[index]['isEdit'] = true
+        // dataset[index]['customerEditLabel'] = {
+        //     height: () => {
+        //         return (
+        //             <input type='text' value={dataset[index].height} 
+        //                 onChange={(e) => changeVal(e, 'height', index)}/>
+        //         )
+        //     }
+        // }
+        setNewRecord(cloneDeep(record))  // 保存原有数据
+
         // react 渲染机制 引用类型必须声明新变量 否则会被视为无改变
-        const newDataSet = [...dataset]
-        setDataset(newDataSet)
+        // const newDataSet = [...dataset]
+        // setDataset(newDataSet)
     }
 
     const changeVal = (e, key, index) => {
@@ -103,13 +135,27 @@ const ConcentFnPage = React.memo(function(props) {
         setDataset(newDataSet)
     }
 
-    useEffect(() => {
-        console.log('repeat render......', props)
-    },['tag'])
-
     const refreshButon = () => {
-        setValue(100)
+        setValue(1000000000000000000)
     }
+
+    useEffect(() => {
+        console.log('changed...', newRecord)
+        if (newRecord.index || newRecord.index == 0) {
+            const { index } = newRecord
+            dataset[index]['isEdit'] = true
+            dataset[index]['customerEditLabel'] = {
+                height: () => {
+                    return (
+                        <input type='text' value={dataset[index].height} 
+                            onChange={(e) => changeVal(e, 'height', index)}/>
+                    )
+                }
+            }
+            const newDataSet = [...dataset]
+            setDataset(newDataSet)
+        }
+      }, [newRecord])
 
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
