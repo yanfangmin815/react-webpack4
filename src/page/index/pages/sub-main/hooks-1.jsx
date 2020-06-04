@@ -24,34 +24,50 @@ const ConcentFnPage = React.memo(function(props) {
 
     const [dataset,setDataset] = useState([{
         id: 1,
-        name: 'Apple',
+        sex: 'female',
         height: 178
     }, {
         id: 2,
-        name: 'Boy',
+        sex: 'female',
         height: 177
     }, {
         id: 3,
-        name: 'Cat',
+        sex: 'male',
         height: 176    
     }])
 
-    const [datacolumn,setDatacolumn] = useState([{
+    const datacolumn = [{
         selection: 'checbox'
         },{
         title: 'ID',
         prop: 'id',
-        width: '25%'
+        width: '25%',
+        handles: (record) => {
+            if (record.isEdit && record.customerEditLabel) {
+                return record.customerEditLabel.id()
+            }
+            return (
+                <span>{record.id}</span>
+            )
+        }
     }, {
-        title: '姓名',
-        prop: 'name',
-        width: '25%'
+        title: '性別',
+        prop: 'sex',
+        width: '25%',
+        handles: (record) => {
+            if (record.isEdit && record.customerEditLabel) {
+                return record.customerEditLabel.sex()
+            }
+            return (
+                <span>{record.sex}</span>
+            )
+        }
     }, {
         title: '身高',
         prop: 'height',
         width: '25%',
         handles: (record) => {
-            if (record.isEdit) {
+            if (record.isEdit && record.customerEditLabel) {
                 return record.customerEditLabel.height()
             }
             return (
@@ -64,7 +80,6 @@ const ConcentFnPage = React.memo(function(props) {
         prop: 'action2',
         type: 'action',
         handles: (record) => {
-            console.log(isEdit)
             return (
                 <div className='pop-box d-f ac jc'>
                     <button className="btn-hollow mr10" onClick={() => handleDel(record)}>delete</button>
@@ -76,11 +91,10 @@ const ConcentFnPage = React.memo(function(props) {
                     : <button className="btn-hollow mr10"
                         disabled={isEdit}
                         onClick={() => handleEdit(record)}>edit</button>}
-                   
                 </div>
             )
         }
-    }])
+    }]
 
     const handleSave = (record) => {
         const { index } = record
@@ -96,6 +110,7 @@ const ConcentFnPage = React.memo(function(props) {
             dataset[index][key] = newRecord[key]
         }
         dataset[index]['isEdit'] = false
+        setIsEdit(false)
         const newDataSet = [...dataset]
         setDataset(newDataSet)
     }
@@ -109,27 +124,12 @@ const ConcentFnPage = React.memo(function(props) {
     }
 
     const handleEdit = (record) => {
-        const { index } = record
         setIsEdit(true)
-
-        // dataset[index]['isEdit'] = true
-        // dataset[index]['customerEditLabel'] = {
-        //     height: () => {
-        //         return (
-        //             <input type='text' value={dataset[index].height} 
-        //                 onChange={(e) => changeVal(e, 'height', index)}/>
-        //         )
-        //     }
-        // }
         setNewRecord(cloneDeep(record))  // 保存原有数据
-
-        // react 渲染机制 引用类型必须声明新变量 否则会被视为无改变
-        // const newDataSet = [...dataset]
-        // setDataset(newDataSet)
     }
 
     const changeVal = (e, key, index) => {
-        const val = e.target.value
+        const val = e.target ? e.target.value : e
         dataset[index][key] = val
         const newDataSet = [...dataset]
         setDataset(newDataSet)
@@ -140,7 +140,7 @@ const ConcentFnPage = React.memo(function(props) {
     }
 
     useEffect(() => {
-        console.log('changed...', newRecord)
+        console.log(newRecord, 'newRecord')
         if (newRecord.index || newRecord.index == 0) {
             const { index } = newRecord
             dataset[index]['isEdit'] = true
@@ -149,6 +149,23 @@ const ConcentFnPage = React.memo(function(props) {
                     return (
                         <input type='text' value={dataset[index].height} 
                             onChange={(e) => changeVal(e, 'height', index)}/>
+                    )
+                },
+                sex: () => {
+                    return (
+                        <span>
+                            <input type='radio' value={dataset[index].sex} checked={dataset[index].sex == 'female'}
+                                onChange={(e) => changeVal('female', 'sex', index)}/> 男
+                            <input type='radio' value={dataset[index].sex} checked={dataset[index].sex == 'male'}
+                                onChange={(e) => changeVal('male', 'sex', index)}/> 女
+                        </span>
+                      
+                    )
+                },
+                id: () => {
+                    return (
+                        <input type='text' value={dataset[index].id} 
+                            onChange={(e) => changeVal(e, 'id', index)}/>
                     )
                 }
             }
