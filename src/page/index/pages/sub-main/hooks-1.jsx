@@ -2,10 +2,11 @@ import React, { useReducer, useEffect, useState } from 'react'
 import { run, useConcent } from 'concent'
 import { cloneDeep } from 'lodash'
 import * as logic from '@/assets/utils/logic'
-import { Table } from '@/mayflyComponent'
+import { Table, Paging } from '@/mayflyComponent'
 import './hooks.css'
 import setup from './public'
 import "@/mayflyComponent/component/table/style/css.js";
+import "@/mayflyComponent/component/paging/style/css.js";
 
 // import("./public").then(() => {
 //     console.log(12345678)
@@ -21,6 +22,11 @@ const ConcentFnPage = React.memo(function(props) {
     const [value,setValue] = useState('MMMMMMM')
     const [newRecord,setNewRecord] = useState({})
     const [isEdit, setIsEdit] = useState(false)
+    const [pageInfo, setPageInfo] = useState({
+        total: 100,
+        maxToShow: 10,
+        currentPage: 1
+    })
 
     const [dataset,setDataset] = useState([{
         id: 1,
@@ -38,26 +44,6 @@ const ConcentFnPage = React.memo(function(props) {
         id: 1,
         sex: 'female',
         height: 178
-    }, {
-        id: 2,
-        sex: 'female',
-        height: 177
-    }, {
-        id: 3,
-        sex: 'male',
-        height: 176    
-    }, {
-        id: 1,
-        sex: 'female',
-        height: 178
-    }, {
-        id: 2,
-        sex: 'female',
-        height: 177
-    }, {
-        id: 3,
-        sex: 'male',
-        height: 176    
     }])
 
     const datacolumn = [{
@@ -208,6 +194,7 @@ const ConcentFnPage = React.memo(function(props) {
                 dataset={dataset} 
                 loading={false} />
             <br/>
+            <Paging pageInfo={pageInfo}/>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>
