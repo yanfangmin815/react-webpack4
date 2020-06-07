@@ -166,6 +166,10 @@ export default class Paging extends Component {
                             before: before ? true : false,
                             after: after ? true : false
                         })
+                    }, () => {
+                        const {currentPage} = this.state.viewBox
+                        // console.log('handleViewBox', this.state.viewBox)
+                        this.props.onPageChange && this.props.onPageChange(currentPage)
                     })
                 }
                 // 判断左侧
@@ -213,6 +217,10 @@ export default class Paging extends Component {
                             before: before ? true : false,
                             after: after ? true : false
                         })
+                    }, () => {
+                        const {currentPage} = this.state.viewBox
+                        // console.log('handleViewBox', this.state.viewBox)
+                        this.props.onPageChange && this.props.onPageChange(currentPage)
                     })
                 }
             }
@@ -224,7 +232,9 @@ export default class Paging extends Component {
                     after: false
                 })
             }, () => {
+                const {currentPage} = this.state.viewBox
                 // console.log('handleViewBox', this.state.viewBox)
+                this.props.onPageChange && this.props.onPageChange(currentPage)
             });
         }
     }

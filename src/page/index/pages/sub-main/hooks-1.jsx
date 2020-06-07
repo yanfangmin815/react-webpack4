@@ -197,6 +197,11 @@ const ConcentFnPage = React.memo(function(props) {
         })
     }
 
+    // 页码改变回调
+    const pageChange = (currentPage) => {
+        console.log(currentPage, 'coming back...')
+    }
+
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
@@ -208,7 +213,9 @@ const ConcentFnPage = React.memo(function(props) {
                 dataset={dataset} 
                 loading={false} />
             <br/>
-            <Paging pageInfo={pageInfo}/>
+            <Paging 
+                pageInfo={pageInfo} 
+                onPageChange={(currentPage) => pageChange(currentPage)}/>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>
