@@ -183,6 +183,20 @@ const ConcentFnPage = React.memo(function(props) {
         }
       }, [newRecord])
 
+    const BBB = () => {
+        const mark = true
+        return new Promise((resolve,reject) => {
+            setTimeout(() => {
+                console.log('COMGING INTO......')
+                if (mark) {
+                    resolve(true)
+                }else {
+                    reject(false)
+                }
+            },5000)
+        })
+    }
+
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (

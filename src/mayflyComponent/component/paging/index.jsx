@@ -57,10 +57,8 @@ export default class Paging extends Component {
     init(cb) {
         const { pageInfo } = this.state;
         this.end = Math.ceil(pageInfo.total / pageInfo.maxToShow);
-        this.end > 0
-            ? this.end
-            : this.end = 1;
-        // console.log(this.end);
+        this.end = this.end > 0 ? this.end : 1
+        console.log(this.end, 'this.end');
         this.minWidth = this.end - 2;
         let currentWidth = this.maxWidth > this.minWidth
             ? this.minWidth
@@ -75,7 +73,7 @@ export default class Paging extends Component {
                         let k = i;
                         list.push(++k);
                     }
-                    // console.log(list);
+                    console.log(list);
                     return list;
                 })(currentWidth),
                 before: false,
@@ -94,8 +92,15 @@ export default class Paging extends Component {
             currentPageSelf = this.start
         }
         if (currentPageSelf > this.end) { currentPageSelf = this.end; }
-        this.props.isSingleDataFlow && this.handleResizeViewBox(currentPageSelf);
-        this.props.onAction && this.props.onAction(currentPageSelf);
+
+        this.setState({
+            viewBox: Object.assign({}, this.state.viewBox, {
+                currentPage: currentPageSelf
+            })
+        }, () => {
+            this.handleResizeViewBox(currentPageSelf);
+        })
+        // this.props.onAction && this.props.onAction(currentPageSelf);
     }
 
     handleResizeViewBox(currentPage) {
@@ -116,69 +121,150 @@ export default class Paging extends Component {
 
     // 维护viewBox
     handleViewBox(currentPage) {
-        // console.log('handleViewBox', this.state);
-        let width = this.state.viewBox.width;
+        let width = this.state.viewBox.width
+        let list = this.state.viewBox.list
+        let len = list.length
+        let after = true
+        let before = true
+        // console.log('handleViewBox', this.state, list);
 
         // 多条件判断
         if (this.end - 2 >= this.maxWidth) {
-            // 左临界
-            if (currentPage < this.start + Math.floor(width / 2)) {
-                let list = [];
-                for (let i = this.start + 1; i < this.start + 1 + width; i++) {
-                    list.push(i);
-                }
-                // console.log('l', list);
-                this.setState({
-                    viewBox: Object.assign(this.state.viewBox, {
-                        list,
-                        currentPage,
-                        before: false,
-                        after: true
+            if (list.includes(currentPage)) {
+                const positionIndex = list.indexOf(currentPage)
+                // 判断右侧
+                if (positionIndex > Math.floor(len / 2)) {
+                    let lastNum = list[len - 1]
+                    const indexRuler = positionIndex - Math.floor(len / 2)
+               
+                    console.log(firstNum, this.end - 1)
+                    // 边界判断
+                    if(lastNum === this.end - 1) {
+                        after = false
+                    } else {
+                        list.splice(0,indexRuler)
+                        for (let i=0;i<indexRuler;i++) {
+                            
+                            const newLastNum = ++lastNum
+                            if (newLastNum === this.end) {
+                                break;
+                            }
+                            if (newLastNum === this.end - 1) {
+                                after = false
+                            }
+                            list.push(newLastNum)
+                        }
+                    }
+                    let firstNum = list[0]
+
+                    before = this.start + 1 < firstNum ? true : false
+                    console.log(list, 'r')
+                    const newList = [...list]
+                    this.setState({
+                        viewBox: Object.assign({}, this.state.viewBox, {
+                            list: newList,
+                            before: before ? true : false,
+                            after: after ? true : false
+                        })
                     })
-                }, () => {
-                    // console.log('handleViewBox l', this.state.viewBox)
-                });
-            }
-            // 右临界
-            if (currentPage > this.end - Math.ceil(width / 2)) {
-                let list = [];
-                for (let i = this.end - width; i < this.end; i++) {
-                    list.push(i);
                 }
-                // console.log('r', list);
-                this.setState({
-                    viewBox: Object.assign(this.state.viewBox, {
-                        list,
-                        currentPage,
-                        before: true,
-                        after: false
+                // 判断左侧
+                if (positionIndex < Math.floor(len / 2)) {
+                    let firstNum = list[0] // 第一个字符
+                    let lastNum = list[len - 1]
+                    const indexRuler = Math.floor(len / 2) - positionIndex
+                    const after = this.end - 1 > lastNum ? true : false
+                    // 边界判断
+                    if(firstNum === this.end + 1) {
+                        before = false
+                    } else {
+                        if (len === this.maxWidth) {
+                            list.splice(len - 2,indexRuler)
+                            for (let i=0;i<indexRuler;i++) {
+                                const newLastNum = --firstNum
+                                if (newLastNum === this.start) {
+                                    break;
+                                }
+                                if (newLastNum === this.start + 1) {
+                                    before = false
+                                }
+                                list.unshift(newLastNum)
+                            }
+                        } else if (len === this.maxWidth - 1) {
+
+                        }
+                        
+                    }
+                    
+                    console.log(list, 'l')
+                    const newList = [...list]
+                    this.setState({
+                        viewBox: Object.assign({}, this.state.viewBox, {
+                            list: newList,
+                            before: before ? true : false,
+                            after: after ? true : false
+                        })
                     })
-                }, () => {
-                    // console.log('handleViewBox r', this.state.viewBox)
-                });
-            }
-            // 通常情况
-            if (currentPage >= this.start + Math.floor(width / 2) && currentPage <= this.end - Math.ceil(width / 2)) {
-                let list = [];
-                let i = currentPage - Math.floor(width / 2);
-                // 重新判断临界条件
-                if (i < 2) { i = 2; }
-                if (i > this.end - width) { i = this.end - width; }
-                while (width--) {
-                    list.push(i++);
                 }
-                // console.log('n', list);
-                this.setState({
-                    viewBox: Object.assign(this.state.viewBox, {
-                        list,
-                        currentPage,
-                        before: true,
-                        after: true
-                    })
-                }, () => {
-                    // console.log('handleViewBox n', this.state.viewBox)
-                });
             }
+            // // 左临界
+            // if (currentPage < this.start + Math.floor(width / 2)) {
+            //     let list = [];
+            //     for (let i = this.start + 1; i < this.start + 1 + width; i++) {
+            //         list.push(i);
+            //     }
+            //     console.log('l', list);
+            //     this.setState({
+            //         viewBox: Object.assign(this.state.viewBox, {
+            //             list,
+            //             currentPage,
+            //             before: false,
+            //             after: true
+            //         })
+            //     }, () => {
+            //         console.log('handleViewBox l', this.state.viewBox)
+            //     });
+            // }
+            // // 右临界
+            // if (currentPage > this.end - Math.ceil(width / 2)) {
+            //     let list = [];
+            //     for (let i = this.end - width; i < this.end; i++) {
+            //         list.push(i);
+            //     }
+            //     console.log('r', list);
+            //     this.setState({
+            //         viewBox: Object.assign(this.state.viewBox, {
+            //             list,
+            //             currentPage,
+            //             before: true,
+            //             after: false
+            //         })
+            //     }, () => {
+            //         console.log('handleViewBox r', this.state.viewBox)
+            //     });
+            // }
+            // // 通常情况
+            // if (currentPage >= this.start + Math.floor(width / 2) && currentPage <= this.end - Math.ceil(width / 2)) {
+            //     let list = [];
+            //     let i = currentPage - Math.floor(width / 2);
+            //     // 重新判断临界条件
+            //     if (i < 2) { i = 2; }
+            //     if (i > this.end - width) { i = this.end - width; }
+            //     while (width--) {
+            //         list.push(i++);
+            //     }
+            //     console.log('n', list);
+            //     this.setState({
+            //         viewBox: Object.assign(this.state.viewBox, {
+            //             list,
+            //             currentPage,
+            //             before: true,
+            //             after: true
+            //         })
+            //     }, () => {
+            //         // console.log('handleViewBox n', this.state.viewBox)
+            //     });
+            // }
         } else {
             this.setState({
                 viewBox: Object.assign(this.state.viewBox, {

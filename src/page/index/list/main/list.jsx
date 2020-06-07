@@ -46,6 +46,36 @@ class List extends React.Component {
     componentWillMount() {
         const { getMockDataGood } = this.props;
         getMockDataGood()
+        // this.CCC()
+        this.AAA()
+    }
+
+    async CCC() {
+        await this.BBB()
+        await this.BBB()
+    }
+
+    async AAA() {
+        for (let i=0;i<6;i++) {
+            const n = await this.BBB()
+            console.log(n)
+        }
+    }
+
+
+    BBB = () => {
+        const mark = true
+        return new Promise((resolve,reject) => {
+            setTimeout(() => {
+            console.log('COMGING INTO......')
+                if (mark) {
+                    resolve(true)
+                }else {
+                    reject(false)
+                }
+            },5000)
+        })
+      
     }
 
     componentDidUpdate() {
