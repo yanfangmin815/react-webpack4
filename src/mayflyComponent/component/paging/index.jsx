@@ -137,7 +137,7 @@ export default class Paging extends Component {
                     let lastNum = list[len - 1]
                     const indexRuler = positionIndex - Math.floor(len / 2)
                
-                    console.log(firstNum, this.end - 1)
+                    // console.log(firstNum, this.end - 1)
                     // 边界判断
                     if(lastNum === this.end - 1) {
                         after = false
@@ -171,15 +171,13 @@ export default class Paging extends Component {
                 // 判断左侧
                 if (positionIndex < Math.floor(len / 2)) {
                     let firstNum = list[0] // 第一个字符
-                    let lastNum = list[len - 1]
                     const indexRuler = Math.floor(len / 2) - positionIndex
-                    const after = this.end - 1 > lastNum ? true : false
                     // 边界判断
-                    if(firstNum === this.end + 1) {
+                    if(firstNum === this.start + 1) {
                         before = false
                     } else {
                         if (len === this.maxWidth) {
-                            list.splice(len - 2,indexRuler)
+                            list.splice(len - indexRuler,indexRuler)
                             for (let i=0;i<indexRuler;i++) {
                                 const newLastNum = --firstNum
                                 if (newLastNum === this.start) {
@@ -191,11 +189,22 @@ export default class Paging extends Component {
                                 list.unshift(newLastNum)
                             }
                         } else if (len === this.maxWidth - 1) {
-
-                        }
-                        
+                            list.splice(len - 1,indexRuler - 1)
+                            for (let i=0;i<indexRuler;i++) {
+                                const newLastNum = --firstNum
+                                if (newLastNum === this.start) {
+                                    break;
+                                }
+                                if (newLastNum === this.start + 1) {
+                                    before = false
+                                }
+                                list.unshift(newLastNum)
+                            }
+                        }  
                     }
-                    
+                    let lastNum = list[list.length - 1]
+                    after = this.end - 1 > lastNum ? true : false
+
                     console.log(list, 'l')
                     const newList = [...list]
                     this.setState({
@@ -207,64 +216,6 @@ export default class Paging extends Component {
                     })
                 }
             }
-            // // 左临界
-            // if (currentPage < this.start + Math.floor(width / 2)) {
-            //     let list = [];
-            //     for (let i = this.start + 1; i < this.start + 1 + width; i++) {
-            //         list.push(i);
-            //     }
-            //     console.log('l', list);
-            //     this.setState({
-            //         viewBox: Object.assign(this.state.viewBox, {
-            //             list,
-            //             currentPage,
-            //             before: false,
-            //             after: true
-            //         })
-            //     }, () => {
-            //         console.log('handleViewBox l', this.state.viewBox)
-            //     });
-            // }
-            // // 右临界
-            // if (currentPage > this.end - Math.ceil(width / 2)) {
-            //     let list = [];
-            //     for (let i = this.end - width; i < this.end; i++) {
-            //         list.push(i);
-            //     }
-            //     console.log('r', list);
-            //     this.setState({
-            //         viewBox: Object.assign(this.state.viewBox, {
-            //             list,
-            //             currentPage,
-            //             before: true,
-            //             after: false
-            //         })
-            //     }, () => {
-            //         console.log('handleViewBox r', this.state.viewBox)
-            //     });
-            // }
-            // // 通常情况
-            // if (currentPage >= this.start + Math.floor(width / 2) && currentPage <= this.end - Math.ceil(width / 2)) {
-            //     let list = [];
-            //     let i = currentPage - Math.floor(width / 2);
-            //     // 重新判断临界条件
-            //     if (i < 2) { i = 2; }
-            //     if (i > this.end - width) { i = this.end - width; }
-            //     while (width--) {
-            //         list.push(i++);
-            //     }
-            //     console.log('n', list);
-            //     this.setState({
-            //         viewBox: Object.assign(this.state.viewBox, {
-            //             list,
-            //             currentPage,
-            //             before: true,
-            //             after: true
-            //         })
-            //     }, () => {
-            //         // console.log('handleViewBox n', this.state.viewBox)
-            //     });
-            // }
         } else {
             this.setState({
                 viewBox: Object.assign(this.state.viewBox, {

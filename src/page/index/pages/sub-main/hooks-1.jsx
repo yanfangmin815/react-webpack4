@@ -23,7 +23,7 @@ const ConcentFnPage = React.memo(function(props) {
     const [newRecord,setNewRecord] = useState({})
     const [isEdit, setIsEdit] = useState(false)
     const [pageInfo, setPageInfo] = useState({
-        total: 100,
+        total: 90,
         maxToShow: 10,
         currentPage: 1
     })
