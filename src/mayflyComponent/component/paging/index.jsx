@@ -58,7 +58,7 @@ export default class Paging extends Component {
         const { pageInfo } = this.state;
         this.end = Math.ceil(pageInfo.total / pageInfo.maxToShow);
         this.end = this.end > 0 ? this.end : 1
-        console.log(this.end, 'this.end');
+        // console.log(this.end, 'this.end');
         this.minWidth = this.end - 2;
         let currentWidth = this.maxWidth > this.minWidth
             ? this.minWidth
@@ -73,7 +73,7 @@ export default class Paging extends Component {
                         let k = i;
                         list.push(++k);
                     }
-                    console.log(list);
+                    // console.log(list);
                     return list;
                 })(currentWidth),
                 before: false,
@@ -91,7 +91,9 @@ export default class Paging extends Component {
         if (currentPageSelf < this.start) { 
             currentPageSelf = this.start
         }
-        if (currentPageSelf > this.end) { currentPageSelf = this.end; }
+        if (currentPageSelf > this.end) { 
+            currentPageSelf = this.end
+         }
 
         this.setState({
             viewBox: Object.assign({}, this.state.viewBox, {
@@ -106,16 +108,26 @@ export default class Paging extends Component {
     handleResizeViewBox(currentPage) {
         // 保证临界条件
         let currentPageSelf = parseInt(currentPage);
-        if (currentPageSelf < this.start) { currentPageSelf = this.start; }
-        if (currentPageSelf > this.end) { currentPageSelf = this.end; }
+        if (currentPageSelf < this.start) { 
+            currentPageSelf = this.start; 
+            return 
+        }
+        if (currentPageSelf > this.end) { 
+            currentPageSelf = this.end;
+            return 
+        }
         this.handleViewBox(currentPageSelf);
     }
 
     handleChangePageLeft() {
+        const currentPage = this.state.viewBox.currentPage
+        if (currentPage == 1) return
         this.handleChangePage(--this.state.viewBox.currentPage);
     }
 
     handleChangePageRight() {
+        const currentPage = this.state.viewBox.currentPage
+        if (currentPage == this.end) return
         this.handleChangePage(++this.state.viewBox.currentPage);
     }
 
@@ -127,9 +139,34 @@ export default class Paging extends Component {
         let after = true
         let before = true
         // console.log('handleViewBox', this.state, list);
-
+        if (currentPage == 1) {
+            this.init()
+            return
+        }
+        
         // 多条件判断
-        if (this.end - 2 >= this.maxWidth) {
+        if (this.end - 2 > this.maxWidth) {
+            if (currentPage == this.end) {
+                const newList = []
+                for (let i=this.end - 1;i>this.end - 5;i--) {
+                    // console.log(i)
+                    newList.unshift(i)
+                }
+                const firstNum = newList[0]
+                before = this.start + 1 < firstNum ? true : false
+                this.setState({
+                    viewBox: Object.assign(this.state.viewBox, {
+                        currentPage,
+                        before: before,
+                        after: false,
+                        list: newList
+                    })
+                }, () => {
+                    const {currentPage} = this.state.viewBox
+                    // console.log('handleViewBox', this.state.viewBox)
+                    this.props.onPageChange && this.props.onPageChange(currentPage)
+                });
+            }
             if (list.includes(currentPage)) {
                 const positionIndex = list.indexOf(currentPage)
                 // 判断右侧
@@ -158,7 +195,7 @@ export default class Paging extends Component {
                     let firstNum = list[0]
 
                     before = this.start + 1 < firstNum ? true : false
-                    console.log(list, 'r')
+                    // console.log(list, 'r')
                     const newList = [...list]
                     this.setState({
                         viewBox: Object.assign({}, this.state.viewBox, {
@@ -209,7 +246,7 @@ export default class Paging extends Component {
                     let lastNum = list[list.length - 1]
                     after = this.end - 1 > lastNum ? true : false
 
-                    console.log(list, 'l')
+                    // console.log(list, 'l')
                     const newList = [...list]
                     this.setState({
                         viewBox: Object.assign({}, this.state.viewBox, {
@@ -239,7 +276,7 @@ export default class Paging extends Component {
         }
     }
     render() {
-        // console.log(this.start, this.end, this.state.viewBox.currentPage, this.state.viewBox.list);
+        console.log(this.start, this.end, this.state.viewBox.currentPage, this.state.viewBox.list);
         const { pageInfo } = this.state;
         return (
             <div>

@@ -2,11 +2,10 @@ import React, { useReducer, useEffect, useState } from 'react'
 import { run, useConcent } from 'concent'
 import { cloneDeep } from 'lodash'
 import * as logic from '@/assets/utils/logic'
-import { Table, Paging } from '@/mayflyComponent'
+import { Table } from '@/mayflyComponent'
 import './hooks.css'
 import setup from './public'
 import "@/mayflyComponent/component/table/style/css.js";
-import "@/mayflyComponent/component/paging/style/css.js";
 
 // import("./public").then(() => {
 //     console.log(12345678)
@@ -23,7 +22,7 @@ const ConcentFnPage = React.memo(function(props) {
     const [newRecord,setNewRecord] = useState({})
     const [isEdit, setIsEdit] = useState(false)
     const [pageInfo, setPageInfo] = useState({
-        total: 90,
+        total: 800,
         maxToShow: 10,
         currentPage: 1
     })
@@ -211,11 +210,11 @@ const ConcentFnPage = React.memo(function(props) {
             <Table 
                 dataconf={datacolumn} 
                 dataset={dataset} 
-                loading={false} />
+                loading={false}
+                showPage={true}
+                pageInfo={pageInfo}
+                onPageChange={(currentPage) => pageChange(currentPage)} />
             <br/>
-            <Paging 
-                pageInfo={pageInfo} 
-                onPageChange={(currentPage) => pageChange(currentPage)}/>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>

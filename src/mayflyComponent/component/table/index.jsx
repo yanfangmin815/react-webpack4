@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import Loading from '../loading'
+import Paging from '../paging'
+import "../paging/style/css"
+// const crypto = require('crypto');
+// const hmac = crypto.createHmac('sha256', 'a secret');
+// console.log(hmac.digest('hex'));
 
 export default class Table extends Component {
     constructor() {
@@ -9,7 +14,7 @@ export default class Table extends Component {
     }
 
     handleCheckboxChange(data, i, checked, callback) { 
-        console.log(checked);
+        // console.log(checked);
         if (checked) {
             this
                 .checkboxList
@@ -99,7 +104,6 @@ export default class Table extends Component {
     }
 
     render() {
-        // console.log(23423423)
         return (
             <div>
                 <div className="p-r">
@@ -240,6 +244,11 @@ export default class Table extends Component {
                         </div>
                     </div>
                 </div>
+                <Paging 
+                    style={{display: this.props.showPage ? 'block' : 'none'}}
+                    pageInfo={this.props.pageInfo} 
+                    onPageChange={this.props.pageChange}
+                />
             </div >
         );
     }
