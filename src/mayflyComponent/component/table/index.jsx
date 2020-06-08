@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import Loading from '../loading'
 import Paging from '../paging'
 import "../paging/style/css"
-// const crypto = require('crypto');
-// const hmac = crypto.createHmac('sha256', 'a secret');
-// console.log(hmac.digest('hex'));
+const crypto = require('crypto');
+const hmac = crypto.createHmac('sha256', {a:1});
+const hmac1 = crypto.createHmac('sha256', 'a secret-1');
+console.log(hmac.digest('hex'), hmac1.digest('hex'));
 
 export default class Table extends Component {
     constructor() {
         super();
         this.checkboxList = [];
         this.isAllSelect = false;
+        this.dataCache = {}
     }
 
     handleCheckboxChange(data, i, checked, callback) { 
@@ -51,6 +53,20 @@ export default class Table extends Component {
             item['checked'] = bool
         });
         this.forceUpdate();
+    }
+
+    pageChange = (page, prePageNum) => {
+        this.props.onPageChange(page, prePageNum)
+        const newDataSet = this.props.dataset.map((data,index) => {
+            const hmacData = crypto.createHmac('sha256', data)
+            const digesthmacData = hmacData.digest('hex')
+            return {
+                [digesthmacData]: data
+            }
+        })
+        const dataCacheItem = { [prePageNum]: newDataSet}
+        this.dataCache = Object.assign({}, this.dataCache, dataCacheItem)
+        console.log(this.dataCache)
     }
 
     handleDisplay(callback, data, i) {
@@ -244,11 +260,10 @@ export default class Table extends Component {
                         </div>
                     </div>
                 </div>
-                <Paging 
-                    style={{display: this.props.showPage ? 'block' : 'none'}}
+                {this.props.showPage ? <Paging 
                     pageInfo={this.props.pageInfo} 
-                    onPageChange={this.props.pageChange}
-                />
+                    onPageChange={(page, prePageNum) => this.pageChange(page, prePageNum)}
+                /> : null}
             </div >
         );
     }

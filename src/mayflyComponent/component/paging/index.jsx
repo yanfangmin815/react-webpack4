@@ -7,6 +7,7 @@ export default class Paging extends Component {
         this.maxWidth = 5;
         this.minWidth = '';
         this.end = '';
+        this.pageNum = 1
         // 分页对象
 
         this.state = {
@@ -93,8 +94,8 @@ export default class Paging extends Component {
         }
         if (currentPageSelf > this.end) { 
             currentPageSelf = this.end
-         }
-
+        }
+        this.pageNum = this.state.viewBox.currentPage
         this.setState({
             viewBox: Object.assign({}, this.state.viewBox, {
                 currentPage: currentPageSelf
@@ -131,6 +132,12 @@ export default class Paging extends Component {
         this.handleChangePage(++this.state.viewBox.currentPage);
     }
 
+    transferPage = () => {
+        const {currentPage} = this.state.viewBox
+        // console.log('handleViewBox', this.state.viewBox)
+        this.props.onPageChange && this.props.onPageChange(currentPage, this.pageNum)
+    }
+
     // 维护viewBox
     handleViewBox(currentPage) {
         let width = this.state.viewBox.width
@@ -140,7 +147,7 @@ export default class Paging extends Component {
         let before = true
         // console.log('handleViewBox', this.state, list);
         if (currentPage == 1) {
-            this.init()
+            this.init(this.transferPage)
             return
         }
         
@@ -162,9 +169,7 @@ export default class Paging extends Component {
                         list: newList
                     })
                 }, () => {
-                    const {currentPage} = this.state.viewBox
-                    // console.log('handleViewBox', this.state.viewBox)
-                    this.props.onPageChange && this.props.onPageChange(currentPage)
+                    this.transferPage()
                 });
             }
             if (list.includes(currentPage)) {
@@ -204,9 +209,7 @@ export default class Paging extends Component {
                             after: after ? true : false
                         })
                     }, () => {
-                        const {currentPage} = this.state.viewBox
-                        // console.log('handleViewBox', this.state.viewBox)
-                        this.props.onPageChange && this.props.onPageChange(currentPage)
+                        this.transferPage()
                     })
                 }
                 // 判断左侧
@@ -255,9 +258,7 @@ export default class Paging extends Component {
                             after: after ? true : false
                         })
                     }, () => {
-                        const {currentPage} = this.state.viewBox
-                        // console.log('handleViewBox', this.state.viewBox)
-                        this.props.onPageChange && this.props.onPageChange(currentPage)
+                        this.transferPage()
                     })
                 }
             }
@@ -269,14 +270,12 @@ export default class Paging extends Component {
                     after: false
                 })
             }, () => {
-                const {currentPage} = this.state.viewBox
-                // console.log('handleViewBox', this.state.viewBox)
-                this.props.onPageChange && this.props.onPageChange(currentPage)
+                this.transferPage()
             });
         }
     }
     render() {
-        console.log(this.start, this.end, this.state.viewBox.currentPage, this.state.viewBox.list);
+        // console.log(this.start, this.end, this.state.viewBox.currentPage, this.state.viewBox.list);
         const { pageInfo } = this.state;
         return (
             <div>

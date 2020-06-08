@@ -22,7 +22,7 @@ const ConcentFnPage = React.memo(function(props) {
     const [newRecord,setNewRecord] = useState({})
     const [isEdit, setIsEdit] = useState(false)
     const [pageInfo, setPageInfo] = useState({
-        total: 800,
+        total: 30,
         maxToShow: 10,
         currentPage: 1
     })
@@ -197,8 +197,8 @@ const ConcentFnPage = React.memo(function(props) {
     }
 
     // 页码改变回调
-    const pageChange = (currentPage) => {
-        console.log(currentPage, 'coming back...')
+    const pageChange = (currentPage, prePageNum) => {
+        console.log(currentPage, prePageNum, 'page info coming back...')
     }
 
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
@@ -213,7 +213,7 @@ const ConcentFnPage = React.memo(function(props) {
                 loading={false}
                 showPage={true}
                 pageInfo={pageInfo}
-                onPageChange={(currentPage) => pageChange(currentPage)} />
+                onPageChange={(currentPage, prePageNum) => pageChange(currentPage, prePageNum)} />
             <br/>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
