@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import Loading from '../loading'
-import Paging from '../paging'
-import "../paging/style/css"
+// import Paging from '../paging'
+// import '../paging/style/css'
 const crypto = require('crypto');
-const hmac = crypto.createHmac('sha256', {a:1});
-const hmac1 = crypto.createHmac('sha256', 'a secret-1');
-console.log(hmac.digest('hex'), hmac1.digest('hex'));
 
 export default class Table extends Component {
     constructor() {
@@ -15,7 +12,7 @@ export default class Table extends Component {
         this.dataCache = {}
     }
 
-    handleCheckboxChange(data, i, checked, callback) { 
+    handleCheckboxChange(data, i, checked, callback) {
         // console.log(checked);
         if (checked) {
             this
@@ -35,6 +32,19 @@ export default class Table extends Component {
         callback(this.checkboxList);
     }
 
+    hashcode = (str) => {
+        let hash = 0
+        let chr
+        let len = str.length
+        if (str.length === 0) return hash;
+        for (let i = 0; i < len; i++) {
+            chr = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
+    }
+
     handleCheckboxTieleChange(e, callback) {
         this.isAllSelect = e.target.checked;
         if (this.isAllSelect) {
@@ -49,7 +59,7 @@ export default class Table extends Component {
     }
 
     changeDataSet = (bool) => {
-        this.props.dataset.map((item) => {
+        this.props.dataset.forEach((item) => {
             item['checked'] = bool
         });
         this.forceUpdate();
@@ -57,14 +67,14 @@ export default class Table extends Component {
 
     pageChange = (page, prePageNum) => {
         this.props.onPageChange(page, prePageNum)
-        const newDataSet = this.props.dataset.map((data,index) => {
-            const hmacData = crypto.createHmac('sha256', data)
+        const newDataSet = this.props.dataset.map((data, index) => {
+            const hmacData = crypto.createHmac('sha256', JSON.stringify(data))
             const digesthmacData = hmacData.digest('hex')
             return {
                 [digesthmacData]: data
             }
         })
-        const dataCacheItem = { [prePageNum]: newDataSet}
+        const dataCacheItem = { [prePageNum]: newDataSet }
         this.dataCache = Object.assign({}, this.dataCache, dataCacheItem)
         console.log(this.dataCache)
     }
@@ -74,7 +84,6 @@ export default class Table extends Component {
             return true;
         }
         return callback(data, i);
-
     }
     handleClass(btnType) {
         switch (btnType) {
@@ -103,7 +112,7 @@ export default class Table extends Component {
                     this.isAllSelect = !this.isAllSelect
                 }
             }
-        }); 
+        });
         if (isAllSelect) {
             this.isAllSelect = true
         }
@@ -126,28 +135,30 @@ export default class Table extends Component {
                     {
                         this.props.loading ? <div className="d-f ac jc table-loading" >
                             {
-                                this.props.loadingOption 
-                                ? this.props.loadingOption 
-                                : <Loading />
+                                this.props.loadingOption
+                                    ? this.props.loadingOption
+                                    : <Loading />
                             }
                         </div> : null
                     }
 
-                    <div className="slucky-table" 
-                        style={{ 'width': this.props.maxWidth ? this.props.maxWidth : '100%', 
-                                'maxHeight': this.props.maxHeight }}>
+                    <div className="slucky-table"
+                        style={{
+                            'width': this.props.maxWidth ? this.props.maxWidth : '100%',
+                            'maxHeight': this.props.maxHeight
+                        }}>
                         {/* table header */}
                         <div className={['table-header d-f ac jc-b', this.props.fixTitle ? 'table-fix' : ''].join(' ')}>
                             {
                                 this.props.dataconf.map((conf, i) => {
                                     // 全选选项
                                     return (
-                                        <div key={i} className={["ptb16 d-il ta-c table-title s0", i === 0 ? 'plr20' : 'plr6'].join(' ')} 
+                                        <div key={i} className={['ptb16 d-il ta-c table-title s0', i === 0 ? 'plr20' : 'plr6'].join(' ')}
                                             style={{ 'width': conf.width }}>
                                             <div className="checkbox-box-normalize">
                                                 {i === 0 ? <input id="checkbox_normalize_title" type="checkbox" name="c_n"
-                                                    checked={this.isAllSelect} 
-                                                    onChange={(e) => this.handleCheckboxTieleChange(e, conf.handles ? conf.handles: null, this.props.dataset)} /> : null}
+                                                    checked={this.isAllSelect}
+                                                    onChange={(e) => this.handleCheckboxTieleChange(e, conf.handles ? conf.handles : null, this.props.dataset)} /> : null}
                                                 <span className="checkbox-hook ta-c">
                                                     <span className="checkbox-hook-in fs12">{conf.title}</span>
                                                 </span>
@@ -160,10 +171,10 @@ export default class Table extends Component {
 
                         <div className="table-content">
                             {
-                                this.props.dataset && this.props.dataset.length == 0 
+                                this.props.dataset && this.props.dataset.length == 0
                                     ? <div className="ta-c pt32 pb16 c-hint-b" >
-                                    <p>暂无数据</p>
-                                </div> : null
+                                        <p>暂无数据</p>
+                                    </div> : null
                             }
                             {/* main content */}
                             {/* 列循环 */}
@@ -175,8 +186,8 @@ export default class Table extends Component {
                                             {
                                                 this.props.dataconf.map((conf, i) => {
                                                     if (conf.progress) {
-                                                        return <progress key={i} className="p-a w-full" 
-                                                        style={{ height: conf.progressWidth || 2 + 'px', top: 'unset', bottom: 0 }} max="100" value={conf.progress && conf.progress(data)}
+                                                        return <progress key={i} className="p-a w-full"
+                                                            style={{ height: conf.progressWidth || 2 + 'px', top: 'unset', bottom: 0 }} max="100" value={conf.progress && conf.progress(data)}
                                                             className="progress-loading-table"></progress>;
                                                     }
                                                     return null;
@@ -186,25 +197,25 @@ export default class Table extends Component {
                                             {
                                                 this.props.dataconf.map((conf, k) => {
                                                     return (
-                                                        <div className={['d-f ta-c table-title s0 h50 jc ac', 
-                                                            this.props.textAlign ? this.props.textAlign : 'ta-l', 
+                                                        <div className={['d-f ta-c table-title s0 h50 jc ac',
+                                                            this.props.textAlign ? this.props.textAlign : 'ta-l',
                                                             conf.selection ? 'plr20' : 'plr6'].join(' ')}
-                                                            style={{ 'width': conf.width, 'cursor': 'pointer' }} key={k}>
+                                                        style={{ 'width': conf.width, 'cursor': 'pointer' }} key={k}>
                                                             {/* checkbox */}
                                                             {
-                                                                conf.selection 
-                                                                    ?  <input type='checkbox' checked={data.checked || false} 
-                                                                        onChange={(e) => this.changeCheckState(e, i)}/> 
+                                                                conf.selection
+                                                                    ? <input type="checkbox" checked={data.checked || false}
+                                                                        onChange={(e) => this.changeCheckState(e, i)}/>
                                                                     : null
                                                             }
                                                             {
-                                                                !conf.handles && !conf.pipe && !conf.textarea && !conf.progress && !conf.tagList && !conf.input ? <span className='va-m'>{data[conf.prop]}</span> : null
+                                                                !conf.handles && !conf.pipe && !conf.textarea && !conf.progress && !conf.tagList && !conf.input ? <span className="va-m">{data[conf.prop]}</span> : null
                                                             }
                                                             {/* 复杂情况，有多种handle */}
                                                             {
                                                                 conf.handles ?
-                                                                <div className='w-full h-full ov-a-x d-f ac jc' scrollbar = 'normal'>
-                                                                    {Table.handleActions(this, conf.handles, data, i)}
+                                                                    <div className="w-full h-full ov-a-x d-f ac jc" scrollbar = "normal">
+                                                                        {Table.handleActions(this, conf.handles, data, i)}
                                                                     </div>
                                                                     : null
                                                             }
@@ -217,7 +228,7 @@ export default class Table extends Component {
                                                             {/* Textarea */}
                                                             {
                                                                 conf.textarea ?
-                                                                    <textarea rows="4" className="textarea w-full" value={data[conf.prop]} readonly></textarea>
+                                                                    <textarea rows="4" className="textarea w-full" value={data[conf.prop]} readOnly></textarea>
                                                                     : null
                                                             }
                                                             {/* Progress */}
@@ -260,10 +271,10 @@ export default class Table extends Component {
                         </div>
                     </div>
                 </div>
-                {this.props.showPage ? <Paging 
-                    pageInfo={this.props.pageInfo} 
+                {/* {this.props.showPage ? <Paging
+                    pageInfo={this.props.pageInfo}
                     onPageChange={(page, prePageNum) => this.pageChange(page, prePageNum)}
-                /> : null}
+                /> : null} */}
             </div >
         );
     }
@@ -274,13 +285,13 @@ export default class Table extends Component {
  * handles handles
  * data 单条数据
  * i index
- * 
+ *
 */
 
 Table.handleActions = (self_this, handles, data, i) => {
     return (
         <div className="pop-box d-f ac jc" style={{ width: '90px' }}>
-                {self_this.hanleHandle(handles, data, i)}
+            {self_this.hanleHandle(handles, data, i)}
         </div>
     );
 };
@@ -305,7 +316,7 @@ Table.handleCheckbox = (self_this, data, i, conf) => {
             <input id={'checkbox_normalize_table' + i}
                 type="checkbox"
                 name="c_n"
-                trigger='core'
+                trigger="core"
                 // checked={data.checked}
                 onChange={(e) => self_this.handleCheckboxChange(data, i, e.target.checked, conf.handle)} />
             <span className="checkbox-hook ta-c">
@@ -318,7 +329,7 @@ Table.handleCheckbox = (self_this, data, i, conf) => {
 
 Table.handelPopup = (handleItem) => {
     return (
-        <div class="pop-box">
+        <div className="pop-box">
             {/* <div className="pop-toggle ptb4 mlr4">
                 <div className="pop-main pr8">
                     <div className="pop-content">
