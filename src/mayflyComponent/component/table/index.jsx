@@ -12,6 +12,7 @@ export default class Table extends Component {
         this.isAllSelect = false;
         this.dataCache = {}
         this.customeKeys = ['isEdit', 'customerEditLabel', 'checked']
+        this.page = 1
     }
 
     handleCheckboxChange(data, i, checked, callback) {
@@ -69,6 +70,7 @@ export default class Table extends Component {
 
     pageChange = (page, prePageNum) => {
         this.props.onPageChange(page, prePageNum)
+        this.page = page
         // 获取上一页的数据信息
         const newDataSet = this.props.dataset.map((data, index) => {
             const newData = cloneDeep(data)
@@ -88,8 +90,16 @@ export default class Table extends Component {
         // this.cycleState(page)
     }
 
-    cycleState = (page) => {
-        const { dataset } = this.props
+    componentWillReceiveProps(nextProps) {
+        // 在重新render之前更新state不会重新触发生命周期
+        console.log('componentWillReceiveProps', nextProps, this.props);
+        this.cycleState(this.page, nextProps)
+    }
+
+    cycleState = (page, nextProps) => {
+        const { dataset } = nextProps
+        console.log(nextProps, '???????')
+
         let self = this
         const targetArr = this.dataCache[page]
         if (targetArr && targetArr.length) {
@@ -100,10 +110,8 @@ export default class Table extends Component {
                         const data = dataset[i]
                         const hmacData = crypto.createHmac('sha256', JSON.stringify(data))
                         const digesthmacData = hmacData.digest('hex')
-                        // console.log(key, data, digesthmacData, '???????')
-
                         if (key === digesthmacData) {
-                            dataset[i] = JSON.parse(self.dataCache[key])
+                            dataset[i] = self.dataCache[key]
                         }
                     }
                 }
