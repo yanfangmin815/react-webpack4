@@ -1,12 +1,12 @@
-import React, { useReducer, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { run, useConcent } from 'concent'
 import { cloneDeep } from 'lodash'
 import * as logic from '@/assets/utils/logic'
-import { Table, Paging } from '@/mayflyComponent'
+import { Table } from '@/mayflyComponent'
 import './hooks.css'
 import setup from './public'
 import '@/mayflyComponent/component/table/style/css.js';
-import '@/mayflyComponent/component/paging/style/css.js';
+// import '@/mayflyComponent/component/paging/style/css.js';
 
 // import("./public").then(() => {
 //     console.log(12345678)
@@ -22,6 +22,7 @@ const ConcentFnPage = React.memo(function(props) {
     const [value, setValue] = useState('MMMMMMM')
     const [newRecord, setNewRecord] = useState({})
     const [isEdit, setIsEdit] = useState(false)
+    const exeucuteCycle = useRef()
     const [pageInfo, setPageInfo] = useState({
         total: 30,
         maxToShow: 10,
@@ -29,19 +30,19 @@ const ConcentFnPage = React.memo(function(props) {
     })
 
     const [dataset, setDataset] = useState([{
-        id: 1,
+        id: '11-1',
         sex: 'female',
         height: 178
     }, {
-        id: 2,
+        id: '12-1',
         sex: 'female',
         height: 177
     }, {
-        id: 3,
+        id: '13-1',
         sex: 'male',
         height: 176
     }, {
-        id: 1,
+        id: '14-1',
         sex: 'female',
         height: 178
     }])
@@ -199,26 +200,29 @@ const ConcentFnPage = React.memo(function(props) {
     // 页码改变回调
     const pageChange = (currentPage, prePageNum) => {
         console.log(currentPage, prePageNum, 'page info coming back...')
-        if (currentPage === 2) {
-            setDataset([{
-                id: 11,
-                sex: 'female',
-                height: 178
-            }, {
-                id: 12,
-                sex: 'female',
-                height: 177
-            }, {
-                id: 13,
-                sex: 'male',
-                height: 176
-            }, {
-                id: 14,
-                sex: 'female',
-                height: 178
-            }])
-        }
+        const newDataSet = [{
+            id: `11-${currentPage}`,
+            sex: 'female',
+            height: 178
+        }, {
+            id: `12-${currentPage}`,
+            sex: 'female',
+            height: 177
+        }, {
+            id: `13-${currentPage}`,
+            sex: 'male',
+            height: 176
+        }, {
+            id: `14-${currentPage}`,
+            sex: 'female',
+            height: 178
+        }]
+        setDataset(newDataSet)
     }
+
+    useEffect(() => {
+        exeucuteCycle
+    }, [dataset])
 
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
@@ -230,11 +234,11 @@ const ConcentFnPage = React.memo(function(props) {
                 dataconf={datacolumn}
                 dataset={dataset}
                 loading={false}
-            />
-            <br/>
-            <Paging
+                showPage={true}
                 pageInfo={pageInfo}
+                ref={exeucuteCycle}
                 onPageChange={(currentPage, prePageNum) => pageChange(currentPage, prePageNum)} />
+            <br/>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>

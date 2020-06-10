@@ -30,30 +30,30 @@ export default class Paging extends Component {
         this.init();
     }
 
-    componentWillReceiveProps(nextProps) {
-        // 在重新render之前更新state不会重新触发生命周期
-        // console.log('componentWillReceiveProps', nextProps, this.props);
-        this.setState({
-            pageInfo: {
-                total: nextProps.pageInfo.total || 0,
-                maxToShow: nextProps.pageInfo.maxToShow || 0,
-                currentPage: nextProps.pageInfo.currentPage || 1
-            },
-            viewBox: {
-                width: '', // 可视容器的宽度
-                list: [], // 可视容器列表
-                before: false, // 前后省略号
-                after: false,
-                currentPage: '' // 当前页
-            }
-        }, () => {
-            if (nextProps.pageInfo.currentPage && this.state.viewBox) {
-                this.init(() => this.handleResizeViewBox(nextProps.pageInfo.currentPage));
-            } else {
-                this.init();
-            }
-        });
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     // 在重新render之前更新state不会重新触发生命周期
+    //     console.log('componentWillReceiveProps', nextProps, this.props);
+    //     this.setState({
+    //         pageInfo: {
+    //             total: nextProps.pageInfo.total || 0,
+    //             maxToShow: nextProps.pageInfo.maxToShow || 0,
+    //             currentPage: nextProps.pageInfo.currentPage || 1
+    //         },
+    //         viewBox: {
+    //             width: '', // 可视容器的宽度
+    //             list: [], // 可视容器列表
+    //             before: false, // 前后省略号
+    //             after: false,
+    //             currentPage: '' // 当前页
+    //         }
+    //     }, () => {
+    //         if (nextProps.pageInfo.currentPage && this.state.viewBox) {
+    //             this.init(() => this.handleResizeViewBox(nextProps.pageInfo.currentPage));
+    //         } else {
+    //             this.init();
+    //         }
+    //     });
+    // }
 
     init(cb) {
         const { pageInfo } = this.state;
@@ -89,10 +89,10 @@ export default class Paging extends Component {
     handleChangePage(currentPage, isOnAction = true) {
         // 保证临界条件
         let currentPageSelf = parseInt(currentPage);
-        if (currentPageSelf < this.start) { 
+        if (currentPageSelf < this.start) {
             currentPageSelf = this.start
         }
-        if (currentPageSelf > this.end) { 
+        if (currentPageSelf > this.end) {
             currentPageSelf = this.end
         }
         this.pageNum = this.state.viewBox.currentPage
@@ -109,13 +109,13 @@ export default class Paging extends Component {
     handleResizeViewBox(currentPage) {
         // 保证临界条件
         let currentPageSelf = parseInt(currentPage);
-        if (currentPageSelf < this.start) { 
-            currentPageSelf = this.start; 
-            return 
+        if (currentPageSelf < this.start) {
+            currentPageSelf = this.start;
+            return
         }
-        if (currentPageSelf > this.end) { 
+        if (currentPageSelf > this.end) {
             currentPageSelf = this.end;
-            return 
+            return
         }
         this.handleViewBox(currentPageSelf);
     }
@@ -133,29 +133,28 @@ export default class Paging extends Component {
     }
 
     transferPage = () => {
-        const {currentPage} = this.state.viewBox
+        const { currentPage } = this.state.viewBox
         // console.log('handleViewBox', this.state.viewBox)
         this.props.onPageChange && this.props.onPageChange(currentPage, this.pageNum)
     }
 
     // 维护viewBox
     handleViewBox(currentPage) {
-        let width = this.state.viewBox.width
         let list = this.state.viewBox.list
         let len = list.length
         let after = true
         let before = true
-        // console.log('handleViewBox', this.state, list);
+        console.log('currentPage', currentPage);
         if (currentPage == 1) {
             this.init(this.transferPage)
             return
         }
-        
+
         // 多条件判断
         if (this.end - 2 > this.maxWidth) {
             if (currentPage == this.end) {
                 const newList = []
-                for (let i=this.end - 1;i>this.end - 5;i--) {
+                for (let i = this.end - 1; i > this.end - 5; i--) {
                     // console.log(i)
                     newList.unshift(i)
                 }
@@ -178,15 +177,15 @@ export default class Paging extends Component {
                 if (positionIndex > Math.floor(len / 2)) {
                     let lastNum = list[len - 1]
                     const indexRuler = positionIndex - Math.floor(len / 2)
-               
+
                     // console.log(firstNum, this.end - 1)
                     // 边界判断
-                    if(lastNum === this.end - 1) {
+                    if (lastNum === this.end - 1) {
                         after = false
                     } else {
-                        list.splice(0,indexRuler)
-                        for (let i=0;i<indexRuler;i++) {
-                            
+                        list.splice(0, indexRuler)
+                        for (let i = 0; i < indexRuler; i++) {
+
                             const newLastNum = ++lastNum
                             if (newLastNum === this.end) {
                                 break;
@@ -217,12 +216,12 @@ export default class Paging extends Component {
                     let firstNum = list[0] // 第一个字符
                     const indexRuler = Math.floor(len / 2) - positionIndex
                     // 边界判断
-                    if(firstNum === this.start + 1) {
+                    if (firstNum === this.start + 1) {
                         before = false
                     } else {
                         if (len === this.maxWidth) {
-                            list.splice(len - indexRuler,indexRuler)
-                            for (let i=0;i<indexRuler;i++) {
+                            list.splice(len - indexRuler, indexRuler)
+                            for (let i = 0; i < indexRuler; i++) {
                                 const newLastNum = --firstNum
                                 if (newLastNum === this.start) {
                                     break;
@@ -233,8 +232,8 @@ export default class Paging extends Component {
                                 list.unshift(newLastNum)
                             }
                         } else if (len === this.maxWidth - 1) {
-                            list.splice(len - 1,indexRuler - 1)
-                            for (let i=0;i<indexRuler;i++) {
+                            list.splice(len - 1, indexRuler - 1)
+                            for (let i = 0; i < indexRuler; i++) {
                                 const newLastNum = --firstNum
                                 if (newLastNum === this.start) {
                                     break;
@@ -244,7 +243,7 @@ export default class Paging extends Component {
                                 }
                                 list.unshift(newLastNum)
                             }
-                        }  
+                        }
                     }
                     let lastNum = list[list.length - 1]
                     after = this.end - 1 > lastNum ? true : false
@@ -283,7 +282,7 @@ export default class Paging extends Component {
                     <div className="fs12">共<strong className="plr4">{pageInfo.total}</strong>条，每页<strong className="plr4">{pageInfo.maxToShow}</strong>条</div>
                     <div className="paging-viewbox">
                         <span className="btn-paging arrow-left" onClick={() => this.handleChangePageLeft()}></span>
-                        <span onClick={() => this.handleChangePage(this.start)} 
+                        <span onClick={() => this.handleChangePage(this.start)}
                             className={['btn-paging', this.start === this.state.viewBox.currentPage ? 'btn-active' : ''].join(' ')}>{this.start}</span>
                         {
                             this.state.viewBox.before ? <span className="mr8">...</span> : null
@@ -291,7 +290,7 @@ export default class Paging extends Component {
                         {
                             this.state.viewBox.list.map((item, i) => {
                                 return (
-                                    <span key={i} onClick={() => this.handleChangePage(item)} 
+                                    <span key={i} onClick={() => this.handleChangePage(item)}
                                         className={['btn-paging', item === this.state.viewBox.currentPage ? 'btn-active' : ''].join(' ')} >{item}</span>
                                 );
                             })
@@ -300,7 +299,7 @@ export default class Paging extends Component {
                             this.state.viewBox.after ? <span className="mr8">...</span> : null
                         }
                         {
-                            this.state.viewBox.width >= 0 ? <span onClick={() => this.handleChangePage(this.end)} 
+                            this.state.viewBox.width >= 0 ? <span onClick={() => this.handleChangePage(this.end)}
                                 className={['btn-paging', this.end === this.state.viewBox.currentPage ? 'btn-active' : ''].join(' ')} >{this.end}</span> : null
                         }
                         <span className="btn-paging arrow-right" onClick={() => this.handleChangePageRight()}></span>

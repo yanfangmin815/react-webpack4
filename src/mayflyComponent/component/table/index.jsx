@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import { cloneDeep } from 'lodash'
 import Loading from '../loading'
-// import Paging from '../paging'
-// import '../paging/style/css'
+import Paging from '../paging'
+import '../paging/style/css'
 const crypto = require('crypto');
 
 export default class Table extends Component {
@@ -10,6 +11,7 @@ export default class Table extends Component {
         this.checkboxList = [];
         this.isAllSelect = false;
         this.dataCache = {}
+        this.customeKeys = ['isEdit', 'customerEditLabel', 'checked']
     }
 
     handleCheckboxChange(data, i, checked, callback) {
@@ -67,16 +69,48 @@ export default class Table extends Component {
 
     pageChange = (page, prePageNum) => {
         this.props.onPageChange(page, prePageNum)
+        // 获取上一页的数据信息
         const newDataSet = this.props.dataset.map((data, index) => {
-            const hmacData = crypto.createHmac('sha256', JSON.stringify(data))
+            const newData = cloneDeep(data)
+            this.customeKeys.map(item => {
+                delete newData[item]
+            })
+            const hmacData = crypto.createHmac('sha256', JSON.stringify(newData))
             const digesthmacData = hmacData.digest('hex')
+
             return {
                 [digesthmacData]: data
             }
         })
         const dataCacheItem = { [prePageNum]: newDataSet }
         this.dataCache = Object.assign({}, this.dataCache, dataCacheItem)
-        console.log(this.dataCache)
+        console.log(this.dataCache, '------', this.props.dataset)
+        // this.cycleState(page)
+    }
+
+    cycleState = (page) => {
+        const { dataset } = this.props
+        let self = this
+        const targetArr = this.dataCache[page]
+        if (targetArr && targetArr.length) {
+            for (let j = 0; j < targetArr.length; j++) {
+                const single = targetArr[j]
+                for (let key in single) {
+                    for (let i = 0; i < dataset.length; i++) {
+                        const data = dataset[i]
+                        const hmacData = crypto.createHmac('sha256', JSON.stringify(data))
+                        const digesthmacData = hmacData.digest('hex')
+                        // console.log(key, data, digesthmacData, '???????')
+
+                        if (key === digesthmacData) {
+                            dataset[i] = JSON.parse(self.dataCache[key])
+                        }
+                    }
+                }
+
+            }
+        }
+        this.forceUpdate()
     }
 
     handleDisplay(callback, data, i) {
@@ -271,10 +305,10 @@ export default class Table extends Component {
                         </div>
                     </div>
                 </div>
-                {/* {this.props.showPage ? <Paging
+                {this.props.showPage ? <Paging
                     pageInfo={this.props.pageInfo}
                     onPageChange={(page, prePageNum) => this.pageChange(page, prePageNum)}
-                /> : null} */}
+                /> : null}
             </div >
         );
     }
