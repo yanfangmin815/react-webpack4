@@ -221,7 +221,7 @@ const ConcentFnPage = React.memo(function(props) {
     }
 
     useEffect(() => {
-        exeucuteCycle
+        exeucuteCycle.current.cycleState()
     }, [dataset])
 
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
