@@ -17,7 +17,28 @@ export default class Tree extends Component {
     render() {
         return (
             <div>
-                {/* <TreeNode data={this.props.data} onClick={(node) => this.handleClickNode(node)} open={this.props.open || false} item={(item) => this.props.item && this.props.item(item)} /> */}
+                <div>
+                    <div>
+                        <input type="checkbox"/>
+                        <span className="ml8">parent-0</span>
+                    </div>
+                    <div className="ml10">
+                        <input type="checkbox"/>
+                        <span className="ml8">child-0</span>
+                        <div>
+                            <input type="checkbox"/>
+                            <span className="ml8">child-0</span>
+                        </div>
+                    </div>
+                    <div className="ml20">
+                        <input type="checkbox"/>
+                        <span className="ml8">grand-child-0</span>
+                        <div>
+                            <input type="checkbox"/>
+                            <span className="ml8">child-0</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
