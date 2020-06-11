@@ -1,12 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { run, useConcent } from 'concent'
+import { useConcent } from 'concent'
 import { cloneDeep } from 'lodash'
-import * as logic from '@/assets/utils/logic'
-import { Table } from '@/mayflyComponent'
+import { Table, Tree } from '@/mayflyComponent'
 import './hooks.css'
 import setup from './public'
 import '@/mayflyComponent/component/table/style/css.js';
-// import '@/mayflyComponent/component/paging/style/css.js';
 
 // import("./public").then(() => {
 //     console.log(12345678)
@@ -230,11 +228,13 @@ const ConcentFnPage = React.memo(function(props) {
         <div className="conditionArea">
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
+            <Tree />
             <Table
                 dataconf={datacolumn}
                 dataset={dataset}
                 loading={false}
                 showPage={true}
+                isMaintenance={false}
                 pageInfo={pageInfo}
                 ref={exeucuteCycle}
                 onPageChange={(currentPage, prePageNum) => pageChange(currentPage, prePageNum)} />

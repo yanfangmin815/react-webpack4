@@ -87,13 +87,13 @@ export default class Table extends Component {
         const dataCacheItem = { [prePageNum]: newDataSet }
         this.dataCache = Object.assign({}, this.dataCache, dataCacheItem)
         console.log(this.dataCache, '------', this.props.dataset)
-        // this.cycleState(page)
     }
 
     componentWillReceiveProps(nextProps) {
         // 在重新render之前更新state不会重新触发生命周期
         console.log('componentWillReceiveProps', nextProps, this.props)
-        this.cycleState(this.page, nextProps)
+        const { isMaintenance } = nextProps
+        isMaintenance && this.cycleState(this.page, nextProps)
     }
 
     cycleState = (page, nextProps) => {
