@@ -144,7 +144,7 @@ export default class Paging extends Component {
         let len = list.length
         let after = true
         let before = true
-        console.log('currentPage', currentPage);
+        // console.log('currentPage', currentPage);
         if (currentPage == 1) {
             this.init(this.transferPage)
             return

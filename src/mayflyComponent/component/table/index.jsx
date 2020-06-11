@@ -92,15 +92,13 @@ export default class Table extends Component {
 
     componentWillReceiveProps(nextProps) {
         // 在重新render之前更新state不会重新触发生命周期
-        console.log('componentWillReceiveProps', nextProps, this.props);
+        console.log('componentWillReceiveProps', nextProps, this.props)
         this.cycleState(this.page, nextProps)
     }
 
     cycleState = (page, nextProps) => {
         const { dataset } = nextProps
-        console.log(nextProps, '???????')
-
-        let self = this
+        // return
         const targetArr = this.dataCache[page]
         if (targetArr && targetArr.length) {
             for (let j = 0; j < targetArr.length; j++) {
@@ -108,10 +106,11 @@ export default class Table extends Component {
                 for (let key in single) {
                     for (let i = 0; i < dataset.length; i++) {
                         const data = dataset[i]
+                        // console.log(data, i, dataset, '???????')
                         const hmacData = crypto.createHmac('sha256', JSON.stringify(data))
                         const digesthmacData = hmacData.digest('hex')
                         if (key === digesthmacData) {
-                            dataset[i] = self.dataCache[key]
+                            dataset[i] = single[key]
                         }
                     }
                 }

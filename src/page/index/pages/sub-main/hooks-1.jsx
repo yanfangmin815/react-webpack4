@@ -199,7 +199,7 @@ const ConcentFnPage = React.memo(function(props) {
 
     // 页码改变回调
     const pageChange = (currentPage, prePageNum) => {
-        console.log(currentPage, prePageNum, 'page info coming back...')
+        // console.log(currentPage, prePageNum, 'page info coming back...')
         const newDataSet = [{
             id: `11-${currentPage}`,
             sex: 'female',
