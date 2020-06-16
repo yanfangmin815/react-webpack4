@@ -19,6 +19,7 @@ const ConcentFnPage = React.memo(function(props) {
     const { fetchProducts, updateType, clickTitle, resetButton } = settings;
     const [value, setValue] = useState('MMMMMMM')
     const [newRecord, setNewRecord] = useState({})
+    const [treeData, setTreeData] = useState([])
     const [isEdit, setIsEdit] = useState(false)
     const exeucuteCycle = useRef()
     const [pageInfo, setPageInfo] = useState({
@@ -222,13 +223,19 @@ const ConcentFnPage = React.memo(function(props) {
         // exeucuteCycle.current.cycleState()
     }, [dataset])
 
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setTreeData([1, 2, 3, 4, ])
+    //     }, 2000)
+    // }, [])
+
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
         <div className="conditionArea">
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
-            <Tree />
+            <Tree/>
             <Table
                 dataconf={datacolumn}
                 dataset={dataset}
