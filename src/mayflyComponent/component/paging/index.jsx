@@ -55,13 +55,10 @@ export default class Paging extends Component {
     }
 
     init(cb) {
-        const { pageInfo } = this.state;
-        this.end = Math.ceil(pageInfo.total / pageInfo.maxToShow);
-        this.end > 0
-            ? this.end
-            : this.end = 1;
-        // console.log(this.end);
-        this.minWidth = this.end - 2;
+        const { pageInfo } = this.state
+        this.end = Math.ceil(pageInfo.total / pageInfo.maxToShow) // 总页数
+        this.end = this.end > 0 ? this.end : 1
+        this.minWidth = this.end - 2
         let currentWidth = this.maxWidth > this.minWidth
             ? this.minWidth
             : this.maxWidth;
@@ -75,7 +72,7 @@ export default class Paging extends Component {
                         let k = i;
                         list.push(++k);
                     }
-                    // console.log(list);
+                    console.log(list);
                     return list;
                 })(currentWidth),
                 before: false,
@@ -89,13 +86,21 @@ export default class Paging extends Component {
     }
     handleChangePage(currentPage, isOnAction = true) {
         // 保证临界条件
-        let currentPageSelf = parseInt(currentPage);
+        let currentPageSelf = parseInt(currentPage)
         if (currentPageSelf < this.start) { 
             currentPageSelf = this.start
         }
-        if (currentPageSelf > this.end) { currentPageSelf = this.end; }
-        this.props.isSingleDataFlow && this.handleResizeViewBox(currentPageSelf);
-        this.props.onAction && this.props.onAction(currentPageSelf);
+        if (currentPageSelf > this.end) { 
+            currentPageSelf = this.end
+        }
+        this.setState({
+            viewBox: Object.assign(this.state.viewBox, {
+                currentPage: currentPageSelf
+            })
+        }, () => {
+            this.handleResizeViewBox(currentPageSelf);
+        })
+        // this.props.onAction && this.props.onAction(currentPageSelf);
     }
 
     handleResizeViewBox(currentPage) {

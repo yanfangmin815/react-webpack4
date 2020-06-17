@@ -24,7 +24,7 @@ const ConcentFnPage = React.memo(function(props) {
     const [isEdit, setIsEdit] = useState(false)
     const [pageInfo, setPageInfo] = useState({
         total: 100,
-        maxToShow: 10,
+        maxToShow: 5,
         currentPage: 1
     })
 
