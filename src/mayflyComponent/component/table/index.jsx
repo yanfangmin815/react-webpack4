@@ -126,6 +126,7 @@ export default class Table extends Component {
         }
         return callback(data, i);
     }
+
     handleClass(btnType) {
         switch (btnType) {
             case 'hollow':
