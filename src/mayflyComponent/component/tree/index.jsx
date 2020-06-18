@@ -34,8 +34,13 @@ export default class Tree extends Component {
                                 },
                                 {
                                     key: '1-1-2',
-                                    title: 'grand-child-1',
+                                    title: 'grand-child-2',
                                     checked: true
+                                },
+                                {
+                                    key: '1-1-3',
+                                    title: 'grand-child-3',
+                                    checked: false
                                 }
                             ]
                         }
@@ -104,22 +109,99 @@ export default class Tree extends Component {
                 }
                 data.children = arr
             }
-            // console.log(newData, '???????????')
         }, 500)
     }
 
     renderLayout = (newData) => {
-        newData.map((item, index) => {
+        console.log(newData, '???????????')
+        return newData.map((item, index) => {
             const className = item.depth ? `ml${item.depth}0` : ''
-            console.log(className)
-            // value={item.checked} onChange={e => this.changeState(e)}
+            const key = item.key
             return (
                 <div className={className} key={index}>
-                    <input type="checkbox" />
+                    <input type="checkbox" checked={item.checked}
+                        onChange={e => this.changeState(e, item)}/>
                     <span className="ml8">{item.title}</span>
                 </div>
             )
         })
+    }
+
+    changeState = (e, monomer) => {
+        const checked = e.target.checked
+        const { newData } = this.state
+        newData.some((item, index) => {
+            if (item.key === monomer.key) {
+                const newItem = cloneDeep(item)
+                newItem.checked = checked
+                newData.splice(index, 1, newItem)
+                this.setState({
+                    newData: newData
+                }, () => {
+                    this.handleCheckedState(monomer)
+                })
+                return true
+            }
+        })
+    }
+
+    handleCheckedState = (monomer) => {
+        // 判断同级选择状态
+        const { newData } = this.state
+        const brotherNode = []
+        newData.map((item, index) => {
+            if (item.parent === monomer.parent) {
+                brotherNode.push(item.checked)
+            }
+        })
+        const checkedState = this.getCheckedState(brotherNode)
+        console.log(brotherNode, checkedState, 'brotherNode')
+        this.handleCheckedStateChildren(checkedState, monomer)
+        this.handleCheckedStateParents(checkedState)
+    }
+
+    getCheckedState = (brotherNode) => {
+        let len = brotherNode.length
+        let num = 0
+        brotherNode.forEach((item, index) => {
+            item && num++
+        })
+        return num === len
+    }
+
+    handleCheckedStateChildren = (checked, monomer) => {
+        const { newData } = this.state
+        const that = this
+        if (monomer.children.length) {
+            const newDataDeep = cloneDeep(newData)
+            // console.log(monomer.children, newDataDeep, '>>>>>?????<<<<<<')
+            monomer.children.forEach((item, index) => {
+                for (let i = 0; i < newDataDeep.length; i++) {
+                    const targetItem = newDataDeep[i]
+                    if (targetItem.key === item) {
+                        targetItem.checked = checked
+                        break
+                    }
+                }
+            })
+            this.setState({
+                newData: newDataDeep
+            }, () => {
+                monomer.children.forEach((item, index) => {
+                    for (let i = 0; i < newDataDeep.length; i++) {
+                        const targetItem = newDataDeep[i]
+                        if (targetItem.key === item && targetItem.children.length) {
+                            that.handleCheckedStateChildren(checked, newDataDeep[item])
+                            break
+                        }
+                    }
+                })
+            })
+        }
+    }
+
+    handleCheckedStateParents = (checkedState) => {
+
     }
 
     render() {
@@ -129,26 +211,6 @@ export default class Tree extends Component {
                 {/* 每个节点 -- start */}
                 <div>
                     {this.renderLayout(newData)}
-                    {/* <div>
-                        <input type="checkbox" />
-                        <span className="ml8">parent-0</span>
-                    </div>
-                    <div className="ml10">
-                        <input type="checkbox" />
-                        <span className="ml8">child-0</span>
-                    </div>
-                    <div className="ml10">
-                        <input type="checkbox" />
-                        <span className="ml8">child-1</span>
-                    </div>
-                    <div className="ml20">
-                        <input type="checkbox" />
-                        <span className="ml8">grand-child-0</span>
-                    </div>
-                    <div className="ml20">
-                        <input type="checkbox" />
-                        <span className="ml8">grand-child-1</span>
-                    </div> */}
                 </div>
                 {/* 每个节点 -- end */}
             </div>
