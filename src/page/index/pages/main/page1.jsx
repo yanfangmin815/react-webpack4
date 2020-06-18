@@ -1,7 +1,7 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux'
-import {hot} from 'react-hot-loader'
-import {getMovie} from '@/redux/index/other/actions'
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux'
+import { hot } from 'react-hot-loader'
+import { getMovie } from '@/redux/index/other/actions'
 import { Loading } from '@/component/index'
 import ConcentFnPage from '../sub-main/hooks-1'
 
@@ -15,7 +15,7 @@ class Match1 extends React.Component {
 
     componentWillMount() {
         // console.log(this.props, 'props');
-        const {getMovie} = this.props;
+        const { getMovie } = this.props;
         getMovie(100);
     }
 
@@ -24,8 +24,8 @@ class Match1 extends React.Component {
     }
 
     render() {
-        const {loading} = this.props;
-        return(
+        const { loading } = this.props;
+        return (
             <div>
                 <p>this is the test-page and other page!!</p>
                 <Loading show={loading}/>
@@ -41,5 +41,5 @@ export default connect(
         movie: state.movie,
         loading: state.loading
     }),
-    {getMovie}
+    { getMovie }
 )(Matches)

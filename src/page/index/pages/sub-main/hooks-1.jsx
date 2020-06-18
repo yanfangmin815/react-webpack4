@@ -1,54 +1,54 @@
-import React, { useReducer, useEffect, useState } from 'react'
-import { run, useConcent } from 'concent'
+import React, { useRef, useEffect, useState } from 'react'
+import { useConcent } from 'concent'
 import { cloneDeep } from 'lodash'
-import * as logic from '@/assets/utils/logic'
-import { Table, Paging } from '@/mayflyComponent'
+import { Table, Tree } from '@/mayflyComponent'
 import './hooks.css'
 import setup from './public'
-import "@/mayflyComponent/component/table/style/css.js";
-import "@/mayflyComponent/component/paging/style/css.js";
+import '@/mayflyComponent/component/table/style/css.js';
 
 // import("./public").then(() => {
 //     console.log(12345678)
 // })
 
 const ConcentFnPage = React.memo(function(props) {
-    //定义状态构造函数，传递给useConcent
-    const iState = () => ({ products:[], type: "", sex: "male", addr: "", keyword: "", tag: "B-B" });
+    // 定义状态构造函数，传递给useConcent
+    const iState = () => ({ products: [], type: '', sex: 'male', addr: '', keyword: '', tag: 'B-B' });
     // useConcent返回ctx，这里直接解构ctx，拿想用的对象或方法
     const { state, settings, sync } = useConcent({ setup, state: iState });
     const { products, type, sex, addr, keyword, tag } = state;
     const { fetchProducts, updateType, clickTitle, resetButton } = settings;
-    const [value,setValue] = useState('MMMMMMM')
-    const [newRecord,setNewRecord] = useState({})
+    const [value, setValue] = useState('MMMMMMM')
+    const [newRecord, setNewRecord] = useState({})
+    const [treeData, setTreeData] = useState([])
     const [isEdit, setIsEdit] = useState(false)
+    const exeucuteCycle = useRef()
     const [pageInfo, setPageInfo] = useState({
-        total: 100,
-        maxToShow: 5,
+        total: 30,
+        maxToShow: 10,
         currentPage: 1
     })
 
-    const [dataset,setDataset] = useState([{
-        id: 1,
+    const [dataset, setDataset] = useState([{
+        id: '11-1',
         sex: 'female',
         height: 178
     }, {
-        id: 2,
+        id: '12-1',
         sex: 'female',
         height: 177
     }, {
-        id: 3,
+        id: '13-1',
         sex: 'male',
-        height: 176    
+        height: 176
     }, {
-        id: 1,
+        id: '14-1',
         sex: 'female',
         height: 178
     }])
 
     const datacolumn = [{
         selection: 'checbox'
-        },{
+    }, {
         title: 'ID',
         prop: 'id',
         width: '25%',
@@ -91,16 +91,16 @@ const ConcentFnPage = React.memo(function(props) {
         type: 'action',
         handles: (record) => {
             return (
-                <div className='pop-box d-f ac jc'>
+                <div className="pop-box d-f ac jc">
                     <button className="btn-hollow mr10" onClick={() => handleDel(record)}>delete</button>
-                    {record.isEdit 
-                    ? <div className='pop-box d-f ac jc'> 
-                        <button className="btn-hollow mr10" onClick={() => handleSave(record)}>save</button> 
-                        <button className="btn-hollow mr10" onClick={() => handleCancel()}>cancel</button>
-                     </div>
-                    : <button className="btn-hollow mr10"
-                        disabled={isEdit}
-                        onClick={() => handleEdit(record)}>edit</button>}
+                    {record.isEdit
+                        ? <div className="pop-box d-f ac jc">
+                            <button className="btn-hollow mr10" onClick={() => handleSave(record)}>save</button>
+                            <button className="btn-hollow mr10" onClick={() => handleCancel()}>cancel</button>
+                        </div>
+                        : <button className="btn-hollow mr10"
+                            disabled={isEdit}
+                            onClick={() => handleEdit(record)}>edit</button>}
                 </div>
             )
         }
@@ -150,30 +150,29 @@ const ConcentFnPage = React.memo(function(props) {
     }
 
     useEffect(() => {
-        console.log(newRecord, 'newRecord')
-        if (newRecord.index || newRecord.index == 0) {
+        if (newRecord.index || newRecord.index === 0) {
             const { index } = newRecord
             dataset[index]['isEdit'] = true
             dataset[index]['customerEditLabel'] = {
                 height: () => {
                     return (
-                        <input type='text' value={dataset[index].height} 
+                        <input type="text" value={dataset[index].height}
                             onChange={(e) => changeVal(e, 'height', index)}/>
                     )
                 },
                 sex: () => {
                     return (
                         <span>
-                            <input type='radio' value={dataset[index].sex} checked={dataset[index].sex == 'female'}
+                            <input type="radio" value={dataset[index].sex} checked={dataset[index].sex == 'female'}
                                 onChange={(e) => changeVal('female', 'sex', index)}/> 男
-                            <input type='radio' value={dataset[index].sex} checked={dataset[index].sex == 'male'}
+                            <input type="radio" value={dataset[index].sex} checked={dataset[index].sex == 'male'}
                                 onChange={(e) => changeVal('male', 'sex', index)}/> 女
-                        </span> 
+                        </span>
                     )
                 },
                 id: () => {
                     return (
-                        <input type='text' value={dataset[index].id} 
+                        <input type="text" value={dataset[index].id}
                             onChange={(e) => changeVal(e, 'id', index)}/>
                     )
                 }
@@ -181,7 +180,54 @@ const ConcentFnPage = React.memo(function(props) {
             const newDataSet = [...dataset]
             setDataset(newDataSet)
         }
-      }, [newRecord])
+    }, [newRecord])
+
+    // const BBB = () => {
+    //     const mark = true
+    //     return new Promise((resolve, reject) => {
+    //         setTimeout(() => {
+    //             console.log('COMGING INTO......')
+    //             if (mark) {
+    //                 resolve(true)
+    //             } else {
+    //                 reject(false)
+    //             }
+    //         }, 5000)
+    //     })
+    // }
+
+    // 页码改变回调
+    const pageChange = (currentPage, prePageNum) => {
+        // console.log(currentPage, prePageNum, 'page info coming back...')
+        const newDataSet = [{
+            id: `11-${currentPage}`,
+            sex: 'female',
+            height: 178
+        }, {
+            id: `12-${currentPage}`,
+            sex: 'female',
+            height: 177
+        }, {
+            id: `13-${currentPage}`,
+            sex: 'male',
+            height: 176
+        }, {
+            id: `14-${currentPage}`,
+            sex: 'female',
+            height: 178
+        }]
+        setDataset(newDataSet)
+    }
+
+    useEffect(() => {
+        // exeucuteCycle.current.cycleState()
+    }, [dataset])
+
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setTreeData([1, 2, 3, 4, ])
+    //     }, 2000)
+    // }, [])
 
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
@@ -189,12 +235,17 @@ const ConcentFnPage = React.memo(function(props) {
         <div className="conditionArea">
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
-            <Table 
-                dataconf={datacolumn} 
-                dataset={dataset} 
-                loading={false} />
+            <Tree/>
+            <Table
+                dataconf={datacolumn}
+                dataset={dataset}
+                loading={false}
+                showPage={true}
+                isMaintenance={false}
+                pageInfo={pageInfo}
+                ref={exeucuteCycle}
+                onPageChange={(currentPage, prePageNum) => pageChange(currentPage, prePageNum)} />
             <br/>
-            <Paging pageInfo={pageInfo}/>
             <select value={type} onChange={updateType}>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -208,7 +259,7 @@ const ConcentFnPage = React.memo(function(props) {
             <input data-key="addr" value={addr} onChange={sync('addr')} />
             <input data-key="keyword" value={keyword} onChange={sync('keyword')} />
             <button onClick={refreshButon.bind(this)}>refresh</button>
-            <button onClick={resetButton.bind(this,'BBBBBBBB')}>button</button>
+            <button onClick={resetButton.bind(this, 'BBBBBBBB')}>button</button>
         </div>
     );
 });

@@ -7,6 +7,7 @@ export default class Paging extends Component {
         this.maxWidth = 5;
         this.minWidth = '';
         this.end = '';
+        this.pageNum = 1
         // 分页对象
 
         this.state = {
@@ -29,36 +30,37 @@ export default class Paging extends Component {
         this.init();
     }
 
-    componentWillReceiveProps(nextProps) {
-        // 在重新render之前更新state不会重新触发生命周期
-        // console.log('componentWillReceiveProps', nextProps, this.props);
-        this.setState({
-            pageInfo: {
-                total: nextProps.pageInfo.total || 0,
-                maxToShow: nextProps.pageInfo.maxToShow || 0,
-                currentPage: nextProps.pageInfo.currentPage || 1
-            },
-            viewBox: {
-                width: '', // 可视容器的宽度
-                list: [], // 可视容器列表
-                before: false, // 前后省略号
-                after: false,
-                currentPage: '' // 当前页
-            }
-        }, () => {
-            if (nextProps.pageInfo.currentPage && this.state.viewBox) {
-                this.init(() => this.handleResizeViewBox(nextProps.pageInfo.currentPage));
-            } else {
-                this.init();
-            }
-        });
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     // 在重新render之前更新state不会重新触发生命周期
+    //     console.log('componentWillReceiveProps', nextProps, this.props);
+    //     this.setState({
+    //         pageInfo: {
+    //             total: nextProps.pageInfo.total || 0,
+    //             maxToShow: nextProps.pageInfo.maxToShow || 0,
+    //             currentPage: nextProps.pageInfo.currentPage || 1
+    //         },
+    //         viewBox: {
+    //             width: '', // 可视容器的宽度
+    //             list: [], // 可视容器列表
+    //             before: false, // 前后省略号
+    //             after: false,
+    //             currentPage: '' // 当前页
+    //         }
+    //     }, () => {
+    //         if (nextProps.pageInfo.currentPage && this.state.viewBox) {
+    //             this.init(() => this.handleResizeViewBox(nextProps.pageInfo.currentPage));
+    //         } else {
+    //             this.init();
+    //         }
+    //     });
+    // }
 
     init(cb) {
-        const { pageInfo } = this.state
-        this.end = Math.ceil(pageInfo.total / pageInfo.maxToShow) // 总页数
+        const { pageInfo } = this.state;
+        this.end = Math.ceil(pageInfo.total / pageInfo.maxToShow);
         this.end = this.end > 0 ? this.end : 1
-        this.minWidth = this.end - 2
+        // console.log(this.end, 'this.end');
+        this.minWidth = this.end - 2;
         let currentWidth = this.maxWidth > this.minWidth
             ? this.minWidth
             : this.maxWidth;
@@ -86,15 +88,16 @@ export default class Paging extends Component {
     }
     handleChangePage(currentPage, isOnAction = true) {
         // 保证临界条件
-        let currentPageSelf = parseInt(currentPage)
-        if (currentPageSelf < this.start) { 
+        let currentPageSelf = parseInt(currentPage);
+        if (currentPageSelf < this.start) {
             currentPageSelf = this.start
         }
-        if (currentPageSelf > this.end) { 
+        if (currentPageSelf > this.end) {
             currentPageSelf = this.end
         }
+        this.pageNum = this.state.viewBox.currentPage
         this.setState({
-            viewBox: Object.assign(this.state.viewBox, {
+            viewBox: Object.assign({}, this.state.viewBox, {
                 currentPage: currentPageSelf
             })
         }, () => {
@@ -106,83 +109,157 @@ export default class Paging extends Component {
     handleResizeViewBox(currentPage) {
         // 保证临界条件
         let currentPageSelf = parseInt(currentPage);
-        if (currentPageSelf < this.start) { currentPageSelf = this.start; }
-        if (currentPageSelf > this.end) { currentPageSelf = this.end; }
+        if (currentPageSelf < this.start) {
+            currentPageSelf = this.start;
+            return
+        }
+        if (currentPageSelf > this.end) {
+            currentPageSelf = this.end;
+            return
+        }
         this.handleViewBox(currentPageSelf);
     }
 
     handleChangePageLeft() {
+        const currentPage = this.state.viewBox.currentPage
+        if (currentPage == 1) return
         this.handleChangePage(--this.state.viewBox.currentPage);
     }
 
     handleChangePageRight() {
+        const currentPage = this.state.viewBox.currentPage
+        if (currentPage == this.end) return
         this.handleChangePage(++this.state.viewBox.currentPage);
+    }
+
+    transferPage = () => {
+        const { currentPage } = this.state.viewBox
+        // console.log('handleViewBox', this.state.viewBox)
+        this.props.onPageChange && this.props.onPageChange(currentPage, this.pageNum)
     }
 
     // 维护viewBox
     handleViewBox(currentPage) {
-        // console.log('handleViewBox', this.state);
-        let width = this.state.viewBox.width;
+        let list = this.state.viewBox.list
+        let len = list.length
+        let after = true
+        let before = true
+        // console.log('currentPage', currentPage);
+        if (currentPage == 1) {
+            this.init(this.transferPage)
+            return
+        }
 
         // 多条件判断
-        if (this.end - 2 >= this.maxWidth) {
-            // 左临界
-            if (currentPage < this.start + Math.floor(width / 2)) {
-                let list = [];
-                for (let i = this.start + 1; i < this.start + 1 + width; i++) {
-                    list.push(i);
+        if (this.end - 2 > this.maxWidth) {
+            if (currentPage == this.end) {
+                const newList = []
+                for (let i = this.end - 1; i > this.end - 5; i--) {
+                    // console.log(i)
+                    newList.unshift(i)
                 }
-                // console.log('l', list);
+                const firstNum = newList[0]
+                before = this.start + 1 < firstNum ? true : false
                 this.setState({
                     viewBox: Object.assign(this.state.viewBox, {
-                        list,
                         currentPage,
-                        before: false,
-                        after: true
+                        before: before,
+                        after: false,
+                        list: newList
                     })
                 }, () => {
-                    // console.log('handleViewBox l', this.state.viewBox)
+                    this.transferPage()
                 });
             }
-            // 右临界
-            if (currentPage > this.end - Math.ceil(width / 2)) {
-                let list = [];
-                for (let i = this.end - width; i < this.end; i++) {
-                    list.push(i);
-                }
-                // console.log('r', list);
-                this.setState({
-                    viewBox: Object.assign(this.state.viewBox, {
-                        list,
-                        currentPage,
-                        before: true,
-                        after: false
+            if (list.includes(currentPage)) {
+                const positionIndex = list.indexOf(currentPage)
+                // 判断右侧
+                if (positionIndex > Math.floor(len / 2)) {
+                    let lastNum = list[len - 1]
+                    const indexRuler = positionIndex - Math.floor(len / 2)
+
+                    // console.log(firstNum, this.end - 1)
+                    // 边界判断
+                    if (lastNum === this.end - 1) {
+                        after = false
+                    } else {
+                        list.splice(0, indexRuler)
+                        for (let i = 0; i < indexRuler; i++) {
+
+                            const newLastNum = ++lastNum
+                            if (newLastNum === this.end) {
+                                break;
+                            }
+                            if (newLastNum === this.end - 1) {
+                                after = false
+                            }
+                            list.push(newLastNum)
+                        }
+                    }
+                    let firstNum = list[0]
+
+                    before = this.start + 1 < firstNum ? true : false
+                    // console.log(list, 'r')
+                    const newList = [...list]
+                    this.setState({
+                        viewBox: Object.assign({}, this.state.viewBox, {
+                            list: newList,
+                            before: before ? true : false,
+                            after: after ? true : false
+                        })
+                    }, () => {
+                        this.transferPage()
                     })
-                }, () => {
-                    // console.log('handleViewBox r', this.state.viewBox)
-                });
-            }
-            // 通常情况
-            if (currentPage >= this.start + Math.floor(width / 2) && currentPage <= this.end - Math.ceil(width / 2)) {
-                let list = [];
-                let i = currentPage - Math.floor(width / 2);
-                // 重新判断临界条件
-                if (i < 2) { i = 2; }
-                if (i > this.end - width) { i = this.end - width; }
-                while (width--) {
-                    list.push(i++);
                 }
-                // console.log('n', list);
-                this.setState({
-                    viewBox: Object.assign(this.state.viewBox, {
-                        list,
-                        currentPage,
-                        before: true,
-                        after: true
+                // 判断左侧
+                if (positionIndex < Math.floor(len / 2)) {
+                    let firstNum = list[0] // 第一个字符
+                    const indexRuler = Math.floor(len / 2) - positionIndex
+                    // 边界判断
+                    if (firstNum === this.start + 1) {
+                        before = false
+                    } else {
+                        if (len === this.maxWidth) {
+                            list.splice(len - indexRuler, indexRuler)
+                            for (let i = 0; i < indexRuler; i++) {
+                                const newLastNum = --firstNum
+                                if (newLastNum === this.start) {
+                                    break;
+                                }
+                                if (newLastNum === this.start + 1) {
+                                    before = false
+                                }
+                                list.unshift(newLastNum)
+                            }
+                        } else if (len === this.maxWidth - 1) {
+                            list.splice(len - 1, indexRuler - 1)
+                            for (let i = 0; i < indexRuler; i++) {
+                                const newLastNum = --firstNum
+                                if (newLastNum === this.start) {
+                                    break;
+                                }
+                                if (newLastNum === this.start + 1) {
+                                    before = false
+                                }
+                                list.unshift(newLastNum)
+                            }
+                        }
+                    }
+                    let lastNum = list[list.length - 1]
+                    after = this.end - 1 > lastNum ? true : false
+
+                    // console.log(list, 'l')
+                    const newList = [...list]
+                    this.setState({
+                        viewBox: Object.assign({}, this.state.viewBox, {
+                            list: newList,
+                            before: before ? true : false,
+                            after: after ? true : false
+                        })
+                    }, () => {
+                        this.transferPage()
                     })
-                }, () => {
-                    // console.log('handleViewBox n', this.state.viewBox)
-                });
+                }
             }
         } else {
             this.setState({
@@ -192,7 +269,7 @@ export default class Paging extends Component {
                     after: false
                 })
             }, () => {
-                // console.log('handleViewBox', this.state.viewBox)
+                this.transferPage()
             });
         }
     }
@@ -205,7 +282,7 @@ export default class Paging extends Component {
                     <div className="fs12">共<strong className="plr4">{pageInfo.total}</strong>条，每页<strong className="plr4">{pageInfo.maxToShow}</strong>条</div>
                     <div className="paging-viewbox">
                         <span className="btn-paging arrow-left" onClick={() => this.handleChangePageLeft()}></span>
-                        <span onClick={() => this.handleChangePage(this.start)} 
+                        <span onClick={() => this.handleChangePage(this.start)}
                             className={['btn-paging', this.start === this.state.viewBox.currentPage ? 'btn-active' : ''].join(' ')}>{this.start}</span>
                         {
                             this.state.viewBox.before ? <span className="mr8">...</span> : null
@@ -213,7 +290,7 @@ export default class Paging extends Component {
                         {
                             this.state.viewBox.list.map((item, i) => {
                                 return (
-                                    <span key={i} onClick={() => this.handleChangePage(item)} 
+                                    <span key={i} onClick={() => this.handleChangePage(item)}
                                         className={['btn-paging', item === this.state.viewBox.currentPage ? 'btn-active' : ''].join(' ')} >{item}</span>
                                 );
                             })
@@ -222,7 +299,7 @@ export default class Paging extends Component {
                             this.state.viewBox.after ? <span className="mr8">...</span> : null
                         }
                         {
-                            this.state.viewBox.width >= 0 ? <span onClick={() => this.handleChangePage(this.end)} 
+                            this.state.viewBox.width >= 0 ? <span onClick={() => this.handleChangePage(this.end)}
                                 className={['btn-paging', this.end === this.state.viewBox.currentPage ? 'btn-active' : ''].join(' ')} >{this.end}</span> : null
                         }
                         <span className="btn-paging arrow-right" onClick={() => this.handleChangePageRight()}></span>
