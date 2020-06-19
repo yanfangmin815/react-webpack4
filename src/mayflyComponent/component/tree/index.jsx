@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { cloneDeep } from 'lodash'
-// import TreeNode from '../treeNode';
 
 export default class Tree extends Component {
     constructor(props) {
@@ -35,7 +34,14 @@ export default class Tree extends Component {
                                 {
                                     key: '1-1-2',
                                     title: 'grand-child-2',
-                                    checked: true
+                                    checked: true,
+                                    children: [
+                                        {
+                                            key: '1-1-2-0',
+                                            title: 'grand-grand-child-0',
+                                            checked: false
+                                        }
+                                    ]
                                 },
                                 {
                                     key: '1-1-3',
@@ -66,7 +72,7 @@ export default class Tree extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log('componentWillReceiveProps')
+        // console.log('componentWillReceiveProps')
         const { _Tree } = nextProps
         this.setState({
             newData: []
@@ -84,6 +90,7 @@ export default class Tree extends Component {
             obj.checked = item.checked
             obj.parent = parent
             obj.depth = depth
+            obj.state = ''
             arr.push(obj)
             this.setState({
                 newData: this.state.newData.concat(arr)
@@ -109,16 +116,54 @@ export default class Tree extends Component {
                 }
                 data.children = arr
             }
+            this.setState({
+                newData
+            }, () => {
+                // 渲染时 处理父级节点选择状态 一级一级向上回溯
+                const newDepth = depth
+                this.renderInitial(newDepth)
+            })
         }, 500)
     }
 
+    renderInitial = (depth) => {
+        const { newData } = this.state
+        newData.some((item, index) => {
+            if (item.depth === depth && item.children.length) {
+                const newArr = []
+                item.children.some((mome, key) => {
+                    newData.some((data, subIndex) => {
+                        if (data.key === mome) {
+                            newArr.push(data.checked)
+                            return true
+                        }
+                    })
+                })
+                // 获取同级别选择状态数组
+                const checkedState = this.getCheckedState(newArr)
+                item.state = checkedState
+                item.checked = checkedState === 'all' ? true : false
+                // console.log(newArr, '<<<<<<<<<<<<>>>>>>>>>>>>>>>>>')
+            }
+        })
+        this.setState({
+            newData
+        }, () => {
+            if (depth === 0) return
+            depth--
+            this.renderInitial(depth)
+            // console.log(this.state.newData, '11111111111111111111111')
+        })
+    }
+
     renderLayout = (newData) => {
-        console.log(newData, '???????????')
+        console.log(newData, 'newData-newData')
         return newData.map((item, index) => {
             const className = item.depth ? `ml${item.depth}0` : ''
             const key = item.key
             return (
                 <div className={className} key={index}>
+                    {item.state === 'semi' ? <span>semi</span> : null}
                     <input type="checkbox" checked={item.checked}
                         onChange={e => this.changeState(e, item)}/>
                     <span className="ml8">{item.title}</span>
@@ -134,18 +179,19 @@ export default class Tree extends Component {
             if (item.key === monomer.key) {
                 const newItem = cloneDeep(item)
                 newItem.checked = checked
+                newItem.state = checked ? 'all' : 'none'
                 newData.splice(index, 1, newItem)
                 this.setState({
                     newData: newData
                 }, () => {
-                    this.handleCheckedState(monomer)
+                    this.handleCheckedState(monomer, checked)
                 })
                 return true
             }
         })
     }
 
-    handleCheckedState = (monomer) => {
+    handleCheckedState = (monomer, checked) => {
         // 判断同级选择状态
         const { newData } = this.state
         const brotherNode = []
@@ -154,10 +200,12 @@ export default class Tree extends Component {
                 brotherNode.push(item.checked)
             }
         })
-        const checkedState = this.getCheckedState(brotherNode)
-        console.log(brotherNode, checkedState, 'brotherNode')
-        this.handleCheckedStateChildren(checkedState, monomer)
-        this.handleCheckedStateParents(checkedState)
+        new Promise((resolve, reject) => {
+            this.handleCheckedStateChildren(monomer, checked)
+            resolve()
+        }).then(() => {
+            this.handleCheckedStateParents(brotherNode, monomer)
+        })
     }
 
     getCheckedState = (brotherNode) => {
@@ -166,20 +214,56 @@ export default class Tree extends Component {
         brotherNode.forEach((item, index) => {
             item && num++
         })
-        return num === len
+        if (num === 0) return 'none'
+        if (num !== 0 && num < len) return 'semi'
+        if (num === len) return 'all'
     }
 
-    handleCheckedStateChildren = (checked, monomer) => {
+    handleCheckedStateParents = (brotherNode, monomer) => {
+        // 同级选择状态
+        console.log(brotherNode, monomer, '改变父节点选择状态')
+        const { newData } = this.state
+        const checkedState = this.getCheckedState(brotherNode)
+        const parent = monomer.parent
+        const newDataDeep = cloneDeep(newData)
+        let newItem
+        // 判断父级选择状态
+        newDataDeep.some((item, index) => {
+            if (item.key === parent) {
+                item.state = checkedState
+                item.checked = checkedState === 'all' ? true : false
+                newItem = item
+                newDataDeep.splice(index, 1, item)
+                return true
+            }
+        })
+        this.setState({
+            newData: newDataDeep
+        }, () => {
+            if (parent === 'root') return
+            // 获取父级同级Node monomer
+            const { newData } = this.state
+            const brotherNode = []
+            newData.map((item, index) => {
+                if (item.parent === newItem.parent) {
+                    brotherNode.push(item.checked)
+                }
+            })
+            this.handleCheckedStateParents(brotherNode, newItem)
+        })
+    }
+
+    handleCheckedStateChildren = (monomer, checked) => {
         const { newData } = this.state
         const that = this
         if (monomer.children.length) {
             const newDataDeep = cloneDeep(newData)
-            // console.log(monomer.children, newDataDeep, '>>>>>?????<<<<<<')
             monomer.children.forEach((item, index) => {
                 for (let i = 0; i < newDataDeep.length; i++) {
                     const targetItem = newDataDeep[i]
                     if (targetItem.key === item) {
                         targetItem.checked = checked
+                        targetItem.state = checked ? 'all' : 'none'
                         break
                     }
                 }
@@ -191,17 +275,13 @@ export default class Tree extends Component {
                     for (let i = 0; i < newDataDeep.length; i++) {
                         const targetItem = newDataDeep[i]
                         if (targetItem.key === item && targetItem.children.length) {
-                            that.handleCheckedStateChildren(checked, newDataDeep[item])
+                            that.handleCheckedStateChildren(targetItem, checked)
                             break
                         }
                     }
                 })
             })
         }
-    }
-
-    handleCheckedStateParents = (checkedState) => {
-
     }
 
     render() {
