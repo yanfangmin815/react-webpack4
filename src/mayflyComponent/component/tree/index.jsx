@@ -68,24 +68,24 @@ export default class Tree extends Component {
                         {
                             key: '2-0',
                             title: '2-child-0',
-                            checked: true
-                        },
-                        {
-                            key: '2-1',
-                            title: '2-child-1',
                             checked: true,
                             children: [
                                 {
-                                    key: '2-1-0',
+                                    key: '2-0-0',
                                     title: '2-grand-grand-child-0',
                                     checked: true
                                 },
                                 {
-                                    key: '2-1-1',
+                                    key: '2-0-1',
                                     title: '2-grand-grand-child-1',
                                     checked: true
                                 }
                             ]
+                        },
+                        {
+                            key: '2-1',
+                            title: '2-child-1',
+                            checked: true
                         }
                     ]
                 },
