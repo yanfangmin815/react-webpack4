@@ -1,44 +1,47 @@
 import React, { Component } from 'react';
-import { cloneDeep } from 'lodash'
+import { cloneDeep, debounce } from 'lodash'
 
 export default class Tree extends Component {
     constructor(props) {
         super(props);
+        this.depthStatistics = 0
+        this.initialArr = []
+        this.timer = null
         this.state = {
             _Tree: this.props.data || [
                 {
-                    key: 1,
+                    key: '1',
                     title: 'parent-0',
                     checked: true,
                     children: [
                         {
                             key: '1-0',
-                            title: 'child-0',
-                            checked: true,
-                        },
-                        {
-                            key: '1-1',
-                            title: 'child-1',
+                            title: '1-child-0',
                             checked: true,
                             children: [
                                 {
-                                    key: '1-1-0',
+                                    key: '1-0-0',
                                     title: 'grand-child-0',
                                     checked: true
                                 },
                                 {
-                                    key: '1-1-1',
+                                    key: '1-0-1',
                                     title: 'grand-child-1',
                                     checked: true
                                 },
                                 {
-                                    key: '1-1-2',
+                                    key: '1-0-2',
                                     title: 'grand-child-2',
                                     checked: true,
                                     children: [
                                         {
-                                            key: '1-1-2-0',
+                                            key: '1-0-2-0',
                                             title: 'grand-grand-child-0',
+                                            checked: true
+                                        },
+                                        {
+                                            key: '1-0-2-1',
+                                            title: 'grand-grand-child-1',
                                             checked: true
                                         }
                                     ]
@@ -49,13 +52,71 @@ export default class Tree extends Component {
                                     checked: true
                                 }
                             ]
+                        },
+                        {
+                            key: '1-1',
+                            title: '1-child-1',
+                            checked: true
                         }
                     ]
                 },
                 {
-                    key: 2,
+                    key: '2',
                     title: 'parent-1',
                     checked: true,
+                    children: [
+                        {
+                            key: '2-0',
+                            title: '2-child-0',
+                            checked: true
+                        },
+                        {
+                            key: '2-1',
+                            title: '2-child-1',
+                            checked: true,
+                            children: [
+                                {
+                                    key: '2-1-0',
+                                    title: '2-grand-grand-child-0',
+                                    checked: true
+                                },
+                                {
+                                    key: '2-1-1',
+                                    title: '2-grand-grand-child-1',
+                                    checked: true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    key: '3',
+                    title: 'parent-2',
+                    checked: true,
+                    children: [
+                        {
+                            key: '3-0',
+                            title: '3-child-0',
+                            checked: true
+                        },
+                        {
+                            key: '3-1',
+                            title: '3-child-1',
+                            checked: true,
+                            children: [
+                                {
+                                    key: '3-1-0',
+                                    title: '3-grand-grand-child-0',
+                                    checked: true
+                                },
+                                {
+                                    key: '3-1-1',
+                                    title: '3-grand-grand-child-1',
+                                    checked: true
+                                }
+                            ]
+                        }
+                    ]
                 }
             ],
             newData: []
@@ -64,19 +125,34 @@ export default class Tree extends Component {
 
     componentDidMount() {
         const { _Tree } = this.state
+        this.depthStatistics = 0
+        this.initialArr = []
+        this.timer = null
         this.setState({
             newData: []
         }, () => {
-            this.handleData(_Tree, 'root', 0)
+            const len = _Tree.length
+            new Promise((resolve, reject) => {
+                // for () {
+
+                // }
+                resolve()
+            }).then(() => {
+                this.handleData(_Tree, 'root', 0)
+            })
         })
     }
 
     componentWillReceiveProps(nextProps) {
         // console.log('componentWillReceiveProps')
         const { _Tree } = nextProps
+        this.depthStatistics = 0
+        this.initialArr = []
+        this.timer = null
         this.setState({
             newData: []
         }, () => {
+            const len = _Tree.length
             this.handleData(_Tree, 'root', 0)
         })
     }
@@ -92,16 +168,20 @@ export default class Tree extends Component {
             obj.depth = depth
             obj.state = ''
             arr.push(obj)
+
+            this.initialArr.push(obj)
             this.setState({
-                newData: this.state.newData.concat(arr)
+                newData: this.initialArr
             }, () => {
                 if (item.children && item.children.length) {
-                    depth++
-                    this.handleData(item.children, item.key, depth)
+                    const newObj = cloneDeep(obj)
+                    newObj.depth += 1
+                    timer && clearTimeout(timer)
+                    this.handleData(item.children, item.key, newObj.depth)
                 }
             })
         })
-        setTimeout(() => {
+        let timer = setTimeout(() => {
             const { newData } = this.state
             const len = newData.length
             for (let i = 0; i < len; i++) {
@@ -119,11 +199,54 @@ export default class Tree extends Component {
             this.setState({
                 newData
             }, () => {
-                // 渲染时 处理父级节点选择状态 一级一级向上回溯
+                // 渲染时 处理父级节点选择状态 逐级递归
+                const arr = []
+                const { newData } = this.state
+                newData.map((item, index) => {
+                    if (item.depth === this.depthStatistics) {
+                        arr.push(item)
+                    }
+                })
+                this.debounce(this.sequenceAdjustment.bind(this, newData, arr), 800)()
+                // const dataSequence = this.sequenceAdjustment(newData, arr)
+                // this.setState({
+                //     newData: dataSequence
+                // }, () => {
                 const newDepth = depth
                 this.renderInitial(newDepth)
+                // })
             })
-        }, 500)
+        }, 800)
+    }
+
+    debounce = (fn, delay) => {
+        return () => {
+            if (this.timer) {
+                clearTimeout(this.timer)
+            }
+            this.timer = setTimeout(fn, delay)
+        }
+    }
+
+    sequenceAdjustment = (newData, arr) => {
+        this.depthStatistics++
+        let newArr = cloneDeep(arr)
+        const num = 0
+        arr.map((item, index) => {
+            const con = []
+            newData.some((memo, key) => {
+                if (Number(memo.depth) === this.depthStatistics && item.key === memo.parent) {
+                    con.push(memo)
+                }
+            })
+            // newArr.splice(index + 1, 0, ...con)
+            // console.log(newArr.slice(0, index + 1), ...con, newArr.slice(index + 1))
+            newArr = [...newArr.slice(0, index + 1), ...con, ...newArr.slice(index + 1)]
+
+        })
+        console.log(newArr, 'sequenceAdjustment')
+
+        // this.sequenceAdjustment(newData, arr)
     }
 
     renderInitial = (depth) => {
@@ -143,7 +266,6 @@ export default class Tree extends Component {
                 const checkedState = this.getCheckedState(newArr)
                 item.state = checkedState
                 item.checked = checkedState === 'all' ? true : false
-                // console.log(newArr, '<<<<<<<<<<<<>>>>>>>>>>>>>>>>>')
             }
         })
         this.setState({
@@ -152,7 +274,6 @@ export default class Tree extends Component {
             if (depth === 0) return
             depth--
             this.renderInitial(depth)
-            // console.log(this.state.newData, '11111111111111111111111')
         })
     }
 
