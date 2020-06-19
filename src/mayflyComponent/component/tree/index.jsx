@@ -24,7 +24,7 @@ export default class Tree extends Component {
                                 {
                                     key: '1-1-0',
                                     title: 'grand-child-0',
-                                    checked: false
+                                    checked: true
                                 },
                                 {
                                     key: '1-1-1',
@@ -39,14 +39,15 @@ export default class Tree extends Component {
                                         {
                                             key: '1-1-2-0',
                                             title: 'grand-grand-child-0',
-                                            checked: false
+                                            checked: true
                                         }
+
                                     ]
                                 },
                                 {
                                     key: '1-1-3',
                                     title: 'grand-child-3',
-                                    checked: false
+                                    checked: true
                                 }
                             ]
                         }
