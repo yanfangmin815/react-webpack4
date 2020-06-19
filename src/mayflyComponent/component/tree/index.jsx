@@ -41,7 +41,6 @@ export default class Tree extends Component {
                                             title: 'grand-grand-child-0',
                                             checked: true
                                         }
-
                                     ]
                                 },
                                 {
