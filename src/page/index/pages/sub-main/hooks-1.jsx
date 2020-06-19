@@ -232,7 +232,7 @@ const ConcentFnPage = React.memo(function(props) {
     // 下面UI中使用sync语法糖函数同步状态，如果为了最求极致的性能
     // 可将它们定义在setup返回结果里，这样不用每次渲染都生成临时的更新函数
     return (
-        <div className="conditionArea">
+        <div className="conditionArea" style={{ height: '100%', overflow: 'auto' }}>
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
             <Tree/>

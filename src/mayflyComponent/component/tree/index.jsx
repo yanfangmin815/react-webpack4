@@ -199,26 +199,37 @@ export default class Tree extends Component {
             this.setState({
                 newData
             }, () => {
-                // 渲染时 处理父级节点选择状态 逐级递归
+                // 确定父子关系 保证节点顺序
                 const arr = []
                 const { newData } = this.state
-                newData.map((item, index) => {
+                const depthArr = newData.map((item, index) => {
                     if (item.depth === this.depthStatistics) {
                         arr.push(item)
                     }
+                    return item.depth
                 })
-                this.debounce(this.sequenceAdjustment.bind(this, newData, arr), 800)()
-                // const dataSequence = this.sequenceAdjustment(newData, arr)
-                // this.setState({
-                //     newData: dataSequence
-                // }, () => {
-                const newDepth = depth
-                this.renderInitial(newDepth)
-                // })
+                // 找出最大值
+                const maxVal = this.bubbleSort(depthArr)[depthArr.length - 1]
+
+                this.debounce(this.sequenceAdjustment.bind(this, newData, arr, maxVal), 800)()
             })
         }, 800)
     }
 
+    bubbleSort = (arr) => {
+        for (let i = 0, l = arr.length; i < l - 1; i++) {
+            for (let j = i + 1; j < l; j++) {
+                if (arr[i] > arr[j]) {
+                    let tem = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = tem;
+                }
+            }
+        }
+        return arr
+    }
+
+    // 防抖
     debounce = (fn, delay) => {
         return () => {
             if (this.timer) {
@@ -228,25 +239,35 @@ export default class Tree extends Component {
         }
     }
 
-    sequenceAdjustment = (newData, arr) => {
+    sequenceAdjustment = (newData, arr, maxVal) => {
         this.depthStatistics++
         let newArr = cloneDeep(arr)
-        const num = 0
+        let initItem
         arr.map((item, index) => {
             const con = []
             newData.some((memo, key) => {
                 if (Number(memo.depth) === this.depthStatistics && item.key === memo.parent) {
+                    initItem = item
                     con.push(memo)
                 }
             })
-            // newArr.splice(index + 1, 0, ...con)
-            // console.log(newArr.slice(0, index + 1), ...con, newArr.slice(index + 1))
-            newArr = [...newArr.slice(0, index + 1), ...con, ...newArr.slice(index + 1)]
-
+            if (con.length) {
+                const indexes = newArr.findIndex((item, index) => item.key === initItem.key)
+                newArr = [...newArr.slice(0, indexes + 1), ...con, ...newArr.slice(indexes + 1)]
+            }
         })
         console.log(newArr, 'sequenceAdjustment')
-
-        // this.sequenceAdjustment(newData, arr)
+        if (maxVal === this.depthStatistics) {
+            this.setState({
+                newData: newArr
+            }, () => {
+                // 渲染时 处理父级节点选择状态 逐级递归
+                this.renderInitial(maxVal)
+            })
+        }
+        if (this.depthStatistics <= maxVal - 1) {
+            this.sequenceAdjustment(newData, newArr, maxVal)
+        }
     }
 
     renderInitial = (depth) => {
