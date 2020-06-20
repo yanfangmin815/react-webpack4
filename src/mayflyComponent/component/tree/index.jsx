@@ -131,14 +131,20 @@ export default class Tree extends Component {
         this.setState({
             newData: []
         }, () => {
-            const len = _Tree.length
             new Promise((resolve, reject) => {
-                // for () {
-
-                // }
-                resolve()
-            }).then(() => {
-                this.handleData(_Tree, 'root', 0)
+                let len
+                let newLen
+                const result = this.handleData(_Tree, 'root', 0)
+                const timer = setInterval(() => {
+                    len = result && result.length
+                    if (len === newLen) {
+                        clearInterval(timer)
+                        resolve(result)
+                    }
+                    newLen = len
+                }, 100)
+            }).then((result) => {
+                this.preHandle(result)
             })
         })
     }
@@ -152,8 +158,21 @@ export default class Tree extends Component {
         this.setState({
             newData: []
         }, () => {
-            const len = _Tree.length
-            this.handleData(_Tree, 'root', 0)
+            new Promise((resolve, reject) => {
+                let len
+                let newLen
+                const result = this.handleData(_Tree, 'root', 0)
+                const timer = setInterval(() => {
+                    len = result && result.length
+                    if (len === newLen) {
+                        clearInterval(timer)
+                        resolve(result)
+                    }
+                    newLen = len
+                }, 100)
+            }).then((result) => {
+                this.preHandle(result)
+            })
         })
     }
 
@@ -170,51 +189,47 @@ export default class Tree extends Component {
             arr.push(obj)
 
             this.initialArr.push(obj)
-            this.setState({
-                newData: this.initialArr
-            }, () => {
-                if (item.children && item.children.length) {
-                    const newObj = cloneDeep(obj)
-                    newObj.depth += 1
-                    timer && clearTimeout(timer)
-                    this.handleData(item.children, item.key, newObj.depth)
-                }
-            })
-        })
-        let timer = setTimeout(() => {
-            const { newData } = this.state
-            const len = newData.length
-            for (let i = 0; i < len; i++) {
-                const data = newData[i]
-                const key = data.key
-                const arr = []
-                for (let j = 0; j < len; j++) {
-                    const data = newData[j]
-                    if (key === data.parent) {
-                        arr.push(data.key)
-                    }
-                }
-                data.children = arr
+            // this.setState({
+            // newData: this.initialArr
+            // }, () => {
+            if (item.children && item.children.length) {
+                const newObj = cloneDeep(obj)
+                newObj.depth += 1
+                this.handleData(item.children, item.key, newObj.depth)
             }
-            this.setState({
-                newData
-            }, () => {
-                // 确定父子关系 保证节点顺序
-                const arr = []
-                const { newData } = this.state
-                const depthArr = newData.map((item, index) => {
-                    if (item.depth === this.depthStatistics) {
-                        arr.push(item)
-                    }
-                    return item.depth
-                })
-                // 找出最大值
-                const maxVal = this.bubbleSort(depthArr)[depthArr.length - 1]
-
-                this.debounce(this.sequenceAdjustment.bind(this, newData, arr, maxVal), 800)()
-            })
-        }, 800)
+            // })
+        })
+        return this.initialArr
     }
+
+    preHandle = (result) => {
+        const len = result.length
+        for (let i = 0; i < len; i++) {
+            const data = result[i]
+            const key = data.key
+            const arr = []
+            for (let j = 0; j < len; j++) {
+                const data = result[j]
+                if (key === data.parent) {
+                    arr.push(data.key)
+                }
+            }
+            data.children = arr
+        }
+        // 确定父子关系 保证节点顺序
+        const arr = []
+        const depthArr = result.map((item, index) => {
+            if (item.depth === this.depthStatistics) {
+                arr.push(item)
+            }
+            return item.depth
+        })
+        // 找出最大值
+        const maxVal = this.bubbleSort(depthArr)[depthArr.length - 1]
+
+        this.debounce(this.sequenceAdjustment.bind(this, result, arr, maxVal), 800)()
+    }
+
 
     bubbleSort = (arr) => {
         for (let i = 0, l = arr.length; i < l - 1; i++) {
@@ -258,25 +273,21 @@ export default class Tree extends Component {
         })
         console.log(newArr, 'sequenceAdjustment')
         if (maxVal === this.depthStatistics) {
-            this.setState({
-                newData: newArr
-            }, () => {
-                // 渲染时 处理父级节点选择状态 逐级递归
-                this.renderInitial(maxVal)
-            })
+            // 渲染时 处理父级节点选择状态 逐级递归
+            this.renderInitial(maxVal, newArr)
         }
         if (this.depthStatistics <= maxVal - 1) {
             this.sequenceAdjustment(newData, newArr, maxVal)
         }
     }
 
-    renderInitial = (depth) => {
-        const { newData } = this.state
-        newData.some((item, index) => {
+    renderInitial = (depth, result) => {
+        // const { newData } = this.state
+        result.some((item, index) => {
             if (item.depth === depth && item.children.length) {
                 const newArr = []
                 item.children.some((mome, key) => {
-                    newData.some((data, subIndex) => {
+                    result.some((data, subIndex) => {
                         if (data.key === mome) {
                             newArr.push(data.checked)
                             return true
@@ -289,13 +300,14 @@ export default class Tree extends Component {
                 item.checked = checkedState === 'all' ? true : false
             }
         })
-        this.setState({
-            newData
-        }, () => {
-            if (depth === 0) return
-            depth--
-            this.renderInitial(depth)
-        })
+        if (depth === 0) {
+            this.setState({
+                newData: result
+            })
+            return
+        }
+        depth--
+        this.renderInitial(depth, result)
     }
 
     renderLayout = (newData) => {
