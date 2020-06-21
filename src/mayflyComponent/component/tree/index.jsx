@@ -186,18 +186,15 @@ export default class Tree extends Component {
             obj.parent = parent
             obj.depth = depth
             obj.state = ''
+            obj.folded = false  // 是否折叠
             arr.push(obj)
 
             this.initialArr.push(obj)
-            // this.setState({
-            // newData: this.initialArr
-            // }, () => {
             if (item.children && item.children.length) {
                 const newObj = cloneDeep(obj)
                 newObj.depth += 1
                 this.handleData(item.children, item.key, newObj.depth)
             }
-            // })
         })
         return this.initialArr
     }
@@ -226,10 +223,8 @@ export default class Tree extends Component {
         })
         // 找出最大值
         const maxVal = this.bubbleSort(depthArr)[depthArr.length - 1]
-
         this.debounce(this.sequenceAdjustment.bind(this, result, arr, maxVal), 800)()
     }
-
 
     bubbleSort = (arr) => {
         for (let i = 0, l = arr.length; i < l - 1; i++) {
@@ -281,8 +276,35 @@ export default class Tree extends Component {
         }
     }
 
+    handleFold = (item) => {
+        const { folded, children } = item
+        const { newData } = this.state
+        const data = cloneDeep(newData)
+        if (children.length) {
+            this.subHandleFold(children, data, folded)
+        }
+    }
+
+    subHandleFold = (children, data, folded) => {
+        children.forEach(memo => {
+            data.some((subMemo, subIndex) => {
+                if (subMemo.key === memo) {
+                    subMemo.folded = folded
+                    data.splice(subIndex, 1, subMemo)
+                    this.setState({
+                        newArr: data
+                    }, () => {
+                        if (subMemo.children.length) {
+                            this.subHandleFold(subMemo.children, data, folded)
+                        }
+                    })
+                }
+                return true
+            })
+        })
+    }
+
     renderInitial = (depth, result) => {
-        // const { newData } = this.state
         result.some((item, index) => {
             if (item.depth === depth && item.children.length) {
                 const newArr = []
@@ -314,14 +336,14 @@ export default class Tree extends Component {
         console.log(newData, 'newData-newData')
         return newData.map((item, index) => {
             const className = item.depth ? `ml${item.depth}0` : ''
-            const key = item.key
             return (
-                <div className={className} key={index}>
-                    {item.state === 'semi' ? <span>semi</span> : null}
-                    <input type="checkbox" checked={item.checked}
-                        onChange={e => this.changeState(e, item)}/>
-                    <span className="ml8">{item.title}</span>
-                </div>
+                {!item.folded?<div className={className} key={index} onClick={this.handleFold.bind(this, item)}>
+                <span>{item.state === 'semi' ? semi: ''}</span>
+                <input type="checkbox" checked={item.checked}
+                    onChange={e => this.changeState(e, item)}/>
+                <span className="ml8">{item.title}</span>
+            </div>:<div></div>}
+               
             )
         })
     }

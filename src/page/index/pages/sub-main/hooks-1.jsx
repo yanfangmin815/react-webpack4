@@ -260,6 +260,7 @@ const ConcentFnPage = React.memo(function(props) {
             <input data-key="keyword" value={keyword} onChange={sync('keyword')} />
             <button onClick={refreshButon.bind(this)}>refresh</button>
             <button onClick={resetButton.bind(this, 'BBBBBBBB')}>button</button>
+            <button style={{ display: 'none' }}>button-1</button>
         </div>
     );
 });
