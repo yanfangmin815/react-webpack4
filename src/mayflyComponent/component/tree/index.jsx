@@ -343,7 +343,6 @@ export default class Tree extends Component {
                     onChange={e => this.changeState(e, item)}/>
                 <span className="ml8">{item.title}</span>
             </div>:<div></div>}
-               
             )
         })
     }
