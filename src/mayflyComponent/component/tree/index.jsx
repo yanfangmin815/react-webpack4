@@ -187,6 +187,7 @@ export default class Tree extends Component {
             obj.depth = depth
             obj.state = ''
             obj.folded = false  // 是否折叠
+            obj.subFolded = false  // 子项是否折叠
             arr.push(obj)
 
             this.initialArr.push(obj)
@@ -276,13 +277,25 @@ export default class Tree extends Component {
         }
     }
 
-    handleFold = (item) => {
-        const { folded, children } = item
+    handleFold(item) {
+        const { children, key, subFolded } = item
         const { newData } = this.state
         const data = cloneDeep(newData)
-        if (children.length) {
-            this.subHandleFold(children, data, folded)
-        }
+        const antiFolded = !subFolded
+        data.some((memo, index) => {
+            if (memo.key === key && children.length) {
+                memo.subFolded = !subFolded
+                data.splice(index, 1, memo)
+                this.setState({
+                    newData: data
+                }, () => {
+                    if (children.length) {
+                        this.subHandleFold(children, data, antiFolded)
+                    }
+                })
+                return true
+            }
+        })
     }
 
     subHandleFold = (children, data, folded) => {
@@ -294,12 +307,12 @@ export default class Tree extends Component {
                     this.setState({
                         newArr: data
                     }, () => {
-                        if (subMemo.children.length) {
+                        if (subMemo.children.length && !subMemo.subFolded) {
                             this.subHandleFold(subMemo.children, data, folded)
                         }
                     })
+                    return true
                 }
-                return true
             })
         })
     }
@@ -336,14 +349,12 @@ export default class Tree extends Component {
         console.log(newData, 'newData-newData')
         return newData.map((item, index) => {
             const className = item.depth ? `ml${item.depth}0` : ''
-            return (
-                {!item.folded?<div className={className} key={index} onClick={this.handleFold.bind(this, item)}>
-                <span>{item.state === 'semi' ? semi: ''}</span>
-                <input type="checkbox" checked={item.checked}
-                    onChange={e => this.changeState(e, item)}/>
+            return !item.folded ? <div className={className} key={index} onClick={this.handleFold.bind(this, item)}>
+                <span>{item.state === 'semi' ? 'semi' : ''}</span>
+                <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
                 <span className="ml8">{item.title}</span>
-            </div>:<div></div>}
-            )
+            </div> : null
+
         })
     }
 
