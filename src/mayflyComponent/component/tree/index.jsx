@@ -476,9 +476,7 @@ export default class Tree extends Component {
         return (
             <div>
                 {/* 每个节点 -- start */}
-                <div>
-                    {this.renderLayout(newData)}
-                </div>
+                {this.renderLayout(newData)}
                 {/* 每个节点 -- end */}
             </div>
         );
