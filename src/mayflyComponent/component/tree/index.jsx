@@ -10,6 +10,9 @@ export default class Tree extends Component {
         this.tops = ''
         this.bottoms = ''
         this.disY = ''
+        this.height = ''
+        this.position = ''
+        this.item = ''
         this.state = {
             _Tree: this.props.data || [
                 {
@@ -349,26 +352,42 @@ export default class Tree extends Component {
         this.renderInitial(depth, result)
     }
 
-    mouseEvent(e) {
+    mouseDownEvent(e) {
         const top = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop
         this.disY = e.clientY - top
     }
 
     dragTarget(e, item) {
-        const height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
+        this.height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
         this.tops = e.clientY - this.disY
-        this.bottoms = Number(this.tops) + Number(height)
-
-        // console.log(e.target.className.split(' ')[1])
-        // console.log(document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop, 'dragTarget')
-        // const height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
-        // const top = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop
-        // this.tops = Number(e.clientY) - height
-        // this.bottoms = Number(this.tops) + Number(document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight)
+        this.bottoms = Number(this.tops) + Number(this.height)
+        this.item = item
     }
 
     dropTarget(e, item) {
-        // console.log(item, 'dropTarget')
+        console.log(this.position, item, this.item, 'dropTarget')
+        const position = this.position
+        const { newData } = this.state
+        const deepData = cloneDeep(newData)
+        if (position === 'up') {
+            deepData.some((memo, index) => {
+                if (memo.key === this.item.key) {
+                    this.item.depth = item.depth
+                    this.item.parent = item.parent
+                    deepData.splice(index, 1)
+                    return true
+                }
+            })
+            deepData.some((memo, index) => {
+                if (memo.key === item.key) {
+                    deepData.splice(index, 0, this.item)
+                    return true
+                }
+            })
+            this.setState({
+                newData: deepData
+            })
+        }
     }
 
     onDragOverTarget(e, item) {
@@ -379,28 +398,28 @@ export default class Tree extends Component {
         console.log(this.tops, this.bottoms, top, bottom, e.target.innerHTML, 'onDragOverTarget')
         if (this.bottoms - bottom >= 3 && this.bottoms - bottom <= 19) {
             console.log('到了下面')
+            this.position = 'below'
         }
         if (top - this.tops >= 6 && top - this.tops <= 19) {
             console.log('在上面了')
+            this.position = 'up'
         }
         if (top - this.tops < 6 && this.bottoms - bottom < 3) {
             console.log('在中间')
+            this.position = 'middle'
         }
-        // console.log(e.pageY, this.tops, 'onDragOverTarget')
     }
 
     renderLayout = (newData) => {
         console.log(newData, 'newData-newData')
         return newData.map((item, index) => {
             const className = item.depth ? `ml${item.depth}0` : ''
-            return !item.folded ? <div className={className} key={index}
-                style={{ padding: '0 0 10px 0' }}
-                onClick={this.handleFold.bind(this, item)}>
+            return !item.folded ? <div className={className} key={index} onClick={this.handleFold.bind(this, item)}>
                 <span>{item.state === 'semi' ? 'semi' : ''}</span>
                 <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
                 <span className={['ml8', `ml${item.key}`].join(' ')}
-                    style={{ backgroundColor: 'red' }}
-                    onMouseDown={(e) => this.mouseEvent(e)}
+                    style={{ display: 'inline-block', height: '24px', lineHeight: '24px' }}
+                    onMouseDown={(e) => this.mouseDownEvent(e)}
                     onMouseUp={() => { document.onmousemove = null }}
                     draggable={true}
                     onDrag={(e) => this.dragTarget(e, item)}
