@@ -365,25 +365,26 @@ export default class Tree extends Component {
     }
 
     dropTarget(e, item) {
-        console.log(this.position, item, this.item, 'dropTarget')
+        // console.log(this.position, item, this.item, 'dropTarget')
         const position = this.position
         const { newData } = this.state
         const deepData = cloneDeep(newData)
         if (position === 'up') {
-            deepData.some((memo, index) => {
-                if (memo.key === this.item.key) {
-                    this.item.depth = item.depth
-                    this.item.parent = item.parent
-                    deepData.splice(index, 1)
-                    return true
-                }
-            })
-            deepData.some((memo, index) => {
-                if (memo.key === item.key) {
-                    deepData.splice(index, 0, this.item)
-                    return true
-                }
-            })
+            if (this.item.children.length) {
+                const arr = deepData.some((memo) => {
+                    if (memo.parent === this.item.parent) {
+                        return memo
+                    }
+                })
+                console.log(arr, '>??????????????>>>>>>>>')
+            } else {
+                const targetIndex = deepData.findIndex((memo) => memo.key === this.item.key)
+                this.item.depth = item.depth
+                this.item.parent = item.parent
+                deepData.splice(targetIndex, 1)
+                const targetItemIndex = deepData.findIndex((memo) => memo.key === item.key)
+                deepData.splice(targetItemIndex, 0, this.item)
+            }
             this.setState({
                 newData: deepData
             })
