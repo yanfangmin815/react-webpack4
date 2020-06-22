@@ -307,6 +307,7 @@ export default class Tree extends Component {
                     this.setState({
                         newArr: data
                     }, () => {
+                        // 维持枝节点折叠状态
                         if (subMemo.children.length && !subMemo.subFolded) {
                             this.subHandleFold(subMemo.children, data, folded)
                         }
