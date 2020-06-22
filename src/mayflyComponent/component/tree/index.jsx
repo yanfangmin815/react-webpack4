@@ -7,6 +7,9 @@ export default class Tree extends Component {
         this.depthStatistics = 0
         this.initialArr = []
         this.timer = null
+        this.tops = ''
+        this.bottoms = ''
+        this.disY = ''
         this.state = {
             _Tree: this.props.data || [
                 {
@@ -240,7 +243,7 @@ export default class Tree extends Component {
         return arr
     }
 
-    // 防抖
+    // 防抖--应用于自调用函数
     debounce = (fn, delay) => {
         return () => {
             if (this.timer) {
@@ -267,7 +270,7 @@ export default class Tree extends Component {
                 newArr = [...newArr.slice(0, indexes + 1), ...con, ...newArr.slice(indexes + 1)]
             }
         })
-        console.log(newArr, 'sequenceAdjustment')
+        // console.log(newArr, 'sequenceAdjustment')
         if (maxVal === this.depthStatistics) {
             // 渲染时 处理父级节点选择状态 逐级递归
             this.renderInitial(maxVal, newArr)
@@ -346,16 +349,64 @@ export default class Tree extends Component {
         this.renderInitial(depth, result)
     }
 
+    mouseEvent(e) {
+        const top = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop
+        this.disY = e.clientY - top
+    }
+
+    dragTarget(e, item) {
+        const height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
+        this.tops = e.clientY - this.disY
+        this.bottoms = Number(this.tops) + Number(height)
+
+        // console.log(e.target.className.split(' ')[1])
+        // console.log(document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop, 'dragTarget')
+        // const height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
+        // const top = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop
+        // this.tops = Number(e.clientY) - height
+        // this.bottoms = Number(this.tops) + Number(document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight)
+    }
+
+    dropTarget(e, item) {
+        // console.log(item, 'dropTarget')
+    }
+
+    onDragOverTarget(e, item) {
+        e.preventDefault();
+        const top = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop
+        const height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
+        const bottom = Number(top) + Number(height)
+        console.log(this.tops, this.bottoms, top, bottom, e.target.innerHTML, 'onDragOverTarget')
+        if (this.bottoms - bottom >= 3 && this.bottoms - bottom <= 19) {
+            console.log('到了下面')
+        }
+        if (top - this.tops >= 6 && top - this.tops <= 19) {
+            console.log('在上面了')
+        }
+        if (top - this.tops < 6 && this.bottoms - bottom < 3) {
+            console.log('在中间')
+        }
+        // console.log(e.pageY, this.tops, 'onDragOverTarget')
+    }
+
     renderLayout = (newData) => {
         console.log(newData, 'newData-newData')
         return newData.map((item, index) => {
             const className = item.depth ? `ml${item.depth}0` : ''
-            return !item.folded ? <div className={className} key={index} onClick={this.handleFold.bind(this, item)}>
+            return !item.folded ? <div className={className} key={index}
+                style={{ padding: '0 0 10px 0' }}
+                onClick={this.handleFold.bind(this, item)}>
                 <span>{item.state === 'semi' ? 'semi' : ''}</span>
                 <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
-                <span className="ml8">{item.title}</span>
+                <span className={['ml8', `ml${item.key}`].join(' ')}
+                    style={{ backgroundColor: 'red' }}
+                    onMouseDown={(e) => this.mouseEvent(e)}
+                    onMouseUp={() => { document.onmousemove = null }}
+                    draggable={true}
+                    onDrag={(e) => this.dragTarget(e, item)}
+                    onDragOver={(e) => this.onDragOverTarget(e, item)}
+                    onDrop={(e) => this.dropTarget(e, item)}>{item.title}</span>
             </div> : null
-
         })
     }
 
@@ -408,7 +459,7 @@ export default class Tree extends Component {
 
     handleCheckedStateParents = (brotherNode, monomer) => {
         // 同级选择状态
-        console.log(brotherNode, monomer, '改变父节点选择状态')
+        // console.log(brotherNode, monomer, '改变父节点选择状态')
         const { newData } = this.state
         const checkedState = this.getCheckedState(brotherNode)
         const parent = monomer.parent
