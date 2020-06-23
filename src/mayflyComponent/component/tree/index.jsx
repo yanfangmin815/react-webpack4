@@ -409,11 +409,9 @@ export default class Tree extends Component {
             let targetItemIndex = deepData.findIndex((memo) => memo.key === item.key)
             targetItemIndex = type === 'up' ? targetItemIndex : targetItemIndex + 1
             deepData.splice(targetItemIndex, 0, this.item)
-            if (disVal) {
-                const parent = deepData.find(item => item.key === this.item.parent)
-                const key = this.item.key
-                parent && parent.children.push(key)
-            }
+            const parent = deepData.find(item => item.key === this.item.parent)
+            const key = this.item.key
+            parent && parent.children.push(key)
         }
         this.setState({
             newData: deepData
