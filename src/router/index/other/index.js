@@ -9,46 +9,46 @@ import loadable from '@/assets/utils/loadable'
 const otherMainRouters = [
     {
         // 其他页面-1
-        path:'/other-page',
-        component:Loadable({
-            loader:() => import('@/page/index/pages/main/page1.jsx'),
-            loading:() => ('')
+        path: '/other-page',
+        component: Loadable({
+            loader: () => import('@/page/index/pages/main/page1.jsx'),
+            loading: () => ('')
         }),
         title: '其他页面'
     },
     {
         // hooks页面
-        path:'/other-hooks',
-        component:Loadable({
-            loader:() => import('@/page/index/pages/sub-main/hooks.jsx'),
-            loading:() => ('')
+        path: '/other-hooks',
+        component: Loadable({
+            loader: () => import('@/page/index/pages/sub-main/hooks.jsx'),
+            loading: () => ('')
         }),
-        title: 'hooks页面'
+        title: 'hooks测试页面'
     },
     {
         // hooks页面
-        path:'/other-hooks-1',
-        component:Loadable({
-            loader:() => import('@/page/index/pages/sub-main/hooks-1.jsx'),
-            loading:() => ('')
+        path: '/other-hooks-1',
+        component: Loadable({
+            loader: () => import('@/page/index/pages/sub-main/hooks-1.jsx'),
+            loading: () => ('')
         }),
-        title: 'hooks-1页面'
+        title: 'hooks-1测试页面'
     },
     {
         // 多语言测试页面
-        path:'/multi-language',
-        component:Loadable({
-            loader:() => import('@/page/index/list/sub-item/multi-language.jsx'),
-            loading:() => ('')
+        path: '/multi-language',
+        component: Loadable({
+            loader: () => import('@/page/index/list/sub-item/multi-language.jsx'),
+            loading: () => ('')
         }),
         title: '多语言测试页面'
     },
     {
         // 多语言测试页面
-        path:'/ast-test-1',
-        component:Loadable({
-            loader:() => import('@/page/index/pages/sub-main/ast-test-1.jsx'),
-            loading:() => ('')
+        path: '/ast-test-1',
+        component: Loadable({
+            loader: () => import('@/page/index/pages/sub-main/ast-test-1.jsx'),
+            loading: () => ('')
         }),
         title: 'ast-test-1'
     }
@@ -61,13 +61,13 @@ const otherMainRouters = [
  */
 const otherSubRouters = [
     {
-        /*// React hash 模式路由实现的手段
+        /* // React hash 模式路由实现的手段
         path:'/other-page',
-        component:loadable('/pages/main/page1')*/
+        component:loadable('/pages/main/page1') */
     }
 ];
 
-export  {
+export {
     otherMainRouters,
     otherSubRouters
 }

@@ -285,42 +285,45 @@ export default class Tree extends Component {
 
     handleFold(item) {
         const { children, key, subFolded } = item
+        if (!children.length) return
         const { newData } = this.state
         const data = cloneDeep(newData)
         const antiFolded = !subFolded
-        data.some((memo, index) => {
-            if (memo.key === key && children.length) {
-                memo.subFolded = !subFolded
-                data.splice(index, 1, memo)
-                this.setState({
-                    newData: data
-                }, () => {
-                    if (children.length) {
-                        this.subHandleFold(children, data, antiFolded)
-                    }
-                })
-                return true
+        // data.some((memo, index) => {
+        const index = data.findIndex(memo => memo.key === key && children.length)
+        // if (memo.key === key && children.length) {
+        data[index].subFolded = !subFolded
+        data.splice(index, 1, data[index])
+        this.setState({
+            newData: data
+        }, () => {
+            if (children.length) {
+                this.subHandleFold(children, data, antiFolded)
             }
         })
+        //         return true
+        //     }
+        // })
     }
 
     subHandleFold = (children, data, folded) => {
         children.forEach(memo => {
-            data.some((subMemo, subIndex) => {
-                if (subMemo.key === memo) {
-                    subMemo.folded = folded
-                    data.splice(subIndex, 1, subMemo)
-                    this.setState({
-                        newArr: data
-                    }, () => {
-                        // 维持枝节点折叠状态
-                        if (subMemo.children.length && !subMemo.subFolded) {
-                            this.subHandleFold(subMemo.children, data, folded)
-                        }
-                    })
-                    return true
+            // data.some((subMemo, subIndex) => {
+            const subIndex = data.findIndex(subMemo => subMemo.key === memo)
+            // if (subMemo.key === memo) {
+            data[subIndex].folded = folded
+            data.splice(subIndex, 1, data[subIndex])
+            this.setState({
+                newArr: data
+            }, () => {
+                // 维持枝节点折叠状态
+                if (data[subIndex].children.length && !data[subIndex].subFolded) {
+                    this.subHandleFold(data[subIndex].children, data, folded)
                 }
             })
+            //         return true
+            //     }
+            // })
         })
     }
 
@@ -369,13 +372,14 @@ export default class Tree extends Component {
         const position = this.position
         const { newData } = this.state
         const deepData = cloneDeep(newData)
+        const that = this
         if (position === 'up') {
             if (this.item.children.length) {
-                const arr = deepData.some((memo) => {
-                    if (memo.parent === this.item.parent) {
-                        return memo
-                    }
-                })
+                const arr = []
+                for (let i = 0; i < deepData.length; i++) {
+                    const memo = deepData[i]
+                    memo.parent === that.item.parent && arr.push(memo)
+                }
                 console.log(arr, '>??????????????>>>>>>>>')
             } else {
                 const targetIndex = deepData.findIndex((memo) => memo.key === this.item.key)
