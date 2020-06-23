@@ -375,7 +375,7 @@ export default class Tree extends Component {
         this.item = item
     }
 
-    droplogic = (deepData, disVal, item, type) => {
+    dropLogic = (deepData, disVal, item, type) => {
         const that = this
         if (this.item.children.length) {
             const index = deepData.findIndex(memo => memo.key === this.item.key)
