@@ -112,12 +112,25 @@ export default class Tree extends Component {
                             children: [
                                 {
                                     key: '3-1-0',
-                                    title: '3-grand-grand-child-0',
-                                    checked: true
+                                    title: '3-grand-child-0',
+                                    checked: true,
+                                    children: [
+                                        {
+                                            key: '3-1-0-0',
+                                            title: '3-grand-grand-child-0',
+                                            checked: true,
+
+                                        },
+                                        {
+                                            key: '3-1-0-1',
+                                            title: '3-grand-grand-child-1',
+                                            checked: true
+                                        }
+                                    ]
                                 },
                                 {
                                     key: '3-1-1',
-                                    title: '3-grand-grand-child-1',
+                                    title: '3-grand-child-1',
                                     checked: true
                                 }
                             ]
@@ -308,9 +321,7 @@ export default class Tree extends Component {
 
     subHandleFold = (children, data, folded) => {
         children.forEach(memo => {
-            // data.some((subMemo, subIndex) => {
             const subIndex = data.findIndex(subMemo => subMemo.key === memo)
-            // if (subMemo.key === memo) {
             data[subIndex].folded = folded
             data.splice(subIndex, 1, data[subIndex])
             this.setState({
@@ -321,9 +332,6 @@ export default class Tree extends Component {
                     this.subHandleFold(data[subIndex].children, data, folded)
                 }
             })
-            //         return true
-            //     }
-            // })
         })
     }
 
@@ -368,19 +376,43 @@ export default class Tree extends Component {
     }
 
     dropTarget(e, item) {
-        // console.log(this.position, item, this.item, 'dropTarget')
+        console.log(this.position, item, this.item, 'dropTarget')
         const position = this.position
         const { newData } = this.state
         const deepData = cloneDeep(newData)
         const that = this
+        let disVal = Number(item.depth) - Number(this.item.depth)
+        // disVal -> 跨层级拖拽 -> 旧父节点需移除此item对应之key -> 新父节点添加此item之key
+        // if (disVal) {
+        const key = that.item.key
+        const parent = deepData.find(item => item.key === that.item.parent)
+        const index = parent.children.findIndex(item => item === key)
+        parent && parent.children.splice(index, 1)
+        // }
         if (position === 'up') {
             if (this.item.children.length) {
+                const index = deepData.findIndex(memo => memo.key === this.item.key)
+                const itemIndex = deepData.findIndex(memo => memo.key === item.key)
+                // 获取当前被拖拽节点并其子节点
                 const arr = []
-                for (let i = 0; i < deepData.length; i++) {
+                for (let i = index; i < deepData.length; i++) {
                     const memo = deepData[i]
-                    memo.parent === that.item.parent && arr.push(memo)
+                    if (arr.length && memo.depth === that.item.depth) break
+                    memo.depth = Number(memo.depth) + disVal
+                    arr.push(memo)
                 }
-                console.log(arr, '>??????????????>>>>>>>>')
+                // 更新parent
+                arr[0].parent = item.parent
+                // 向父节点添加此item之key
+                const parent = deepData.find(item => item.key === arr[0].parent)
+                const key = arr[0].key
+                parent && parent.children.push(key)
+                // 先删再添
+                arr.map((single, key) => {
+                    const index = deepData.findIndex(item => item.key === single.key)
+                    deepData.splice(index, 1)
+                })
+                deepData.splice(itemIndex, 0, ...arr)
             } else {
                 const targetIndex = deepData.findIndex((memo) => memo.key === this.item.key)
                 this.item.depth = item.depth
@@ -388,6 +420,53 @@ export default class Tree extends Component {
                 deepData.splice(targetIndex, 1)
                 const targetItemIndex = deepData.findIndex((memo) => memo.key === item.key)
                 deepData.splice(targetItemIndex, 0, this.item)
+                if (disVal) {
+                    const parent = deepData.find(item => item.key === this.item.parent)
+                    const key = this.item.key
+                    parent && parent.children.push(key)
+                }
+            }
+            this.setState({
+                newData: deepData
+            })
+        }
+        else if (position === 'below') {
+            if (this.item.children.length) {
+                const index = deepData.findIndex(memo => memo.key === this.item.key)
+                const itemIndex = deepData.findIndex(memo => memo.key === item.key)
+                // 获取当前被拖拽节点并其子节点
+                const arr = []
+                for (let i = index; i < deepData.length; i++) {
+                    const memo = deepData[i]
+                    if (arr.length && memo.depth === that.item.depth) break
+                    memo.depth = Number(memo.depth) + disVal
+                    arr.push(memo)
+                }
+                // 更新parent
+                arr[0].parent = item.parent
+                // 向父节点添加此item之key
+                const parent = deepData.find(item => item.key === arr[0].parent)
+                const key = arr[0].key
+                parent && parent.children.push(key)
+                // 先删再添之删除
+                arr.map((single, key) => {
+                    const index = deepData.findIndex(item => item.key === single.key)
+                    deepData.splice(index, 1)
+                })
+                // 先删再添之添加
+                deepData.splice(itemIndex + 1, 0, ...arr)
+            } else {
+                const targetIndex = deepData.findIndex((memo) => memo.key === this.item.key)
+                this.item.depth = item.depth
+                this.item.parent = item.parent
+                deepData.splice(targetIndex, 1)
+                const targetItemIndex = deepData.findIndex((memo) => memo.key === item.key)
+                deepData.splice(targetItemIndex + 1, 0, this.item)
+                if (disVal) {
+                    const parent = deepData.find(item => item.key === this.item.parent)
+                    const key = this.item.key
+                    parent && parent.children.push(key)
+                }
             }
             this.setState({
                 newData: deepData
