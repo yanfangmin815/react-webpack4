@@ -434,7 +434,7 @@ export default class Tree extends Component {
         parent && parent.children.splice(index, 1)
 
         if (position === 'up') {
-            this.droplogic(deepData, disVal, item, 'up')
+            this.dropLogic(deepData, disVal, item, 'up')
             // if (this.item.children.length) {
             //     const index = deepData.findIndex(memo => memo.key === this.item.key)
             //     const itemIndex = deepData.findIndex(memo => memo.key === item.key)
@@ -476,7 +476,7 @@ export default class Tree extends Component {
             // })
         }
         else if (position === 'below') {
-            this.droplogic(deepData, disVal, item, 'below')
+            this.dropLogic(deepData, disVal, item, 'below')
             // if (this.item.children.length) {
             //     const index = deepData.findIndex(memo => memo.key === this.item.key)
             //     const itemIndex = deepData.findIndex(memo => memo.key === item.key)
