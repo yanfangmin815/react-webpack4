@@ -5,6 +5,7 @@ import { Table, Tree } from '@/mayflyComponent'
 import './hooks.css'
 import setup from './public'
 import '@/mayflyComponent/component/table/style/css.js';
+import '@/mayflyComponent/component/tree/style/css.js';
 
 // import("./public").then(() => {
 //     console.log(12345678)

@@ -207,6 +207,8 @@ export default class Tree extends Component {
             obj.state = ''
             obj.folded = false  // 是否折叠
             obj.subFolded = false  // 子项是否折叠
+            obj.upLine = false  // 上方border
+            obj.belowLine = false  // 下方border
             arr.push(obj)
 
             this.initialArr.push(obj)
@@ -377,9 +379,9 @@ export default class Tree extends Component {
 
     dropLogic = (deepData, disVal, item, type) => {
         const that = this
+        let itemIndex = deepData.findIndex(memo => memo.key === item.key)
         if (this.item.children.length) {
             const index = deepData.findIndex(memo => memo.key === this.item.key)
-            let itemIndex = deepData.findIndex(memo => memo.key === item.key)
             // 获取当前被拖拽节点并其子节点
             const arr = []
             for (let i = index; i < deepData.length; i++) {
@@ -399,30 +401,55 @@ export default class Tree extends Component {
                 const index = deepData.findIndex(item => item.key === single.key)
                 deepData.splice(index, 1)
             })
-            itemIndex = type === 'up' ? itemIndex : itemIndex + 1
-            deepData.splice(itemIndex, 0, ...arr)
+            if (type === 'up') {
+                deepData.splice(itemIndex, 0, ...arr)
+            } else if (type === 'below') {
+                item.children.length && this.handleDeepData(deepData, item, itemIndex, arr)
+                !item.children.length && deepData.splice(itemIndex + 1, 0, ...arr)
+            }
         } else {
             const targetIndex = deepData.findIndex((memo) => memo.key === this.item.key)
             this.item.depth = item.depth
             this.item.parent = item.parent
             deepData.splice(targetIndex, 1)
-            let targetItemIndex = deepData.findIndex((memo) => memo.key === item.key)
-            targetItemIndex = type === 'up' ? targetItemIndex : targetItemIndex + 1
-            deepData.splice(targetItemIndex, 0, this.item)
+            if (type === 'up') {
+                deepData.splice(itemIndex, 0, this.item)
+            } else if (type === 'below') {
+                item.children.length && this.handleDeepData(deepData, item, itemIndex, [this.item])
+                !item.children.length && deepData.splice(itemIndex + 1, 0, this.item)
+            }
             const parent = deepData.find(item => item.key === this.item.parent)
             const key = this.item.key
             parent && parent.children.push(key)
         }
+        item.belowLine = false
+        item.upLine = false
+        deepData.splice(itemIndex, 1, item)
         this.setState({
             newData: deepData
         })
+    }
+
+    handleDeepData = (deepData, item, index, arr) => {
+        const len = deepData.length
+        for (let i = index; i < len; i++) {
+            const memo = deepData[i]
+            if (memo.depth === item.depth && i < len - 1 && memo.key !== item.key) {
+                deepData.splice(i, 0, ...arr)
+                break
+            }
+            if (i === len - 1 && memo.depth > item.depth) {
+                deepData.splice(i + 1, 0, ...arr)
+                break
+            }
+        }
     }
 
     dropTarget(e, item) {
         // console.log(this.position, item, this.item, 'dropTarget')
         const position = this.position
         const { newData } = this.state
-        const deepData = cloneDeep(newData)
+        let deepData = cloneDeep(newData)
         const that = this
         let disVal = Number(item.depth) - Number(this.item.depth)
         // disVal -> 跨层级拖拽 -> 旧父节点需移除此item对应之key -> 新父节点添加此item之key
@@ -520,6 +547,7 @@ export default class Tree extends Component {
 
     onDragOverTarget(e, item) {
         e.preventDefault();
+        const { newData } = this.state
         const top = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop
         const height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
         const bottom = Number(top) + Number(height)
@@ -527,15 +555,35 @@ export default class Tree extends Component {
         if (this.bottoms - bottom >= 3 && this.bottoms - bottom <= 19) {
             console.log('到了下面')
             this.position = 'below'
+            item.belowLine = true
+            item.upLine = false
         }
         if (top - this.tops >= 6 && top - this.tops <= 19) {
             console.log('在上面了')
             this.position = 'up'
+            item.belowLine = false
+            item.upLine = true
         }
         if (top - this.tops < 6 && this.bottoms - bottom < 3) {
             console.log('在中间')
             this.position = 'middle'
         }
+        let itemIndex = newData.findIndex(memo => memo.key === item.key)
+        newData.splice(itemIndex, 1, item)
+        this.setState({
+            newData
+        })
+    }
+
+    onDragLeaveTarget(e, item) {
+        const { newData } = this.state
+        item.belowLine = false
+        item.upLine = false
+        let itemIndex = newData.findIndex(memo => memo.key === item.key)
+        newData.splice(itemIndex, 1, item)
+        this.setState({
+            newData
+        })
     }
 
     renderLayout = (newData) => {
@@ -545,14 +593,18 @@ export default class Tree extends Component {
             return !item.folded ? <div className={className} key={index} onClick={this.handleFold.bind(this, item)}>
                 <span>{item.state === 'semi' ? 'semi' : ''}</span>
                 <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
-                <span className={['ml8', `ml${item.key}`].join(' ')}
-                    style={{ display: 'inline-block', height: '24px', lineHeight: '24px' }}
-                    onMouseDown={(e) => this.mouseDownEvent(e)}
-                    onMouseUp={() => { document.onmousemove = null }}
-                    draggable={true}
-                    onDrag={(e) => this.dragTarget(e, item)}
-                    onDragOver={(e) => this.onDragOverTarget(e, item)}
-                    onDrop={(e) => this.dropTarget(e, item)}>{item.title}</span>
+                <span className={['ml8', `ml${item.key}`,
+                    'bor-t-opacity', 'bor-b-opacity',
+                    item.upLine ? 'border-tops' : '',
+                    item.belowLine ? 'border-bottoms' : 'border-bottoms'].join(' ')}
+                style={{ display: 'inline-block', height: '24px', lineHeight: '24px' }}
+                onMouseDown={(e) => this.mouseDownEvent(e)}
+                onMouseUp={() => { document.onmousemove = null }}
+                draggable={true}
+                onDrag={(e) => this.dragTarget(e, item)}
+                onDragOver={(e) => this.onDragOverTarget(e, item)}
+                onDragLeave={(e) => this.onDragLeaveTarget(e, item)}
+                onDrop={(e) => this.dropTarget(e, item)}>{item.title}</span>
             </div> : null
         })
     }

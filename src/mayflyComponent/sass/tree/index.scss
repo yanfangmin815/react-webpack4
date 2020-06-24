@@ -519,10 +519,16 @@ $space: 2;
     border-top: solid 1px;
 }
 
+.bor-b-opacity {
+    border-bottom: 2px solid transparent;
+}
+.bor-t-opacity {
+    border-top: 2px solid transparent;
+}
+
 .bor-b {
     border-bottom: solid 1px;
 }
-
 .bor-l {
     border-left: solid 1px;
 }
