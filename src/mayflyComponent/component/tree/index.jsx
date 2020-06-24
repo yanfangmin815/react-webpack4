@@ -595,8 +595,8 @@ export default class Tree extends Component {
                 <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
                 <span className={['ml8', `ml${item.key}`,
                     'bor-t-opacity', 'bor-b-opacity',
-                    item.upLine ? 'border-tops' : '',
-                    item.belowLine ? 'border-bottoms' : 'border-bottoms'].join(' ')}
+                    item.upLine ? 'border-top' : '',
+                    item.belowLine ? 'border-bottom' : ''].join(' ')}
                 style={{ display: 'inline-block', height: '24px', lineHeight: '24px' }}
                 onMouseDown={(e) => this.mouseDownEvent(e)}
                 onMouseUp={() => { document.onmousemove = null }}
