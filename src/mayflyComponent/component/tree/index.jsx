@@ -13,7 +13,7 @@ export default class Tree extends Component {
         this.height = ''
         this.position = ''
         this.item = ''
-        this.initialDepth = 1
+        this.initialDepth = 4
         this.state = {
             _Tree: this.props.data || [
                 {
@@ -394,7 +394,6 @@ export default class Tree extends Component {
 
     dropLogic = (deepData, disVal, item, type) => {
         const that = this
-        let itemIndex = deepData.findIndex(memo => memo.key === item.key)
         if (this.item.children.length) {
             const index = deepData.findIndex(memo => memo.key === this.item.key)
             // 获取当前被拖拽节点并其子节点
@@ -407,7 +406,7 @@ export default class Tree extends Component {
             }
             // 更新parent
             arr[0].parent = item.parent
-            // 向父节点添加此item之key
+            // 向父节点添加被拖拽item之key
             const parent = deepData.find(item => item.key === arr[0].parent)
             const key = arr[0].key
             parent && parent.children.push(key)
@@ -416,6 +415,8 @@ export default class Tree extends Component {
                 const index = deepData.findIndex(item => item.key === single.key)
                 deepData.splice(index, 1)
             })
+            let itemIndex = deepData.findIndex(memo => memo.key === item.key)
+
             if (type === 'up') {
                 deepData.splice(itemIndex, 0, ...arr)
             } else if (type === 'below') {
@@ -427,6 +428,8 @@ export default class Tree extends Component {
             this.item.depth = item.depth
             this.item.parent = item.parent
             deepData.splice(targetIndex, 1)
+            let itemIndex = deepData.findIndex(memo => memo.key === item.key)
+
             if (type === 'up') {
                 deepData.splice(itemIndex, 0, this.item)
             } else if (type === 'below') {
@@ -437,9 +440,12 @@ export default class Tree extends Component {
             const key = this.item.key
             parent && parent.children.push(key)
         }
+        let itemIndex = deepData.findIndex(memo => memo.key === item.key)
         item.belowLine = false
         item.upLine = false
+        item.onOver = false
         deepData.splice(itemIndex, 1, item)
+
         this.setState({
             newData: deepData
         })
@@ -469,6 +475,7 @@ export default class Tree extends Component {
         let disVal = Number(item.depth) - Number(this.item.depth)
         // disVal -> 跨层级拖拽 -> 旧父节点需移除此item对应之key -> 新父节点添加此item之key
         const key = that.item.key
+        const itemIndex = deepData.findIndex(memo => memo.key === this.item.key)
         const parent = deepData.find(item => item.key === that.item.parent)
         const index = parent.children.findIndex(item => item === key)
         parent && parent.children.splice(index, 1)
@@ -559,7 +566,49 @@ export default class Tree extends Component {
             // })
         }
         else if (position === 'middle') {
+            if (this.item.children.length) {
+                const index = deepData.findIndex(memo => memo.key === this.item.key)
+                // 获取当前被拖拽节点并其子节点
+                const arr = []
+                for (let i = index; i < deepData.length; i++) {
+                    const memo = deepData[i]
+                    if (arr.length && memo.depth === that.item.depth) break
+                    memo.depth = Number(memo.depth) + disVal + 1
+                    arr.push(memo)
+                }
+                // 更新parent
+                arr[0].parent = item.key
+                // 向父节点添加被拖拽item之key
+                item.children.push(key)
+                // 先删再添 之 删除
+                arr.map((single, key) => {
+                    const index = deepData.findIndex(item => item.key === single.key)
+                    deepData.splice(index, 1)
+                })
+                // 先删再添 之 添加
+                let itemIndex = deepData.findIndex(memo => memo.key === item.key)
+                item.children.length && this.handleDeepData(deepData, item, itemIndex, arr)
+                // 无子元素需单独讨论
+                !item.children.length && deepData.splice(itemIndex + 1, 0, ...arr)
+            } else {
+                const targetIndex = deepData.findIndex((memo) => memo.key === this.item.key)
+                this.item.depth = Number(item.depth) + 1
+                this.item.parent = item.key
+                deepData.splice(targetIndex, 1)
+                let itemIndex = deepData.findIndex(memo => memo.key === item.key)
+                item.children.length && this.handleDeepData(deepData, item, itemIndex, [this.item])
+                !item.children.length && deepData.splice(itemIndex + 1, 0, this.item)
+                item.children.push(key)
+            }
+            let itemIndex = deepData.findIndex(memo => memo.key === item.key)
+            item.belowLine = false
+            item.upLine = false
+            item.onOver = false
+            deepData.splice(itemIndex, 1, item)
 
+            this.setState({
+                newData: deepData
+            })
         }
     }
 
@@ -576,6 +625,7 @@ export default class Tree extends Component {
             this.position = 'below'
             item.belowLine = true
             item.upLine = false
+            item.onOver = false
             let itemIndex = newData.findIndex(memo => memo.key === item.key)
             newData.splice(itemIndex, 1, item)
             this.setState({
@@ -587,6 +637,7 @@ export default class Tree extends Component {
             this.position = 'up'
             item.belowLine = false
             item.upLine = true
+            item.onOver = false
             let itemIndex = newData.findIndex(memo => memo.key === item.key)
             newData.splice(itemIndex, 1, item)
             this.setState({
@@ -596,6 +647,9 @@ export default class Tree extends Component {
         if (top - this.tops < 6 && this.bottoms - bottom < 3) {
             console.log('在中间')
             this.position = 'middle'
+            item.onOver = true
+            item.belowLine = false
+            item.upLine = false
             if (item.subFolded && item.children.length) {
                 item.children.forEach((items, index) => {
                     let itemIndex = deepData.findIndex(memo => memo.key === items)
@@ -615,6 +669,7 @@ export default class Tree extends Component {
         const { newData } = this.state
         item.belowLine = false
         item.upLine = false
+        item.onOver = false
         let itemIndex = newData.findIndex(memo => memo.key === item.key)
         newData.splice(itemIndex, 1, item)
         this.setState({
@@ -630,11 +685,12 @@ export default class Tree extends Component {
                 onClick={this.handleFold.bind(this, item)}>
                 <span>{item.state === 'semi' ? 'semi' : ''}</span>
                 <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
-                <span className={['ml8', `ml${item.key}`,
+                <span className={['ml8', `ml${item.key}`, 'pl4 pr4 ',
                     'bor-t-opacity', 'bor-b-opacity',
                     item.upLine ? 'border-top' : '',
-                    item.belowLine ? 'border-bottom' : ''].join(' ')}
-                style={{ display: 'inline-block', height: '24px', lineHeight: '24px' }}
+                    item.belowLine ? 'border-bottom' : '',
+                    item.onOver ? 'on-over' : ''].join(' ')}
+                style={{ display: 'inline-block', height: '24px', lineHeight: '24px', 'borderRadius': '2px' }}
                 onMouseDown={(e) => this.mouseDownEvent(e)}
                 onMouseUp={() => { document.onmousemove = null }}
                 draggable={true}
