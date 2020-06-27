@@ -13,6 +13,7 @@ export default class Tree extends Component {
         this.height = ''
         this.position = ''
         this.item = ''
+        this.initialDepth = 1
         this.state = {
             _Tree: this.props.data || [
                 {
@@ -163,6 +164,8 @@ export default class Tree extends Component {
                     newLen = len
                 }, 100)
             }).then((result) => {
+                // 节点展开状态
+                this.depthStatusCheck(result)
                 this.preHandle(result)
             })
         })
@@ -190,9 +193,25 @@ export default class Tree extends Component {
                     newLen = len
                 }, 100)
             }).then((result) => {
+                // 节点展开状态
+                this.depthStatusCheck(result)
                 this.preHandle(result)
             })
         })
+    }
+
+    depthStatusCheck = (result) => {
+        const len = result.length
+        for (let i = 0; i < len; i++) {
+            const memo = result[i]
+            if (Number(this.initialDepth) <= memo.depth) {
+                memo.folded = true
+                memo.subFolded = true
+            }
+            if (Number(this.initialDepth) - 1 === memo.depth) {
+                memo.subFolded = true
+            }
+        }
     }
 
     handleData = (treeData, parent, depth) => {
@@ -304,9 +323,7 @@ export default class Tree extends Component {
         const { newData } = this.state
         const data = cloneDeep(newData)
         const antiFolded = !subFolded
-        // data.some((memo, index) => {
         const index = data.findIndex(memo => memo.key === key && children.length)
-        // if (memo.key === key && children.length) {
         data[index].subFolded = !subFolded
         data.splice(index, 1, data[index])
         this.setState({
@@ -316,9 +333,6 @@ export default class Tree extends Component {
                 this.subHandleFold(children, data, antiFolded)
             }
         })
-        //         return true
-        //     }
-        // })
     }
 
     subHandleFold = (children, data, folded) => {
@@ -331,7 +345,7 @@ export default class Tree extends Component {
             }, () => {
                 // 维持枝节点折叠状态
                 if (data[subIndex].children.length && !data[subIndex].subFolded) {
-                    this.subHandleFold(data[subIndex].children, data, folded)
+                    // this.subHandleFold(data[subIndex].children, data, folded)
                 }
             })
         })
@@ -353,6 +367,7 @@ export default class Tree extends Component {
                 const checkedState = this.getCheckedState(newArr)
                 item.state = checkedState
                 item.checked = checkedState === 'all' ? true : false
+                // item.this.initialDepth
             }
         })
         if (depth === 0) {
@@ -543,11 +558,15 @@ export default class Tree extends Component {
             //     newData: deepData
             // })
         }
+        else if (position === 'middle') {
+
+        }
     }
 
     onDragOverTarget(e, item) {
         e.preventDefault();
         const { newData } = this.state
+        let deepData = cloneDeep(newData)
         const top = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop
         const height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
         const bottom = Number(top) + Number(height)
@@ -557,22 +576,39 @@ export default class Tree extends Component {
             this.position = 'below'
             item.belowLine = true
             item.upLine = false
+            let itemIndex = newData.findIndex(memo => memo.key === item.key)
+            newData.splice(itemIndex, 1, item)
+            this.setState({
+                newData
+            })
         }
         if (top - this.tops >= 6 && top - this.tops <= 19) {
             console.log('在上面了')
             this.position = 'up'
             item.belowLine = false
             item.upLine = true
+            let itemIndex = newData.findIndex(memo => memo.key === item.key)
+            newData.splice(itemIndex, 1, item)
+            this.setState({
+                newData
+            })
         }
         if (top - this.tops < 6 && this.bottoms - bottom < 3) {
             console.log('在中间')
             this.position = 'middle'
+            if (item.subFolded && item.children.length) {
+                item.children.forEach((items, index) => {
+                    let itemIndex = deepData.findIndex(memo => memo.key === items)
+                    deepData[itemIndex].folded = false
+                })
+                item.subFolded = false
+                let itemIndex = deepData.findIndex(memo => memo.key === item.key)
+                deepData.splice(itemIndex, 1, item)
+                this.setState({
+                    newData: deepData
+                })
+            }
         }
-        let itemIndex = newData.findIndex(memo => memo.key === item.key)
-        newData.splice(itemIndex, 1, item)
-        this.setState({
-            newData
-        })
     }
 
     onDragLeaveTarget(e, item) {
@@ -590,7 +626,8 @@ export default class Tree extends Component {
         console.log(newData, 'newData-newData')
         return newData.map((item, index) => {
             const className = item.depth ? `ml${item.depth}0` : ''
-            return !item.folded ? <div className={className} key={index} onClick={this.handleFold.bind(this, item)}>
+            return !item.folded ? <div className={className} key={index}
+                onClick={this.handleFold.bind(this, item)}>
                 <span>{item.state === 'semi' ? 'semi' : ''}</span>
                 <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
                 <span className={['ml8', `ml${item.key}`,
