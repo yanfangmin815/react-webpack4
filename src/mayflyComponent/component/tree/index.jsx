@@ -688,7 +688,7 @@ export default class Tree extends Component {
                     <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
                 </svg> : null}
                 <span>{item.state === 'semi' ? 'semi' : ''}</span>
-                <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
+                <input type="checkbox" checked={item.checked} style={{ opacity: 0 }} onChange={e => this.changeState(e, item)}/>
                 <span className={['ml8', `ml${item.key}`, 'pl4 pr4 ', 'bor-t-opacity', 'bor-b-opacity',
                     item.upLine ? 'border-top' : '', item.belowLine ? 'border-bottom' : '', item.onOver ? 'on-over' : ''].join(' ')}
                 style={{ display: 'inline-block', height: '24px', lineHeight: '24px', 'borderRadius': '2px' }}
