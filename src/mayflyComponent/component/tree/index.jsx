@@ -345,7 +345,7 @@ export default class Tree extends Component {
             }, () => {
                 // 维持枝节点折叠状态
                 if (data[subIndex].children.length && !data[subIndex].subFolded) {
-                    // this.subHandleFold(data[subIndex].children, data, folded)
+                    this.subHandleFold(data[subIndex].children, data, folded)
                 }
             })
         })
@@ -680,20 +680,17 @@ export default class Tree extends Component {
     renderLayout = (newData) => {
         console.log(newData, 'newData-newData')
         return newData.map((item, index) => {
-            const className = item.depth ? `ml${item.depth}0` : ''
-            return !item.folded ? <div className={className} key={index}
-                onClick={this.handleFold.bind(this, item)}>
-                <svg viewBox="0 0 1024 1024" focusable="false" className="" data-icon="caret-down"
-                    width="1em" height="1em" fill="currentColor" aria-hidden="true">
+            const className = item.depth && !item.children.length ? `ml${(Number(item.depth) + 1) * 10 + 6}` : item.depth ? `ml${Number(item.depth)}0` : ''
+            return !item.folded ? <div className={className} key={index}>
+                {item.children.length ? <svg viewBox="0 0 1024 1024" onClick={this.handleFold.bind(this, item)} focusable="false"
+                    className={[item.children.length && item.subFolded ? 'tree-branch-node-close' : 'tree-branch-node-open', 'mr6', 'svg-size'].join(' ')}
+                    data-icon="caret-down" width="1em" height="1em" fill="currentColor" aria-hidden="true">
                     <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
-                </svg>
+                </svg> : null}
                 <span>{item.state === 'semi' ? 'semi' : ''}</span>
                 <input type="checkbox" checked={item.checked} onChange={e => this.changeState(e, item)}/>
-                <span className={['ml8', `ml${item.key}`, 'pl4 pr4 ',
-                    'bor-t-opacity', 'bor-b-opacity',
-                    item.upLine ? 'border-top' : '',
-                    item.belowLine ? 'border-bottom' : '',
-                    item.onOver ? 'on-over' : ''].join(' ')}
+                <span className={['ml8', `ml${item.key}`, 'pl4 pr4 ', 'bor-t-opacity', 'bor-b-opacity',
+                    item.upLine ? 'border-top' : '', item.belowLine ? 'border-bottom' : '', item.onOver ? 'on-over' : ''].join(' ')}
                 style={{ display: 'inline-block', height: '24px', lineHeight: '24px', 'borderRadius': '2px' }}
                 onMouseDown={(e) => this.mouseDownEvent(e)}
                 onMouseUp={() => { document.onmousemove = null }}

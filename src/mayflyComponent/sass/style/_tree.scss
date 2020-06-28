@@ -10,3 +10,17 @@
     background-color: #26a597;
     color: #fff;
 }
+
+.tree-branch-node-close {
+    transition: transform .3s;
+    transform:rotate(-90deg);
+}
+
+.tree-branch-node-open {
+    transition: transform .3s;
+    transform:rotate(0deg);
+}
+
+.svg-size {
+    width: 10px;
+}
