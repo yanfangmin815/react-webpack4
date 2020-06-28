@@ -656,12 +656,12 @@ export default class Tree extends Component {
                     deepData[itemIndex].folded = false
                 })
                 item.subFolded = false
-                let itemIndex = deepData.findIndex(memo => memo.key === item.key)
-                deepData.splice(itemIndex, 1, item)
-                this.setState({
-                    newData: deepData
-                })
             }
+            let itemIndex = deepData.findIndex(memo => memo.key === item.key)
+            deepData.splice(itemIndex, 1, item)
+            this.setState({
+                newData: deepData
+            })
         }
     }
 
