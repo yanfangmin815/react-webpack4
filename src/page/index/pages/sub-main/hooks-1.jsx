@@ -1,11 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useConcent } from 'concent'
 import { cloneDeep } from 'lodash'
-import { Table, Tree } from '@/mayflyComponent'
+import { Table, Tree, Checkbox } from '@/mayflyComponent'
 import './hooks.css'
 import setup from './public'
 import '@/mayflyComponent/component/table/style/css.js';
 import '@/mayflyComponent/component/tree/style/css.js';
+import '@/mayflyComponent/component/checkbox/style/css.js';
 
 // import("./public").then(() => {
 //     console.log(12345678)
@@ -236,6 +237,7 @@ const ConcentFnPage = React.memo(function(props) {
         <div className="conditionArea" style={{ height: '100%', overflow: 'auto' }}>
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
+            <Checkbox defaultChecked="semi"/>
             <Tree/>
             <Table
                 dataconf={datacolumn}

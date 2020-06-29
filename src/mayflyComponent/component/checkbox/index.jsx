@@ -4,44 +4,46 @@ export default class Checkbox extends Component {
     constructor(props) {
         super(props);
         this.id = Math.random().toString(36).substring(2);
+        this.state = {
+            checked: props.defaultChecked || false
+        }
     }
 
-    
     handleChange(e) {
-        this.props.onChange(e);
+        console.log(e.target.checked)
+        const checked = e.target.checked
+        this.setState({
+            checked
+        })
+        // this.props.onChange(e);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            checked: nextProps.defaultChecked
+        })
     }
 
     render() {
+        const { checked } = this.state
         return (
-            <div className="checkbox-box-normalize mr16 d-il" style={{ display: this.props.display || '' }}>
-                {
-                    this.props.checked == undefined ? <input
-                        id={this.id}
-                        trigger='core'
-                        type="checkbox"
-                        disabled={this.props.disabled}
-                        className=""
-                        name={this.props.name || ''}
-                        value={this.props.value}
-                        defaultChecked={this.props.defaultChecked || false}
-                        onChange={(e) => this.handleChange(e)}
-                    /> : <input
-                            id={this.id}
-                            trigger='core'
-                            type="checkbox"
-                            disabled={this.props.disabled}
-                            className=""
-                            name={this.props.name}
-                            value={this.props.value}
-                            checked={this.props.checked || false}
-                            onChange={(e) => this.handleChange(e)}
-                        />
-                }
-                <span className="checkbox-hook ta-c">
-                    <span className="checkbox-hook-in fs12 op0">✓</span>
-                </span>
-                <label htmlFor={this.id} className="p-r z10 pl8">{this.props.label || ''}</label>
-            </div>
+            <span className={['checkbox-hook', 'ta-c', 'mayfly-checkbox',
+                checked === 'semi' ? 'mayfly-checkbox-indeterminate'
+                : checked === true ? 'mayfly-checkbox-checked' : ''].join(' ')} >
+                <input
+                    id={this.id}
+                    trigger="core"
+                    type="checkbox"
+                    disabled={this.props.disabled}
+                    className="mayfly-checkbox-input"
+                    style={{ opacity: 0 }}
+                    name={this.props.name || ''}
+                    value={checked}
+                    defaultChecked={this.props.defaultChecked || false }
+                    onChange={(e) => this.handleChange(e)}
+                />
+                <span className="mayfly-checkbox-inner fs12"></span>
+            </span>
         );
     }
 }
@@ -61,7 +63,7 @@ export class CheckboxFontIn extends Component {
                 {
                     this.props.checked == undefined ? <input
                         id={this.id}
-                        trigger='core'
+                        trigger="core"
                         type="checkbox"
                         disabled={this.props.disabled}
                         className="d-n"
@@ -70,16 +72,16 @@ export class CheckboxFontIn extends Component {
                         defaultChecked={this.props.defaultChecked || false}
                         onChange={(e) => this.handleChange(e)}
                     /> : <input
-                            id={this.id}
-                            trigger='core'
-                            type="checkbox"
-                            disabled={this.props.disabled}
-                            className="d-n"
-                            name={this.props.name}
-                            value={this.props.value}
-                            checked={this.props.checked || false}
-                            onChange={(e) => this.handleChange(e)}
-                        />
+                        id={this.id}
+                        trigger="core"
+                        type="checkbox"
+                        disabled={this.props.disabled}
+                        className="d-n"
+                        name={this.props.name}
+                        value={this.props.value}
+                        checked={this.props.checked || false}
+                        onChange={(e) => this.handleChange(e)}
+                    />
                 }
                 <label
                     htmlFor={this.id}
@@ -107,7 +109,7 @@ export class CheckboxBorder extends Component {
                 {
                     this.props.checked == undefined ? <input
                         id={this.id}
-                        trigger='core'
+                        trigger="core"
                         type="checkbox"
                         disabled={this.props.disabled}
                         className="d-n"
@@ -116,16 +118,16 @@ export class CheckboxBorder extends Component {
                         defaultChecked={this.props.defaultChecked || false}
                         onChange={(e) => this.handleChange(e)}
                     /> : <input
-                            id={this.id}
-                            trigger='core'
-                            type="checkbox"
-                            disabled={this.props.disabled}
-                            className="d-n"
-                            name={this.props.name}
-                            value={this.props.value}
-                            checked={this.props.checked || false}
-                            onChange={(e) => this.handleChange(e)}
-                        />
+                        id={this.id}
+                        trigger="core"
+                        type="checkbox"
+                        disabled={this.props.disabled}
+                        className="d-n"
+                        name={this.props.name}
+                        value={this.props.value}
+                        checked={this.props.checked || false}
+                        onChange={(e) => this.handleChange(e)}
+                    />
                 }
                 <label
                     htmlFor={this.id}
@@ -159,7 +161,7 @@ const GroupContainer = (component) => class Group extends Component {
         const { values, selected } = this.state;
         let res = [];
         if (values) {
-            //受控
+            // 受控
             if (checked) {
                 res = [...values, value];
             } else {
@@ -173,7 +175,7 @@ const GroupContainer = (component) => class Group extends Component {
                 values: res
             }, () => this.props.onChange(this.state.values));
         } else {
-            //非受控，values为undefined
+            // 非受控，values为undefined
             if (checked) {
                 res = [...selected, value];
             } else {

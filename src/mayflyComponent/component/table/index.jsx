@@ -201,8 +201,8 @@ export default class Table extends Component {
                                                 {i === 0 ? <input id="checkbox_normalize_title" type="checkbox" name="c_n"
                                                     checked={this.isAllSelect}
                                                     onChange={(e) => this.handleCheckboxTieleChange(e, conf.handles ? conf.handles : null, this.props.dataset)} /> : null}
-                                                <span className="checkbox-hook ta-c">
-                                                    <span className="checkbox-hook-in fs12">{conf.title}</span>
+                                                <span className="ta-c">
+                                                    <span className=" fs12">{conf.title}</span>
                                                 </span>
                                             </div>
                                         </div>
