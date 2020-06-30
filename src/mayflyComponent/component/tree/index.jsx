@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { cloneDeep, debounce } from 'lodash'
+import { cloneDeep, debounce, isBoolean } from 'lodash'
+import Checkbox from '../checkbox'
+import '../checkbox/style/css'
 
 export default class Tree extends Component {
     constructor(props) {
@@ -148,56 +150,57 @@ export default class Tree extends Component {
         this.depthStatistics = 0
         this.initialArr = []
         this.timer = null
-        this.setState({
-            newData: []
-        }, () => {
-            new Promise((resolve, reject) => {
-                let len
-                let newLen
-                const result = this.handleData(_Tree, 'root', 0)
-                const timer = setInterval(() => {
-                    len = result && result.length
-                    if (len === newLen) {
-                        clearInterval(timer)
-                        resolve(result)
-                    }
-                    newLen = len
-                }, 100)
-            }).then((result) => {
-                // 节点展开状态
-                this.depthStatusCheck(result)
-                this.preHandle(result)
-            })
+        // this.setState({
+        //     newData: []
+        // }, () => {
+        new Promise((resolve, reject) => {
+            let len
+            let newLen
+            const result = this.handleData(_Tree, 'root', 0)
+            const timer = setInterval(() => {
+                len = result && result.length
+                if (len === newLen) {
+                    clearInterval(timer)
+                    resolve(result)
+                }
+                newLen = len
+            }, 100)
+        }).then((result) => {
+            // 节点展开状态
+            this.depthStatusCheck(result)
+            this.preHandle(result)
         })
+        // })
     }
 
     componentWillReceiveProps(nextProps) {
         // console.log('componentWillReceiveProps')
-        const { _Tree } = nextProps
+        // const { _Tree } = nextProps
+        const { _Tree } = this.state
         this.depthStatistics = 0
         this.initialArr = []
         this.timer = null
-        this.setState({
-            newData: []
-        }, () => {
-            new Promise((resolve, reject) => {
-                let len
-                let newLen
-                const result = this.handleData(_Tree, 'root', 0)
-                const timer = setInterval(() => {
-                    len = result && result.length
-                    if (len === newLen) {
-                        clearInterval(timer)
-                        resolve(result)
-                    }
-                    newLen = len
-                }, 100)
-            }).then((result) => {
-                // 节点展开状态
-                this.depthStatusCheck(result)
-                this.preHandle(result)
-            })
+        // this.setState({
+        //     newData: []
+        // }, () => {
+        new Promise((resolve, reject) => {
+            let len
+            let newLen
+            const result = this.handleData(_Tree, 'root', 0)
+            const timer = setInterval(() => {
+                len = result && result.length
+                if (len === newLen) {
+                    clearInterval(timer)
+                    resolve(result)
+                }
+                newLen = len
+            }, 100)
+        }).then((result) => {
+            // 节点展开状态
+            this.depthStatusCheck(result)
+            this.preHandle(result)
         })
+        // })
     }
 
     depthStatusCheck = (result) => {
@@ -365,9 +368,7 @@ export default class Tree extends Component {
                 })
                 // 获取同级别选择状态数组
                 const checkedState = this.getCheckedState(newArr)
-                item.state = checkedState
-                item.checked = checkedState === 'all' ? true : false
-                // item.this.initialDepth
+                item.checked = checkedState
             }
         })
         if (depth === 0) {
@@ -687,9 +688,8 @@ export default class Tree extends Component {
                     data-icon="caret-down" width="1em" height="1em" fill="currentColor" aria-hidden="true">
                     <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
                 </svg> : null}
-                <span>{item.state === 'semi' ? 'semi' : ''}</span>
-                <input type="checkbox" checked={item.checked} style={{ opacity: 0 }} onChange={e => this.changeState(e, item)}/>
-                <span className={['ml8', `ml${item.key}`, 'pl4 pr4 ', 'bor-t-opacity', 'bor-b-opacity',
+                <Checkbox defaultChecked={item.checked} onChange={this.changeState} item={item}/>
+                <span className={['ml2', `ml${item.key}`, 'pl4 pr4 ', 'bor-t-opacity', 'bor-b-opacity',
                     item.upLine ? 'border-top' : '', item.belowLine ? 'border-bottom' : '', item.onOver ? 'on-over' : ''].join(' ')}
                 style={{ display: 'inline-block', height: '24px', lineHeight: '24px', 'borderRadius': '2px' }}
                 onMouseDown={(e) => this.mouseDownEvent(e)}
@@ -710,7 +710,7 @@ export default class Tree extends Component {
             if (item.key === monomer.key) {
                 const newItem = cloneDeep(item)
                 newItem.checked = checked
-                newItem.state = checked ? 'all' : 'none'
+                // newItem.state = checked ? 'all' : 'none'
                 newData.splice(index, 1, newItem)
                 this.setState({
                     newData: newData
@@ -742,32 +742,42 @@ export default class Tree extends Component {
     getCheckedState = (brotherNode) => {
         let len = brotherNode.length
         let num = 0
-        brotherNode.forEach((item, index) => {
-            item && num++
+        brotherNode.some((item, index) => {
+            isBoolean(item) && item && num++
+            num = item === 'semi' ? num + 0.5 : num
         })
-        if (num === 0) return 'none'
+        if (num === 0) return false
         if (num !== 0 && num < len) return 'semi'
-        if (num === len) return 'all'
+        if (num === len) return true
     }
 
     handleCheckedStateParents = (brotherNode, monomer) => {
         // 同级选择状态
-        // console.log(brotherNode, monomer, '改变父节点选择状态')
         const { newData } = this.state
         const checkedState = this.getCheckedState(brotherNode)
         const parent = monomer.parent
         const newDataDeep = cloneDeep(newData)
         let newItem
         // 判断父级选择状态
-        newDataDeep.some((item, index) => {
-            if (item.key === parent) {
-                item.state = checkedState
-                item.checked = checkedState === 'all' ? true : false
-                newItem = item
-                newDataDeep.splice(index, 1, item)
-                return true
-            }
-        })
+
+        const index = newDataDeep.findIndex(item => item.key === parent)
+        console.log(checkedState, parent, index, '::::::::::::::::::')
+        if (index >= 0) {
+            newDataDeep[index].checked = checkedState
+            newItem = newDataDeep[index]
+        }
+
+        // index >= 0 && {
+
+        // }
+        // newDataDeep.some((item, index) => {
+        //     if (item.key === parent) {
+        //         item.checked = checkedState
+        //         newItem = item
+        //         newDataDeep.splice(index, 1, item)
+        //         return true
+        //     }
+        // })
         this.setState({
             newData: newDataDeep
         }, () => {
@@ -794,7 +804,7 @@ export default class Tree extends Component {
                     const targetItem = newDataDeep[i]
                     if (targetItem.key === item) {
                         targetItem.checked = checked
-                        targetItem.state = checked ? 'all' : 'none'
+                        // targetItem.state = checked ? 'all' : 'none'
                         break
                     }
                 }

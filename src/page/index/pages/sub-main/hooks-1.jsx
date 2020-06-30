@@ -237,8 +237,8 @@ const ConcentFnPage = React.memo(function(props) {
         <div className="conditionArea" style={{ height: '100%', overflow: 'auto' }}>
             <h1 onClick={clickTitle}>concent setup compnent</h1>
             <span>{tag}------{value}</span>
-            <Checkbox defaultChecked="semi"/>
-            <Tree/>
+            {/* <Checkbox defaultChecked="semi"/> */}
+            <Tree />
             <Table
                 dataconf={datacolumn}
                 dataset={dataset}

@@ -7,7 +7,8 @@ export default class Input extends Component {
     }
 
     toThousands(number) {
-        let num = (number || '').toString(), result = '';
+        let num = (number || '').toString(); let
+            result = '';
         while (num.length > 3) {
             result = ',' + num.slice(-3) + result;
             num = num.slice(0, num.length - 3);
@@ -111,7 +112,7 @@ class InputNumber extends Component {
     render() {
         return (
             <div className="d-il input-number p-r">
-                <Input type='number' onChange={(v) => this.handleChange(v)} value={this.props.value} width={this.props.width || 128 + 'px'} />
+                <Input type="number" onChange={(v) => this.handleChange(v)} value={this.props.value} width={this.props.width || 128 + 'px'} />
                 <div className="d-il input-ctrl t0 r0 p-a">
                     <div className="ctrl-up" onClick={() => this.handleClickCtrl('UP')}></div>
                     <div className="ctrl-down" onClick={() => this.handleClickCtrl('DOWM')}></div>
