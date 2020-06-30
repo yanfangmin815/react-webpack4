@@ -684,7 +684,7 @@ export default class Tree extends Component {
             const className = item.depth && !item.children.length ? `ml${(Number(item.depth) + 1) * 10 + 6}` : item.depth ? `ml${Number(item.depth)}0` : ''
             return !item.folded ? <div className={className} key={index}>
                 {item.children.length ? <svg viewBox="0 0 1024 1024" onClick={this.handleFold.bind(this, item)} focusable="false"
-                    className={[item.children.length && item.subFolded ? 'tree-branch-node-close' : 'tree-branch-node-open', 'mr6', 'svg-size'].join(' ')}
+                    className={[item.children.length && item.subFolded ? 'tree-branch-node-close' : 'tree-branch-node-open', 'mr6 va-m', 'svg-size'].join(' ')}
                     data-icon="caret-down" width="1em" height="1em" fill="currentColor" aria-hidden="true">
                     <path d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
                 </svg> : null}
@@ -766,18 +766,6 @@ export default class Tree extends Component {
             newDataDeep[index].checked = checkedState
             newItem = newDataDeep[index]
         }
-
-        // index >= 0 && {
-
-        // }
-        // newDataDeep.some((item, index) => {
-        //     if (item.key === parent) {
-        //         item.checked = checkedState
-        //         newItem = item
-        //         newDataDeep.splice(index, 1, item)
-        //         return true
-        //     }
-        // })
         this.setState({
             newData: newDataDeep
         }, () => {
@@ -794,17 +782,17 @@ export default class Tree extends Component {
         })
     }
 
-    handleCheckedStateChildren = (monomer, checked) => {
+    handleCheckedStateChildren = (monomer, checked, dataDeep) => {
         const { newData } = this.state
+        // 引用对象的赋值操作
+        const newDataDeep = dataDeep ? dataDeep : cloneDeep(newData)
         const that = this
         if (monomer.children.length) {
-            const newDataDeep = cloneDeep(newData)
             monomer.children.forEach((item, index) => {
                 for (let i = 0; i < newDataDeep.length; i++) {
                     const targetItem = newDataDeep[i]
                     if (targetItem.key === item) {
                         targetItem.checked = checked
-                        // targetItem.state = checked ? 'all' : 'none'
                         break
                     }
                 }
@@ -816,7 +804,7 @@ export default class Tree extends Component {
                     for (let i = 0; i < newDataDeep.length; i++) {
                         const targetItem = newDataDeep[i]
                         if (targetItem.key === item && targetItem.children.length) {
-                            that.handleCheckedStateChildren(targetItem, checked)
+                            that.handleCheckedStateChildren(targetItem, checked, newDataDeep)
                             break
                         }
                     }
