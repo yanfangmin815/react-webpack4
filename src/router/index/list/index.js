@@ -1,6 +1,6 @@
 import React from 'react'
 import Loadable from 'react-loadable'
-import {Redirect} from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import loadable from '@/assets/utils/loadable'
 const MAINROUTER = '/react-router-example'
 
@@ -12,44 +12,44 @@ const MAINROUTER = '/react-router-example'
  */
 const listMainRouters = [
     {
-        //根路由匹配
-        path:'/',
-        exact:true,
-        component:() => <Redirect to='/other-hooks-1'/>,
+        // 根路由匹配
+        path: '/',
+        exact: true,
+        component: () => <Redirect to="/react-router-example"/>,
         title: '首页'
     },
     {
         // 首页
         path: `${MAINROUTER}`,
-        component:Loadable({
-            loader:() => import('@/page/index/list/main/list.jsx'),
-            loading:() => ('')
+        component: Loadable({
+            loader: () => import('@/page/index/list/main/list.jsx'),
+            loading: () => ('')
         }),
         title: '首页'
     },
     {
         // view0
-        path:`${MAINROUTER}/view0`,
-        component:loadable('index/list/sub-item/view0'),
+        path: `${MAINROUTER}/view0`,
+        component: loadable('index/list/sub-item/view0'),
         title: 'view0'
     },
     {
         // view1
-        path:`${MAINROUTER}/view1`,
-        component:loadable('index/list/sub-item/view1'),
+        path: `${MAINROUTER}/view1`,
+        component: loadable('index/list/sub-item/view1'),
         children: [
             {
                 path: '/home',
                 component: loadable('index/list/sub-item/view1'),
                 children: [
                     {
-                        path:`/home-children`,
-                        component:loadable('index/list/sub-item/view1'),
+                        path: `/home-children`,
+                        component: loadable('index/list/sub-item/view1'),
                         children: [
                             {
-                                 // view2
-                                path:`/sub-home-children`,
-                                component:loadable('index/list/sub-item/view1'),
+                                // view2
+                                path: `/sub-home-children`,
+                                component: loadable('index/list/sub-item/view1'),
                                 title: 'sub-home-children'
                             }
                         ],
@@ -73,38 +73,38 @@ const listMainRouters = [
     },
     {
         // view2
-        path:`/home`,
-        component:loadable('index/list/sub-item/view1'),
+        path: `/home`,
+        component: loadable('index/list/sub-item/view1'),
         title: 'home'
     },
     {
         // view2
-        path:`${MAINROUTER}/view2`,
-        component:loadable('index/list/sub-item/view2'),
+        path: `${MAINROUTER}/view2`,
+        component: loadable('index/list/sub-item/view2'),
         title: 'view2'
     },
     {
         // view3
-        path:`${MAINROUTER}/view3`,
-        component:loadable('index/list/sub-item/view3'),
+        path: `${MAINROUTER}/view3`,
+        component: loadable('index/list/sub-item/view3'),
         title: 'view3'
     },
     {
         // view3
-        path:`/logout`,
-        component:loadable('index/list/sub-item/view3'),
+        path: `/logout`,
+        component: loadable('index/list/sub-item/view3'),
         title: 'view3'
     },
     {
         // view4
-        path:`${MAINROUTER}/view4`,
-        component:loadable('index/list/sub-item/view4'),
+        path: `${MAINROUTER}/view4`,
+        component: loadable('index/list/sub-item/view4'),
         title: 'view4'
     },
     {
         // 404 匹配
-        path:`/no-found`,
-        component:loadable('no-found')
+        path: `/no-found`,
+        component: loadable('no-found')
     },
 ];
 /**

@@ -620,7 +620,7 @@ export default class Tree extends Component {
         const top = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetTop
         const height = document.getElementsByClassName(e.target.className.split(' ')[1])[0].offsetHeight
         const bottom = Number(top) + Number(height)
-        console.log(this.tops, this.bottoms, top, bottom, e.target.innerHTML, 'onDragOverTarget')
+        // console.log(this.tops, this.bottoms, top, bottom, e.target.innerHTML, 'onDragOverTarget')
         if (this.bottoms - bottom >= 3 && this.bottoms - bottom <= 19) {
             console.log('到了下面')
             this.position = 'below'
@@ -761,7 +761,7 @@ export default class Tree extends Component {
         // 判断父级选择状态
 
         const index = newDataDeep.findIndex(item => item.key === parent)
-        console.log(checkedState, parent, index, '::::::::::::::::::')
+        // console.log(checkedState, parent, index, '::::::::::::::::::')
         if (index >= 0) {
             newDataDeep[index].checked = checkedState
             newItem = newDataDeep[index]
