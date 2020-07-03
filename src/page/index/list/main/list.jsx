@@ -4,8 +4,8 @@ import { connect } from 'react-redux'
 import { hot } from 'react-hot-loader'
 import intl from 'react-intl-universal';
 import moment from 'moment'
-import { Table, Tree, Checkbox } from '@/mayflyComponent'
-import '@/mayflyComponent/component/table/style/css.js';
+import { Datepicker, Tree, Checkbox } from '@/mayflyComponent'
+import '@/mayflyComponent/component/datepicker/style/css.js';
 import './list.css'
 import {
     TransitionGroup, CSSTransition
@@ -99,8 +99,8 @@ class List extends React.Component {
         const { dayToDate } = this.state
         const day = moment().startOf('month').day()
         const dayFirst = moment().startOf('month').format('D')
-        const date = moment().format('D')
-        const num = moment().daysInMonth() - date
+        const today = moment().format('D')
+        const num = moment().daysInMonth()
         const beforeArr = []
         const beforeTodayArr = []
         const afterTodayArr = []
@@ -110,34 +110,37 @@ class List extends React.Component {
             const date = moment().startOf('month').add(i, 'd').format('D')
             let obj = {}
             // obj.title = dayToDate[day]
-            obj[dayToDate[day]] = date
+            obj[dayToDate[day]] = { date: date, idIn: false, isToday: today == date ? true : false }
             beforeArr.unshift(obj)
         }
-        for (let i = 0; i > -date; i--) {
-            const day = moment().add(i, 'd').day()
-            const date = moment().add(i, 'd').format('D')
+        // for (let i = 0; i > -date; i--) {
+        //     const day = moment().add(i, 'd').day()
+        //     const date = moment().add(i, 'd').format('D')
+        //     let obj = {}
+        //     // if (dayFirst == date) continue
+        //     obj[dayToDate[day]] = date
+        //     beforeTodayArr.unshift(obj)
+        // }
+        for (let i = 0; i < num; i++) {
+            const day = moment().startOf('month').add(i, 'd').day()
+            const date = moment().startOf('month').add(i, 'd').format('D')
             let obj = {}
-            // if (dayFirst == date) continue
-            obj[dayToDate[day]] = date
-            beforeTodayArr.unshift(obj)
-        }
-        for (let i = 1; i <= num; i++) {
-            const day = moment().add(i, 'd').day()
-            const date = moment().add(i, 'd').format('D')
-            let obj = {}
-            obj[dayToDate[day]] = date
+            obj[dayToDate[day]] = { date: date, idIn: true, isToday: today == date ? true : false }
             afterTodayArr.push(obj)
         }
-        const len = [...beforeArr, ...beforeTodayArr, ...afterTodayArr].length
+        // ...beforeTodayArr,
+        const len = [...beforeArr, ...afterTodayArr].length
         const between = total - len
         for (let i = 1; i <= between; i++) {
             const day = moment().endOf('month').add(i, 'd').day()
             const date = moment().endOf('month').add(i, 'd').format('D')
             let obj = {}
-            obj[dayToDate[day]] = date
+            obj[dayToDate[day]] = { date: date, idIn: false, isToday: today == date ? true : false }
+            // console.log(obj, i, date)
             makeUpArr.push(obj)
         }
-        const arrs = [...beforeArr, ...beforeTodayArr, ...afterTodayArr, ...makeUpArr]
+        // ...beforeTodayArr,
+        const arrs = [...beforeArr, ...afterTodayArr, ...makeUpArr]
         console.log(arrs)
         const dateCon = []
         for (let i = 0; i < arrs.length; i += 7) {
@@ -148,7 +151,7 @@ class List extends React.Component {
                     obj[key] = item[key]
                 }
             })
-            console.log(obj)
+            // console.log(obj)
             dateCon.push(obj)
         }
         this.setState({
@@ -230,11 +233,13 @@ class List extends React.Component {
         // const len = goods.length
 
         return (
-            <Table
-                dataconf={datacolumn}
-                dataset={this.state.data}
-                loading={false}
-                isMaintenance={false} />
+            <div style={{ width: '200px' }}>
+                <Datepicker
+                    dataconf={datacolumn}
+                    dataset={this.state.data}
+                    loading={false}
+                    isMaintenance={false} />
+            </div>
         )
         // switch (len) {
         //     case 1:

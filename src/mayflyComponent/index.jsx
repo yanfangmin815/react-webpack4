@@ -24,6 +24,7 @@ import Lrchange from './component/lrChange';
 import Validator from './component/validator';
 import Lib from './component/lib';
 import Loading from './component/loading';
+import Datepicker from './component/datepicker';
 
 export {
     Dialog,
@@ -51,5 +52,6 @@ export {
     Details,
     Lrchange,
     Lib,
-    Loading
+    Loading,
+    Datepicker
 };
