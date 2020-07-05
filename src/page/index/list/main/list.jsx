@@ -28,30 +28,30 @@ const datacolumn = [
     {
         title: '一',
         prop: '一',
-        width: '10%'
+        // width: '10%'
     }, {
         title: '二',
         prop: '二',
-        width: '10%'
+        // width: '10%'
     }, {
         title: '三',
         prop: '三',
-        width: '10%'
+        // width: '10%'
     }, {
         title: '四',
-        width: '10%',
+        // width: '10%',
         prop: '四'
     }, {
         title: '五',
         prop: '五',
-        width: '10%'
+        // width: '10%'
     }, {
         title: '六',
-        width: '10%',
+        // width: '10%',
         prop: '六'
     }, {
         title: '日',
-        width: '10%',
+        // width: '10%',
         prop: '日'
     }]
 class List extends React.Component {
@@ -102,44 +102,46 @@ class List extends React.Component {
         const today = moment().format('D')
         const num = moment().daysInMonth()
         const beforeArr = []
-        const beforeTodayArr = []
         const afterTodayArr = []
         const makeUpArr = []
         for (let i = -1; i > -day; i--) {
             const day = moment().startOf('month').add(i, 'd').day()
             const date = moment().startOf('month').add(i, 'd').format('D')
             let obj = {}
-            // obj.title = dayToDate[day]
-            obj[dayToDate[day]] = { date: date, idIn: false, isToday: today == date ? true : false }
+            obj[dayToDate[day]] = {
+                date,
+                idIn: false,
+                isToday: today == date ? true : false,
+                time: moment().startOf('month').add(i, 'd')
+            }
             beforeArr.unshift(obj)
         }
-        // for (let i = 0; i > -date; i--) {
-        //     const day = moment().add(i, 'd').day()
-        //     const date = moment().add(i, 'd').format('D')
-        //     let obj = {}
-        //     // if (dayFirst == date) continue
-        //     obj[dayToDate[day]] = date
-        //     beforeTodayArr.unshift(obj)
-        // }
         for (let i = 0; i < num; i++) {
             const day = moment().startOf('month').add(i, 'd').day()
             const date = moment().startOf('month').add(i, 'd').format('D')
             let obj = {}
-            obj[dayToDate[day]] = { date: date, idIn: true, isToday: today == date ? true : false }
+            obj[dayToDate[day]] = {
+                date: date,
+                idIn: true,
+                isToday: today == date ? true : false,
+                time: moment().startOf('month').add(i, 'd')
+            }
             afterTodayArr.push(obj)
         }
-        // ...beforeTodayArr,
         const len = [...beforeArr, ...afterTodayArr].length
         const between = total - len
         for (let i = 1; i <= between; i++) {
             const day = moment().endOf('month').add(i, 'd').day()
             const date = moment().endOf('month').add(i, 'd').format('D')
             let obj = {}
-            obj[dayToDate[day]] = { date: date, idIn: false, isToday: today == date ? true : false }
-            // console.log(obj, i, date)
+            obj[dayToDate[day]] = {
+                date: date,
+                idIn: false,
+                isToday: today == date ? true : false,
+                time: moment().endOf('month').add(i, 'd')
+            }
             makeUpArr.push(obj)
         }
-        // ...beforeTodayArr,
         const arrs = [...beforeArr, ...afterTodayArr, ...makeUpArr]
         console.log(arrs)
         const dateCon = []
@@ -151,7 +153,6 @@ class List extends React.Component {
                     obj[key] = item[key]
                 }
             })
-            // console.log(obj)
             dateCon.push(obj)
         }
         this.setState({

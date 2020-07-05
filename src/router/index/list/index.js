@@ -28,6 +28,15 @@ const listMainRouters = [
         title: '首页'
     },
     {
+        // main
+        path: `${MAINROUTER}/main`,
+        component: Loadable({
+            loader: () => import('@/page/index/list/main/main.jsx'),
+            loading: () => ('')
+        }),
+        title: 'MAIN'
+    },
+    {
         // view0
         path: `${MAINROUTER}/view0`,
         component: loadable('index/list/sub-item/view0'),

@@ -75,6 +75,7 @@
     "react-intl-universal": "^2.2.2",
     "react-redux": "^6.0.0",
     "react-router-config": "^5.1.0",
+    "react-transition-group": "^1.2.1",
     "redux": "^3.7.2",
     "redux-actions": "^2.3.0",
     "redux-thunk": "^2.2.0",
@@ -106,8 +107,7 @@
     "react-hot-loader": "^4.3.4",
     "react-loadable": "^5.5.0",
     "react-router-dom": "^4.3.1",
-    "react-transition-group": "^2.4.0",
-    "redux-devtools-extension": "^2.13.2",
+    "redux-devtools-extension": "^1.x",
     "webpack-dev-middleware": "^3.7.1",
     "webpack-jarvis": "^0.3.2"
   },

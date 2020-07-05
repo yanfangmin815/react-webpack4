@@ -318,6 +318,26 @@ $tab_active_color:$theme_color !default;
 }
 
 
+/* tab动态增加动画 */
+.mayfly-dataePicker-wrap-enter {
+    opacity: .01;
+  }
+   
+.mayfly-dataePicker-wrap-enter.mayfly-dataePicker-wrap-enter-active {
+    opacity: 1;
+    transition: all 500ms ease-in;
+}
+   
+.mayfly-dataePicker-wrap-leave {
+    opacity: 1;
+}
+   
+.mayfly-dataePicker-wrap-leave.mayfly-dataePicker-wrap-leave-active {
+    opacity: .01;
+    transition: all 500ms ease-in;
+} 
+
+
 //normal table-----------------
 
 //
