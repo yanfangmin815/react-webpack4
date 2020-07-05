@@ -337,11 +337,15 @@ $tab_active_color:$theme_color !default;
     transition: all 500ms ease-in;
 } 
 
+.mayfly-datePicker-panel-header {
+    height: 30px;
+}
+
 .mayfly-datePicker-panel-header-year-prev {
     position: relative;
-    display: inline-block;
-    height: 30px;
     transform: rotate(-45deg);
+    width: 7px;
+    height: 7px;
 }
 
 .mayfly-datePicker-panel-header-year-prev::before {
@@ -360,6 +364,26 @@ $tab_active_color:$theme_color !default;
     position: absolute;
     top: 4px;
     left: 4px;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border: 0 solid currentColor;
+    border-width: 1.5px 0 0 1.5px;
+    content: '';
+}
+
+.mayfly-datePicker-panel-header-month-prev {
+    position: relative;
+    transform: rotate(-45deg);
+    width: 7px;
+    height: 7px;
+}
+
+
+.mayfly-datePicker-panel-header-month-prev::after {
+    position: absolute;
+    top: 0;
+    left: 0;
     display: inline-block;
     width: 7px;
     height: 7px;
