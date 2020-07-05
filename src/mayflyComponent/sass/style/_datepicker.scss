@@ -337,6 +337,37 @@ $tab_active_color:$theme_color !default;
     transition: all 500ms ease-in;
 } 
 
+.mayfly-datePicker-panel-header-year-prev {
+    position: relative;
+    display: inline-block;
+    height: 30px;
+    transform: rotate(-45deg);
+}
+
+.mayfly-datePicker-panel-header-year-prev::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border: 0 solid currentColor;
+    border-width: 1.5px 0 0 1.5px;
+    content: '';
+}
+
+.mayfly-datePicker-panel-header-year-prev::after {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border: 0 solid currentColor;
+    border-width: 1.5px 0 0 1.5px;
+    content: '';
+}
+
 
 //normal table-----------------
 

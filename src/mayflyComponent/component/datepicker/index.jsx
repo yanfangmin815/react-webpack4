@@ -116,6 +116,10 @@ export default class Table extends Component {
                     transitionLeaveTimeout={300}>
                     {isClicked ?
                         <div className="p-r pos-a" key={'123'} style={{ top: '29px', left: 0 }}>
+                            <div className="mayfly-datePicker-panel-header d-f ac">
+                                <span className="mayfly-datePicker-panel-header-year-prev"></span>
+                                <span className="mayfly-datePicker-panel-header-month-prev"></span>
+                            </div>
                             <div className="slucky-table">
                                 {/* table header */}
                                 <div className={['table-header d-f ac jc-b', this.props.fixTitle ? 'table-fix' : ''].join(' ')}>
