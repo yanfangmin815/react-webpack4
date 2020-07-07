@@ -1,7 +1,39 @@
 import React, { Component } from 'react';
 import { cloneDeep } from 'lodash'
+import moment from 'moment'
 import { CSSTransitionGroup } from 'react-transition-group'
 
+const total = 42
+const datacolumn = [
+    {
+        title: '一',
+        prop: '一',
+        // width: '10%'
+    }, {
+        title: '二',
+        prop: '二',
+        // width: '10%'
+    }, {
+        title: '三',
+        prop: '三',
+        // width: '10%'
+    }, {
+        title: '四',
+        // width: '10%',
+        prop: '四'
+    }, {
+        title: '五',
+        prop: '五',
+        // width: '10%'
+    }, {
+        title: '六',
+        // width: '10%',
+        prop: '六'
+    }, {
+        title: '日',
+        // width: '10%',
+        prop: '日'
+    }]
 export default class Table extends Component {
     constructor() {
         super();
@@ -12,13 +44,105 @@ export default class Table extends Component {
         this.state = {
             isClicked: false,
             currentVal: '',
-            hasValue: false
+            hasValue: false,
+            dayToDate: {
+                1: '一',
+                2: '二',
+                3: '三',
+                4: '四',
+                5: '五',
+                6: '六',
+                0: '日'
+            },
+            data: [],
+            year: '',
+            month: ''
         }
+    }
+
+    componentDidMount() {
+        this.momentHandle()
+    }
+
+    momentHandle = () => {
+        // console.log(moment().add(-10, 'd').format('DD'), moment().format('D'), moment().day(), moment().startOf('month').day(), '??????????')
+        const { dayToDate } = this.state
+        const day = moment().startOf('month').day()
+        const dayFirst = moment().startOf('month').format('D')
+        const today = moment().format('D')
+        const year = moment().format('Y')
+        const month = moment().format('M')
+        const num = moment().daysInMonth()
+        const beforeArr = []
+        const afterTodayArr = []
+        const makeUpArr = []
+        for (let i = -1; i > -day; i--) {
+            const day = moment().startOf('month').add(i, 'd').day()
+            const date = moment().startOf('month').add(i, 'd').format('D')
+            let obj = {}
+            obj[dayToDate[day]] = {
+                date,
+                idIn: false,
+                isToday: today == date ? true : false,
+                time: moment().startOf('month').add(i, 'd')
+            }
+            beforeArr.unshift(obj)
+        }
+        for (let i = 0; i < num; i++) {
+            const day = moment().startOf('month').add(i, 'd').day()
+            const date = moment().startOf('month').add(i, 'd').format('D')
+            let obj = {}
+            obj[dayToDate[day]] = {
+                date: date,
+                idIn: true,
+                isToday: today == date ? true : false,
+                time: moment().startOf('month').add(i, 'd')
+            }
+            afterTodayArr.push(obj)
+        }
+        const len = [...beforeArr, ...afterTodayArr].length
+        const between = total - len
+        for (let i = 1; i <= between; i++) {
+            const day = moment().endOf('month').add(i, 'd').day()
+            const date = moment().endOf('month').add(i, 'd').format('D')
+            let obj = {}
+            obj[dayToDate[day]] = {
+                date: date,
+                idIn: false,
+                isToday: today == date ? true : false,
+                time: moment().endOf('month').add(i, 'd')
+            }
+            makeUpArr.push(obj)
+        }
+        const arrs = [...beforeArr, ...afterTodayArr, ...makeUpArr]
+        console.log(arrs)
+        const dateCon = []
+        for (let i = 0; i < arrs.length; i += 7) {
+            const arr = arrs.slice(i, i + 7)
+            const obj = {}
+            arr.map((item, index) => {
+                for (let key in item) {
+                    obj[key] = item[key]
+                }
+            })
+            dateCon.push(obj)
+        }
+        this.setState({
+            data: dateCon,
+            year,
+            month
+        }, () => {
+            // console.log(this.state.data, '>?????????')
+        })
+        // console.log(beforeArr, len, '"""""""')
+        // console.log(beforeTodayArr)
+        console.log(afterTodayArr)
+        console.log(makeUpArr)
     }
 
     componentWillReceiveProps(nextProps) {
         // 在重新render之前更新state不会重新触发生命周期
-        console.log('componentWillReceiveProps', nextProps, this.props)
+        // console.log('componentWillReceiveProps', nextProps, this.props)
     }
 
     handleDisplay(callback, data, i) {
@@ -40,7 +164,7 @@ export default class Table extends Component {
     }
 
     hanleHandle(handles, data, index) {
-        const checked = this.props.dataset[index].checked ? true : false
+        const checked = this.state.data[index].checked ? true : false
         let newData = {
             ...data,
             index: index,
@@ -51,7 +175,7 @@ export default class Table extends Component {
 
     handleSelectd = (conf, isSelected) => {
         let isBreak = false
-        this.props.dataset.some((item, index) => {
+        this.state.data.some((item, index) => {
             for (let key in item) {
                 if (item[key].idIn === conf.idIn && item[key].date === conf.date) {
                     item[key].isSelected = isSelected
@@ -95,13 +219,17 @@ export default class Table extends Component {
         this.setState({ currentVal: '' })
     }
 
+    nextMonth = () => {
+        console.log(1234)
+    }
+
     render() {
-        const { isClicked, currentVal, hasValue } = this.state
+        const { isClicked, currentVal, hasValue, year, month } = this.state
         return (
             <div>
                 <div className={['d-f jc-sa ac border-color-d9d9d9'].join(' ')}
                     onClick={this.clickDatePicker} onMouseOver={this.datePickerOver} onMouseLeave={this.datePickerLeave}>
-                    <input type="text" className="mayfly-picker-date-input" value={currentVal}/>
+                    <input type="text" className="mayfly-picker-date-input" value={currentVal} readOnly/>
                     {!hasValue ? <span className="mayfly-picker-suffix">
                         <svg viewBox="64 64 896 896" focusable="false" className="" data-icon="calendar" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M880 184H712v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H384v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H144c-17.7 0-32 14.3-32 32v664c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V216c0-17.7-14.3-32-32-32zm-40 656H184V460h656v380zM184 392V256h128v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h256v48c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-48h128v136H184z"></path></svg>
                     </span> :
@@ -115,18 +243,31 @@ export default class Table extends Component {
                     transitionEnterTimeout={500}
                     transitionLeaveTimeout={300}>
                     {isClicked ?
-                        <div className="p-r pos-a" key={'123'} style={{ top: '29px', left: 0 }}>
-                            <div className="mayfly-datePicker-panel-header d-f ac">
-                                <span className="mayfly-datePicker-panel-header-year-prev"></span>
-                                <span className="mayfly-datePicker-panel-header-month-prev"></span>
+                        <div className="p-r pos-a mayfly-data-picker" key={'123'} style={{ top: '29px', left: 0 }}>
+                            <div className="mayfly-datePicker-panel-header d-f ac jc-b" >
+                                <div className="prev-container">
+                                    <span className="mayfly-datePicker-panel-header-year-prev"></span>
+                                </div>
+                                <div className="prev-container">
+                                    <span className="mayfly-datePicker-panel-header-month-prev"></span>
+                                </div>
+                                <div className="date-picker-area">
+                                    <span className="data-picker-time">{year}年</span>&nbsp;<span className="data-picker-time">{month}月</span>
+                                </div>
+                                <div className="next-container" onClick={this.nextMonth}>
+                                    <span className="mayfly-datePicker-panel-header-month-next"></span>
+                                </div>
+                                <div className="next-container">
+                                    <span className="mayfly-datePicker-panel-header-year-next"></span>
+                                </div>
                             </div>
                             <div className="slucky-table">
                                 {/* table header */}
                                 <div className={['table-header d-f ac jc-b', this.props.fixTitle ? 'table-fix' : ''].join(' ')}>
                                     {
-                                        this.props.dataconf.map((conf, i) => {
+                                        datacolumn.map((conf, i) => {
                                             return (
-                                                <div key={i} className={['ptb16 d-il ta-c table-title s0', 'plr6'].join(' ')} style={{ 'width': conf.width }}>
+                                                <div key={i} className={['ptb4 d-il ta-c table-title s0', 'plr6'].join(' ')} style={{ 'width': conf.width }}>
                                                     <div className="checkbox-box-normalize">
                                                         <span className="ta-c d-il m-w24">
                                                             <span className=" fs12">{conf.title}</span>
@@ -140,7 +281,7 @@ export default class Table extends Component {
                                 {/* table content */}
                                 <div className="table-content">
                                     {
-                                        this.props.dataset && this.props.dataset.length === 0
+                                        this.state.data && this.state.data.length === 0
                                             ? <div className="ta-c pt32 pb16 c-hint-b" >
                                                 <p>暂无数据</p>
                                             </div> : null
@@ -148,11 +289,11 @@ export default class Table extends Component {
                                     {/* main content */}
                                     {/* 列循环 */}
                                     {
-                                        this.props.dataset.map((data, i) => {
+                                        this.state.data.map((data, i) => {
                                             return (
                                                 <div className="table-list d-f ac jc-b p-r h35" key={i}>
                                                     {
-                                                        this.props.dataconf.map((conf, k) => {
+                                                        datacolumn.map((conf, k) => {
                                                             conf.isSelected = false
                                                             return (
                                                                 <div className={['d-f ta-c table-title s0 h35 jc ac box', this.props.textAlign ? this.props.textAlign : 'ta-l', conf.selection ? 'plr20' : 'plr6'].join(' ')}

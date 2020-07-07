@@ -236,8 +236,8 @@ class List extends React.Component {
         return (
             <div style={{ width: '200px' }}>
                 <Datepicker
-                    dataconf={datacolumn}
-                    dataset={this.state.data}
+                    // dataconf={datacolumn}
+                    // dataset={this.state.data}
                     loading={false}
                     isMaintenance={false} />
             </div>

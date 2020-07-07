@@ -169,13 +169,6 @@ $tab_active_color:$theme_color !default;
     }
 }
 
-@mixin disableOutline() {
-    outline: none !important;
-
-    &:focus {
-        outline: none !important;
-    }
-}
 .btn-toggle {
     cursor: pointer;
     display: inline-block;
@@ -336,61 +329,145 @@ $tab_active_color:$theme_color !default;
     opacity: .01;
     transition: all 500ms ease-in;
 } 
-
-.mayfly-datePicker-panel-header {
-    height: 30px;
+@mixin prev-header($deg) {
+            min-width: 20px;
+            text-align: center;
+            color: rgba(0,0,0,.25);
+            cursor: pointer;
+            .mayfly-datePicker-panel-header-year-prev {
+                position: relative;
+                transform: rotate($deg);
+                width: 7px;
+                height: 7px;
+                display: inline-block;
+            }
+            .mayfly-datePicker-panel-header-year-prev::before {
+                position: absolute;
+                top: 0;
+                left: 0;
+                display: inline-block;
+                width: 7px;
+                height: 7px;
+                border: 0 solid currentColor;
+                border-width: 1.5px 0 0 1.5px;
+                content: '';
+            }
+            .mayfly-datePicker-panel-header-year-prev::after  {
+                position: absolute;
+                top: 4px;
+                left: 4px;
+                display: inline-block;
+                width: 7px;
+                height: 7px;
+                border: 0 solid currentColor;
+                border-width: 1.5px 0 0 1.5px;
+                content: '';
+            }
+            .mayfly-datePicker-panel-header-month-prev {
+                position: relative;
+                transform: rotate($deg);
+                width: 7px;
+                height: 7px;
+                display: inline-block;
+            }
+            .mayfly-datePicker-panel-header-month-prev::after {
+                position: absolute;
+                top: 0;
+                left: 0;
+                display: inline-block;
+                width: 7px;
+                height: 7px;
+                border: 0 solid currentColor;
+                border-width: 1.5px 0 0 1.5px;
+                content: '';
+            }
 }
 
-.mayfly-datePicker-panel-header-year-prev {
-    position: relative;
-    transform: rotate(-45deg);
-    width: 7px;
-    height: 7px;
+@mixin next-header($deg) {
+    min-width: 20px;
+    text-align: center;
+    color: rgba(0,0,0,.25);
+    cursor: pointer;
+    .mayfly-datePicker-panel-header-year-next {
+        position: relative;
+        transform: rotate($deg);
+        width: 7px;
+        height: 7px;
+        display: inline-block;
+        &:hover {
+            color: #26a597;
+        }
+    }
+    .mayfly-datePicker-panel-header-year-next::before{
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border: 0 solid currentColor;
+        border-width: 1.5px 0 0 1.5px;
+        content: '';
+    }
+    .mayfly-datePicker-panel-header-year-next::after {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border: 0 solid currentColor;
+        border-width: 1.5px 0 0 1.5px;
+        content: '';
+    }
+    .mayfly-datePicker-panel-header-month-next {
+        position: relative;
+        transform: rotate($deg);
+        width: 7px;
+        height: 7px;
+        display: inline-block;
+        &:hover {
+            color: #26a597;
+        }
+    }
+    .mayfly-datePicker-panel-header-month-next::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border: 0 solid currentColor;
+        border-width: 1.5px 0 0 1.5px;
+        content: '';
+
+    }
+}
+.mayfly-data-picker {
+    .mayfly-datePicker-panel-header {
+        height: 35px;
+        .prev-container {
+            @include prev-header(-45deg)
+        }
+        .next-container {
+            @include next-header(135deg)
+        } 
+        .date-picker-area {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            .data-picker-time {
+                cursor: pointer;
+                font-weight: 700;
+                &:hover {
+                    color: #26a597;
+                }
+            }
+        }
+    }
 }
 
-.mayfly-datePicker-panel-header-year-prev::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border: 0 solid currentColor;
-    border-width: 1.5px 0 0 1.5px;
-    content: '';
-}
 
-.mayfly-datePicker-panel-header-year-prev::after {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border: 0 solid currentColor;
-    border-width: 1.5px 0 0 1.5px;
-    content: '';
-}
-
-.mayfly-datePicker-panel-header-month-prev {
-    position: relative;
-    transform: rotate(-45deg);
-    width: 7px;
-    height: 7px;
-}
-
-
-.mayfly-datePicker-panel-header-month-prev::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border: 0 solid currentColor;
-    border-width: 1.5px 0 0 1.5px;
-    content: '';
-}
 
 
 //normal table-----------------

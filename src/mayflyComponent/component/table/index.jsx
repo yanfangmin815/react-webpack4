@@ -228,9 +228,8 @@ export default class Table extends Component {
                                             {
                                                 this.props.dataconf.map((conf, i) => {
                                                     if (conf.progress) {
-                                                        return <progress key={i} className="p-a w-full"
-                                                            style={{ height: conf.progressWidth || 2 + 'px', top: 'unset', bottom: 0 }} max="100" value={conf.progress && conf.progress(data)}
-                                                            className="progress-loading-table"></progress>;
+                                                        return <progress key={i} className="p-a w-full progress-loading-table"
+                                                            style={{ height: conf.progressWidth || 2 + 'px', top: 'unset', bottom: 0 }} max="100" value={conf.progress && conf.progress(data)}></progress>;
                                                     }
                                                     return null;
 
@@ -321,64 +320,3 @@ export default class Table extends Component {
         );
     }
 }
-
-/**
- * self_this  this
- * handles handles
- * data 单条数据
- * i index
- *
-*/
-
-Table.handleActions = (self_this, handles, data, i) => {
-    return (
-        <div className="pop-box d-f ac jc" style={{ width: '90px' }}>
-            {self_this.hanleHandle(handles, data, i)}
-        </div>
-    );
-};
-
-Table.handleProgress = (data, conf) => {
-    return (
-        <div className="d-il">
-            {
-                !conf.pipe ?
-                    <span className="p-r z10">{data[conf.prop]}</span>
-                    : null
-            }
-            {/* <progress max="100" value={conf.progress && conf.progress(data)}
-                className="progress-loading"></progress> */}
-        </div>
-    );
-};
-
-Table.handleCheckbox = (self_this, data, i, conf) => {
-    return (
-        <div className="checkbox-box-normalize">
-            <input id={'checkbox_normalize_table' + i}
-                type="checkbox"
-                name="c_n"
-                trigger="core"
-                // checked={data.checked}
-                onChange={(e) => self_this.handleCheckboxChange(data, i, e.target.checked, conf.handle)} />
-            <span className="checkbox-hook ta-c">
-                <span className="checkbox-hook-in fs12 op0">✓</span>
-            </span>
-            <label htmlFor={'checkbox_normalize_table' + i} className="p-r z10"></label>
-        </div>
-    );
-};
-
-Table.handelPopup = (handleItem) => {
-    return (
-        <div className="pop-box">
-            {/* <div className="pop-toggle ptb4 mlr4">
-                <div className="pop-main pr8">
-                    <div className="pop-content">
-                        {handleItem.pipe(data, i)}
-                    </div>
-                </div>
-            </div> */}
-        </div>
-    );
-};
