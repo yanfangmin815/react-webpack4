@@ -61,61 +61,75 @@ export default class Table extends Component {
     }
 
     componentDidMount() {
-        this.momentHandle()
-    }
-
-    momentHandle = () => {
-        // console.log(moment().add(-10, 'd').format('DD'), moment().format('D'), moment().day(), moment().startOf('month').day(), '??????????')
-        const { dayToDate } = this.state
-        const day = moment().startOf('month').day()
-        const dayFirst = moment().startOf('month').format('D')
-        const today = moment().format('D')
         const year = moment().format('Y')
         const month = moment().format('M')
-        const num = moment().daysInMonth()
+        const str = `${year}-${month}`
+        this.momentHandle(str)
+    }
+
+    getCustomStartMonth = (str) => {
+        return moment(str).startOf('month')
+    }
+
+    getCustomEndMonth = (str) => {
+        return moment(str).endOf('month')
+    }
+
+    momentHandle = (str) => {
+        const _this = this
+        // console.log(moment().add(-10, 'd').format('DD'), moment().format('D'), moment().day(), moment().startOf('month').day(), '??????????')
+        const { dayToDate } = this.state
+        // const moments = moment().startOf('month').add(index, 'M')
+        console.log(moment('2021-5').add(1, 'M').format('M'), '??????????')
+        const day = this.getCustomStartMonth(str).day()
+
+        const today = this.getCustomStartMonth(str).format('D')
+        const year = this.getCustomStartMonth(str).format('Y')
+        const month = this.getCustomStartMonth(str).format('M')
+        const num = this.getCustomStartMonth(str).daysInMonth()
         const beforeArr = []
         const afterTodayArr = []
         const makeUpArr = []
         for (let i = -1; i > -day; i--) {
-            const day = moment().startOf('month').add(i, 'd').day()
-            const date = moment().startOf('month').add(i, 'd').format('D')
+            const day = _this.getCustomStartMonth(str).add(i, 'd').day()
+            const date = _this.getCustomStartMonth(str).add(i, 'd').format('D')
             let obj = {}
             obj[dayToDate[day]] = {
                 date,
                 idIn: false,
                 isToday: today == date ? true : false,
-                time: moment().startOf('month').add(i, 'd')
+                time: _this.getCustomStartMonth(str).add(i, 'd')
             }
             beforeArr.unshift(obj)
         }
         for (let i = 0; i < num; i++) {
-            const day = moment().startOf('month').add(i, 'd').day()
-            const date = moment().startOf('month').add(i, 'd').format('D')
+            const day = _this.getCustomStartMonth(str).add(i, 'd').day()
+            const date = _this.getCustomStartMonth(str).add(i, 'd').format('D')
             let obj = {}
             obj[dayToDate[day]] = {
                 date: date,
                 idIn: true,
                 isToday: today == date ? true : false,
-                time: moment().startOf('month').add(i, 'd')
+                time: _this.getCustomStartMonth(str).add(i, 'd')
             }
             afterTodayArr.push(obj)
         }
         const len = [...beforeArr, ...afterTodayArr].length
         const between = total - len
         for (let i = 1; i <= between; i++) {
-            const day = moment().endOf('month').add(i, 'd').day()
-            const date = moment().endOf('month').add(i, 'd').format('D')
+            const day = _this.getCustomEndMonth(str).add(i, 'd').day()
+            const date = _this.getCustomEndMonth(str).add(i, 'd').format('D')
             let obj = {}
             obj[dayToDate[day]] = {
                 date: date,
                 idIn: false,
                 isToday: today == date ? true : false,
-                time: moment().endOf('month').add(i, 'd')
+                time: _this.getCustomEndMonth(str).add(i, 'd')
             }
             makeUpArr.push(obj)
         }
         const arrs = [...beforeArr, ...afterTodayArr, ...makeUpArr]
-        console.log(arrs)
+        // console.log(arrs)
         const dateCon = []
         for (let i = 0; i < arrs.length; i += 7) {
             const arr = arrs.slice(i, i + 7)
@@ -132,12 +146,12 @@ export default class Table extends Component {
             year,
             month
         }, () => {
-            // console.log(this.state.data, '>?????????')
+            console.log(this.state.data, '>?????????')
         })
         // console.log(beforeArr, len, '"""""""')
         // console.log(beforeTodayArr)
-        console.log(afterTodayArr)
-        console.log(makeUpArr)
+        // console.log(afterTodayArr)
+        // console.log(makeUpArr)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -219,8 +233,32 @@ export default class Table extends Component {
         this.setState({ currentVal: '' })
     }
 
-    nextMonth = () => {
-        console.log(1234)
+    handleMonth = (type) => {
+        const { year, month } = this.state
+        const str = `${year}-${month}`
+        let newMonth = moment(str)[type](1, 'M').format('M')
+        let newYear = moment(str)[type](1, 'M').format('Y')
+        this.setState({
+            month: newMonth,
+            year: newYear
+        }, () => {
+            const { year, month } = this.state
+            const newStr = `${year}-${month}`
+            this.momentHandle(newStr)
+        })
+    }
+
+    handleYear = (type) => {
+        const { year, month } = this.state
+        const str = `${year}-${month}`
+        let newYear = moment(str)[type](1, 'Y').format('Y')
+        this.setState({
+            year: newYear
+        }, () => {
+            const { year, month } = this.state
+            const newStr = `${year}-${month}`
+            this.momentHandle(newStr)
+        })
     }
 
     render() {
@@ -245,19 +283,19 @@ export default class Table extends Component {
                     {isClicked ?
                         <div className="p-r pos-a mayfly-data-picker" key={'123'} style={{ top: '29px', left: 0 }}>
                             <div className="mayfly-datePicker-panel-header d-f ac jc-b" >
-                                <div className="prev-container">
+                                <div className="prev-container" onClick={() => this.handleYear('subtract')}>
                                     <span className="mayfly-datePicker-panel-header-year-prev"></span>
                                 </div>
-                                <div className="prev-container">
+                                <div className="prev-container" onClick={() => this.handleMonth('subtract')}>
                                     <span className="mayfly-datePicker-panel-header-month-prev"></span>
                                 </div>
                                 <div className="date-picker-area">
                                     <span className="data-picker-time">{year}年</span>&nbsp;<span className="data-picker-time">{month}月</span>
                                 </div>
-                                <div className="next-container" onClick={this.nextMonth}>
+                                <div className="next-container" onClick={() => this.handleMonth('add')}>
                                     <span className="mayfly-datePicker-panel-header-month-next"></span>
                                 </div>
-                                <div className="next-container">
+                                <div className="next-container" onClick={() => this.handleYear('add')}>
                                     <span className="mayfly-datePicker-panel-header-year-next"></span>
                                 </div>
                             </div>

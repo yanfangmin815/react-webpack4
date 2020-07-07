@@ -23,37 +23,6 @@ import {
 import { getMockDataGood, changeGood, changeLoading } from '@/redux/index/list/actions'
 import { Loading, Content } from '@/component/index'
 
-const total = 42
-const datacolumn = [
-    {
-        title: '一',
-        prop: '一',
-        // width: '10%'
-    }, {
-        title: '二',
-        prop: '二',
-        // width: '10%'
-    }, {
-        title: '三',
-        prop: '三',
-        // width: '10%'
-    }, {
-        title: '四',
-        // width: '10%',
-        prop: '四'
-    }, {
-        title: '五',
-        prop: '五',
-        // width: '10%'
-    }, {
-        title: '六',
-        // width: '10%',
-        prop: '六'
-    }, {
-        title: '日',
-        // width: '10%',
-        prop: '日'
-    }]
 class List extends React.Component {
     constructor(props) {
         super(props);
@@ -72,17 +41,7 @@ class List extends React.Component {
                     name: '文言文',
                     value: 'cl-CN'
                 }
-            ],
-            dayToDate: {
-                1: '一',
-                2: '二',
-                3: '三',
-                4: '四',
-                5: '五',
-                6: '六',
-                0: '日'
-            },
-            data: []
+            ]
         }
     }
 
@@ -91,79 +50,6 @@ class List extends React.Component {
         getMockDataGood()
         // this.CCC()
         // this.AAA()
-        this.momentHandle()
-    }
-
-    momentHandle = () => {
-        // console.log(moment().add(-10, 'd').format('DD'), moment().format('D'), moment().day(), moment().startOf('month').day(), '??????????')
-        const { dayToDate } = this.state
-        const day = moment().startOf('month').day()
-        const dayFirst = moment().startOf('month').format('D')
-        const today = moment().format('D')
-        const num = moment().daysInMonth()
-        const beforeArr = []
-        const afterTodayArr = []
-        const makeUpArr = []
-        for (let i = -1; i > -day; i--) {
-            const day = moment().startOf('month').add(i, 'd').day()
-            const date = moment().startOf('month').add(i, 'd').format('D')
-            let obj = {}
-            obj[dayToDate[day]] = {
-                date,
-                idIn: false,
-                isToday: today == date ? true : false,
-                time: moment().startOf('month').add(i, 'd')
-            }
-            beforeArr.unshift(obj)
-        }
-        for (let i = 0; i < num; i++) {
-            const day = moment().startOf('month').add(i, 'd').day()
-            const date = moment().startOf('month').add(i, 'd').format('D')
-            let obj = {}
-            obj[dayToDate[day]] = {
-                date: date,
-                idIn: true,
-                isToday: today == date ? true : false,
-                time: moment().startOf('month').add(i, 'd')
-            }
-            afterTodayArr.push(obj)
-        }
-        const len = [...beforeArr, ...afterTodayArr].length
-        const between = total - len
-        for (let i = 1; i <= between; i++) {
-            const day = moment().endOf('month').add(i, 'd').day()
-            const date = moment().endOf('month').add(i, 'd').format('D')
-            let obj = {}
-            obj[dayToDate[day]] = {
-                date: date,
-                idIn: false,
-                isToday: today == date ? true : false,
-                time: moment().endOf('month').add(i, 'd')
-            }
-            makeUpArr.push(obj)
-        }
-        const arrs = [...beforeArr, ...afterTodayArr, ...makeUpArr]
-        console.log(arrs)
-        const dateCon = []
-        for (let i = 0; i < arrs.length; i += 7) {
-            const arr = arrs.slice(i, i + 7)
-            const obj = {}
-            arr.map((item, index) => {
-                for (let key in item) {
-                    obj[key] = item[key]
-                }
-            })
-            dateCon.push(obj)
-        }
-        this.setState({
-            data: dateCon
-        }, () => {
-            // console.log(this.state.data, '>?????????')
-        })
-        // console.log(beforeArr, len, '"""""""')
-        // console.log(beforeTodayArr)
-        console.log(afterTodayArr)
-        console.log(makeUpArr)
     }
 
     async CCC() {
@@ -236,8 +122,6 @@ class List extends React.Component {
         return (
             <div style={{ width: '200px' }}>
                 <Datepicker
-                    // dataconf={datacolumn}
-                    // dataset={this.state.data}
                     loading={false}
                     isMaintenance={false} />
             </div>
