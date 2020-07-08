@@ -56,7 +56,9 @@ export default class Table extends Component {
             },
             data: [],
             year: '',
-            month: ''
+            month: '',
+            dataType: 'day',
+            choosenYears: []
         }
     }
 
@@ -80,10 +82,11 @@ export default class Table extends Component {
         // console.log(moment().add(-10, 'd').format('DD'), moment().format('D'), moment().day(), moment().startOf('month').day(), '??????????')
         const { dayToDate } = this.state
         // const moments = moment().startOf('month').add(index, 'M')
-        console.log(moment('2021-5').add(1, 'M').format('M'), '??????????')
-        const day = this.getCustomStartMonth(str).day()
+        let day = this.getCustomStartMonth(str).day()
+        day = day == 0 ? 7 : day
+        // console.log(moment().startOf('century').format('Y'), '>>>>>>>>>>>>>>??????????')
 
-        const today = this.getCustomStartMonth(str).format('D')
+        const today = moment().format('YYYYMMDD')
         const year = this.getCustomStartMonth(str).format('Y')
         const month = this.getCustomStartMonth(str).format('M')
         const num = this.getCustomStartMonth(str).daysInMonth()
@@ -93,11 +96,12 @@ export default class Table extends Component {
         for (let i = -1; i > -day; i--) {
             const day = _this.getCustomStartMonth(str).add(i, 'd').day()
             const date = _this.getCustomStartMonth(str).add(i, 'd').format('D')
+            const detailDay = _this.getCustomStartMonth(str).add(i, 'd').format('YYYYMMDD')
             let obj = {}
             obj[dayToDate[day]] = {
                 date,
                 idIn: false,
-                isToday: today == date ? true : false,
+                isToday: today == detailDay ? true : false,
                 time: _this.getCustomStartMonth(str).add(i, 'd')
             }
             beforeArr.unshift(obj)
@@ -105,11 +109,12 @@ export default class Table extends Component {
         for (let i = 0; i < num; i++) {
             const day = _this.getCustomStartMonth(str).add(i, 'd').day()
             const date = _this.getCustomStartMonth(str).add(i, 'd').format('D')
+            const detailDay = _this.getCustomStartMonth(str).add(i, 'd').format('YYYYMMDD')
             let obj = {}
             obj[dayToDate[day]] = {
                 date: date,
                 idIn: true,
-                isToday: today == date ? true : false,
+                isToday: today == detailDay ? true : false,
                 time: _this.getCustomStartMonth(str).add(i, 'd')
             }
             afterTodayArr.push(obj)
@@ -119,11 +124,12 @@ export default class Table extends Component {
         for (let i = 1; i <= between; i++) {
             const day = _this.getCustomEndMonth(str).add(i, 'd').day()
             const date = _this.getCustomEndMonth(str).add(i, 'd').format('D')
+            const detailDay = _this.getCustomEndMonth(str).add(i, 'd').format('YYYYMMDD')
             let obj = {}
             obj[dayToDate[day]] = {
                 date: date,
                 idIn: false,
-                isToday: today == date ? true : false,
+                isToday: today == detailDay ? true : false,
                 time: _this.getCustomEndMonth(str).add(i, 'd')
             }
             makeUpArr.push(obj)
@@ -261,8 +267,182 @@ export default class Table extends Component {
         })
     }
 
+    chooseYear = () => {
+        const { year } = this.state
+        const yearChoosen = year.slice(0, -1)
+        const startYear = yearChoosen == 0 ? yearChoosen : `${yearChoosen}0`
+        const endYear = yearChoosen == 0 ? 9 : `${yearChoosen}9`
+        const allYear = this.getAllYear(startYear, endYear, yearChoosen)
+        this.setState({
+            dataType: 'year',
+            year: `${startYear}-${endYear}`,
+            choosenYears: allYear
+        })
+    }
+
+    getAllYear = (startYear, endYear, year, type = 'year') => {
+        const arr = []
+        for (let i = 0; i <= 9; i++) {
+            const obj = {
+                newYear: year == 0 ? i : String(year) + i,
+                isInRange: true,
+                type
+            }
+            arr.push(obj)
+        }
+        const beforeYear = moment(startYear).add(-1, 'Y').format('Y')
+        const nextYear = moment(endYear).add(1, 'Y').format('Y')
+        arr.unshift({
+            newYear: beforeYear,
+            isInRange: false,
+            type
+        })
+        arr.push({
+            newYear: nextYear,
+            isInRange: false,
+            type
+        })
+        arr.push(type)
+        return arr
+    }
+
+    choosenYearDetail(item) {
+        const { month } = this.state
+        this.getNewStr(item, month)
+    }
+
+    getNewStr = (item, month) => {
+        const { type, newYear } = item
+        const { year } = this.state
+        switch (type) {
+            case 'year':
+                const newStr = `${newYear}-${month}`
+                this.setState({
+                    dataType: 'day'
+                })
+                this.momentHandle(newStr)
+                break;
+            case 'yearBetween':
+                const startTime = newYear.split('-')[0]
+                const yearChoosen = startTime.slice(0, -1)
+                const startYear = yearChoosen == 0 ? yearChoosen : `${yearChoosen}0`
+                const endYear = yearChoosen == 0 ? 9 : `${yearChoosen}9`
+                const allYear = this.getAllYear(startYear, endYear, yearChoosen, 'fromYearBetween')
+                this.setState({
+                    year: `${startYear}-${endYear}`,
+                    choosenYears: allYear
+                })
+                break;
+            case 'fromYearBetween':
+                const allMonth = this.getAllMonth()
+                this.setState({
+                    year: item.newYear,
+                    choosenYears: allMonth
+                })
+                break;
+            case 'toYear':
+                const date = `${year}-${newYear.slice(0, -1)}`
+                this.setState({
+                    dataType: 'day'
+                })
+                this.momentHandle(date)
+                break;
+        }
+    }
+
+    getAllMonth = () => {
+        const arr = []
+        for (let i = 1; i <= 12; i++) {
+            const obj = {
+                newYear: `${i}月`,
+                isInRange: true,
+                type: 'toYear'
+            }
+            arr.push(obj)
+        }
+        arr.push('toYear')
+        return arr
+    }
+
+    yearRange(type, panelType) {
+        console.log(panelType, '??????????????')
+        let { year } = this.state
+        let startYear
+        let endYear
+        let yearChoosen
+        let allYear
+        let baseUnit
+        switch (panelType[0]) {
+            case 'year':
+                startYear = moment(year.split('-')[0])[type](10, 'Y').format('Y')
+                endYear = moment(year.split('-')[1])[type](10, 'Y').format('Y')
+                yearChoosen = startYear.slice(0, -1)
+                allYear = this.getAllYear(startYear, endYear, yearChoosen)
+                this.setState({
+                    year: `${startYear}-${endYear}`,
+                    choosenYears: allYear
+                })
+                break;
+            case 'yearBetween':
+                baseUnit = parseInt(year.split('-')[0] / 100)
+
+                startYear = moment(baseUnit === 0 ? baseUnit : baseUnit + '00', 'Y')[type](100, 'Y').format('Y')
+                endYear = moment(startYear, 'Y').add(99, 'Y').format('Y')
+                console.log(startYear, moment(-100, 'Y').add(100, 'Y').format('Y'), endYear, '>>>>>>>>>>>>>>>>')
+                this.setState({
+                    year: `${startYear}-${endYear}`
+                }, () => {
+                    this.yearRangeList()
+                })
+                break;
+        }
+        // year yearBetween fromYearBetween toYear
+
+    }
+
+    yearRangeList() {
+        let { year } = this.state
+        const baseUnit = parseInt(year.split('-')[0] / 100)
+        const startYear = baseUnit === 0 ? baseUnit : baseUnit + '00'
+        const endYear = moment(startYear).add(99, 'Y').format('Y')
+        const yearRangeList = this.getYearRangeList(startYear, endYear)
+        this.setState({
+            // year: `${startYear}-${endYear}`,
+            choosenYears: yearRangeList
+        },)
+    }
+
+    getYearRangeList = (startYear, endYear) => {
+        const arr = []
+        for (let i = 0; i < 10; i++) {
+            const obj = {
+                newYear: `${Number(startYear) + (i * 10)}-${Number(startYear) + (i * 10) + 9}`,
+                isInRange: true,
+                type: 'yearBetween'
+            }
+            arr.push(obj)
+        }
+        const beforeStartYear = moment(startYear).add(-10, 'Y').format('Y')
+        const nextStartYear = moment(startYear).add(-1, 'Y').format('Y')
+        const afterEndYear = moment(endYear).add(1, 'Y').format('Y')
+        const nextEndYear = moment(endYear).add(10, 'Y').format('Y')
+        arr.unshift({
+            newYear: `${beforeStartYear}-${nextStartYear}`,
+            isInRange: false,
+            type: 'yearBetween'
+        })
+        arr.push({
+            newYear: `${afterEndYear}-${nextEndYear}`,
+            isInRange: false,
+            type: 'yearBetween'
+        })
+        arr.push('yearBetween')
+        return arr
+    }
+
     render() {
-        const { isClicked, currentVal, hasValue, year, month } = this.state
+        const { isClicked, currentVal, hasValue, year, month, dataType, choosenYears } = this.state
+        // console.log(choosenYears, '>>>>>>>>>>>>>>>>>>>>')
         return (
             <div>
                 <div className={['d-f jc-sa ac border-color-d9d9d9'].join(' ')}
@@ -281,75 +461,100 @@ export default class Table extends Component {
                     transitionEnterTimeout={500}
                     transitionLeaveTimeout={300}>
                     {isClicked ?
-                        <div className="p-r pos-a mayfly-data-picker" key={'123'} style={{ top: '29px', left: 0 }}>
-                            <div className="mayfly-datePicker-panel-header d-f ac jc-b" >
-                                <div className="prev-container" onClick={() => this.handleYear('subtract')}>
-                                    <span className="mayfly-datePicker-panel-header-year-prev"></span>
+                        <div className="p-r pos-a mayfly-data-picker" key={'123'} style={{ top: '34px', left: 0 }}>
+                            {dataType === 'day' ? <div>
+                                <div className="mayfly-datePicker-panel-header d-f ac jc-b" >
+                                    <div className="prev-container" onClick={() => this.handleYear('subtract')}>
+                                        <span className="mayfly-datePicker-panel-header-year-prev"></span>
+                                    </div>
+                                    <div className="prev-container" onClick={() => this.handleMonth('subtract')}>
+                                        <span className="mayfly-datePicker-panel-header-month-prev"></span>
+                                    </div>
+                                    <div className="date-picker-area">
+                                        <span className="data-picker-time" onClick={this.chooseYear}>{year}年</span>&nbsp;
+                                        <span className="data-picker-time">{month}月</span>
+                                    </div>
+                                    <div className="next-container" onClick={() => this.handleMonth('add')}>
+                                        <span className="mayfly-datePicker-panel-header-month-next"></span>
+                                    </div>
+                                    <div className="next-container" onClick={() => this.handleYear('add')}>
+                                        <span className="mayfly-datePicker-panel-header-year-next"></span>
+                                    </div>
                                 </div>
-                                <div className="prev-container" onClick={() => this.handleMonth('subtract')}>
-                                    <span className="mayfly-datePicker-panel-header-month-prev"></span>
-                                </div>
-                                <div className="date-picker-area">
-                                    <span className="data-picker-time">{year}年</span>&nbsp;<span className="data-picker-time">{month}月</span>
-                                </div>
-                                <div className="next-container" onClick={() => this.handleMonth('add')}>
-                                    <span className="mayfly-datePicker-panel-header-month-next"></span>
-                                </div>
-                                <div className="next-container" onClick={() => this.handleYear('add')}>
-                                    <span className="mayfly-datePicker-panel-header-year-next"></span>
-                                </div>
-                            </div>
-                            <div className="slucky-table">
-                                {/* table header */}
-                                <div className={['table-header d-f ac jc-b', this.props.fixTitle ? 'table-fix' : ''].join(' ')}>
-                                    {
-                                        datacolumn.map((conf, i) => {
-                                            return (
-                                                <div key={i} className={['ptb4 d-il ta-c table-title s0', 'plr6'].join(' ')} style={{ 'width': conf.width }}>
-                                                    <div className="checkbox-box-normalize">
-                                                        <span className="ta-c d-il m-w24">
-                                                            <span className=" fs12">{conf.title}</span>
-                                                        </span>
+                                <div className="slucky-table">
+                                    {/* table header */}
+                                    <div className={['table-header d-f ac jc-b', this.props.fixTitle ? 'table-fix' : ''].join(' ')}>
+                                        {
+                                            datacolumn.map((conf, i) => {
+                                                return (
+                                                    <div key={i} className={['ptb4 d-il ta-c table-title s0', 'plr6'].join(' ')} style={{ 'width': conf.width }}>
+                                                        <div className="checkbox-box-normalize">
+                                                            <span className="ta-c d-il m-w24">
+                                                                <span className=" fs12">{conf.title}</span>
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )
-                                        })
-                                    }
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                    {/* table content */}
+                                    <div className="table-content">
+                                        {
+                                            this.state.data && this.state.data.length === 0
+                                                ? <div className="ta-c pt32 pb16 c-hint-b" >
+                                                    <p>暂无数据</p>
+                                                </div> : null
+                                        }
+                                        {/* main content */}
+                                        {/* 列循环 */}
+                                        {
+                                            this.state.data.map((data, i) => {
+                                                return (
+                                                    <div className="table-list d-f ac jc-b p-r h35" key={i}>
+                                                        {
+                                                            datacolumn.map((conf, k) => {
+                                                                conf.isSelected = false
+                                                                return (
+                                                                    <div className={['d-f ta-c table-title s0 h35 jc ac box', this.props.textAlign ? this.props.textAlign : 'ta-l', conf.selection ? 'plr20' : 'plr6'].join(' ')}
+                                                                        style={{ 'width': conf.width, 'cursor': 'pointer' }} key={k}>
+                                                                        {
+                                                                            <span className={['va-m p-r d-il m-w24', !data[conf.prop].idIn ? 'not-current-month' : '', data[conf.prop].isToday && data[conf.prop].idIn ? 'mayfly-picker-cell-today' : '', data[conf.prop].isSelected ? 'mayfly-picker-cell-selected' : ''].join(' ')}
+                                                                                onClick={this.selectCell.bind(this, data[conf.prop])}>{data[conf.prop].date}</span>
+                                                                        }
+                                                                    </div>
+                                                                );
+                                                            })
+                                                        }
+                                                    </div>
+                                                );
+                                            })
+                                        }
+                                    </div>
                                 </div>
-                                {/* table content */}
-                                <div className="table-content">
-                                    {
-                                        this.state.data && this.state.data.length === 0
-                                            ? <div className="ta-c pt32 pb16 c-hint-b" >
-                                                <p>暂无数据</p>
-                                            </div> : null
-                                    }
-                                    {/* main content */}
-                                    {/* 列循环 */}
-                                    {
-                                        this.state.data.map((data, i) => {
-                                            return (
-                                                <div className="table-list d-f ac jc-b p-r h35" key={i}>
-                                                    {
-                                                        datacolumn.map((conf, k) => {
-                                                            conf.isSelected = false
-                                                            return (
-                                                                <div className={['d-f ta-c table-title s0 h35 jc ac box', this.props.textAlign ? this.props.textAlign : 'ta-l', conf.selection ? 'plr20' : 'plr6'].join(' ')}
-                                                                    style={{ 'width': conf.width, 'cursor': 'pointer' }} key={k}>
-                                                                    {
-                                                                        <span className={['va-m p-r d-il m-w24', !data[conf.prop].idIn ? 'not-current-month' : '', data[conf.prop].isToday && data[conf.prop].idIn ? 'mayfly-picker-cell-today' : '', data[conf.prop].isSelected ? 'mayfly-picker-cell-selected' : ''].join(' ')}
-                                                                            onClick={this.selectCell.bind(this, data[conf.prop])}>{data[conf.prop].date}</span>
-                                                                    }
-                                                                </div>
-                                                            );
-                                                        })
-                                                    }
-                                                </div>
-                                            );
-                                        })
-                                    }
+
+                            </div> : dataType === 'year' ? <div>
+                                <div className="mayfly-datePicker-panel-header d-f ac jc-b" >
+                                    <div className="prev-container" onClick={() => this.yearRange('subtract', choosenYears.slice(-1))}>
+                                        <span className="mayfly-datePicker-panel-header-year-prev"></span>
+                                    </div>
+                                    <div className="date-picker-area" onClick={() => this.yearRangeList()}>
+                                        <span className="data-picker-time">{year}</span>&nbsp;
+                                    </div>
+                                    <div className="next-container" onClick={() => this.yearRange('add', choosenYears.slice(-1))}>
+                                        <span className="mayfly-datePicker-panel-header-year-next"></span>
+                                    </div>
                                 </div>
-                            </div>
+                                <div className="date-picker-choosen-year-container">
+                                    {choosenYears.slice(0, -1).map((item, index) => {
+                                        return (
+                                            <div key={index} className={['date-picker-choosen-year', !item.isInRange ? 'not-current-month' : ''].join(' ')}>
+                                                <span className="date-picker-choosen-year-inner" onClick={() => this.choosenYearDetail(item)}>{item.newYear}</span>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div> : null}
                         </div> : null}
                 </CSSTransitionGroup>
 
