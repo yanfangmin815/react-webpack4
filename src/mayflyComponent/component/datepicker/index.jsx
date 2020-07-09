@@ -323,7 +323,9 @@ export default class Table extends Component {
                 this.momentHandle(newStr)
                 break;
             case 'yearBetween':
-                const startTime = newYear.split('-')[0]
+                let index = 0
+                let startTime = !newYear.split('-')[index].length ? `-${newYear.split('-')[index + 1]}` : newYear.split('-')[index]
+                // const startTime = newYear.split('-')[0]
                 const yearChoosen = startTime.slice(0, -1)
                 const startYear = yearChoosen == 0 ? yearChoosen : `${yearChoosen}0`
                 const endYear = yearChoosen == 0 ? 9 : `${yearChoosen}9`
@@ -412,7 +414,7 @@ export default class Table extends Component {
         console.log(startYear, endYear)
         const yearRangeList = this.getYearRangeList(startYear, endYear)
         this.setState({
-            // year: `${startYear}-${endYear}`,
+            year: `${startYear}-${endYear}`,
             choosenYears: yearRangeList
         },)
     }
