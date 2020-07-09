@@ -384,11 +384,13 @@ export default class Table extends Component {
                 })
                 break;
             case 'yearBetween':
-                baseUnit = parseInt(year.split('-')[0] / 100)
-
+                let index = 0
+                let value = !year.split('-')[index].length ? `-${year.split('-')[index + 1]}` : year.split('-')[index]
+                baseUnit = parseInt(value / 100)
                 startYear = moment(baseUnit === 0 ? baseUnit : baseUnit + '00', 'Y')[type](100, 'Y').format('Y')
+
                 endYear = moment(startYear, 'Y').add(99, 'Y').format('Y')
-                console.log(startYear, moment(-100, 'Y').add(100, 'Y').format('Y'), endYear, '>>>>>>>>>>>>>>>>')
+                console.log(startYear, moment(-100, 'Y').add(-100, 'Y').format('Y'), endYear, '>>>>>>>>>>>>>>>>')
                 this.setState({
                     year: `${startYear}-${endYear}`
                 }, () => {
@@ -402,9 +404,12 @@ export default class Table extends Component {
 
     yearRangeList() {
         let { year } = this.state
-        const baseUnit = parseInt(year.split('-')[0] / 100)
+        let index = 0
+        let value = !year.split('-')[index].length ? `-${year.split('-')[index + 1]}` : year.split('-')[index]
+        const baseUnit = parseInt(value / 100)
         const startYear = baseUnit === 0 ? baseUnit : baseUnit + '00'
-        const endYear = moment(startYear).add(99, 'Y').format('Y')
+        const endYear = moment(startYear, 'Y').add(99, 'Y').format('Y')
+        console.log(startYear, endYear)
         const yearRangeList = this.getYearRangeList(startYear, endYear)
         this.setState({
             // year: `${startYear}-${endYear}`,
@@ -422,10 +427,10 @@ export default class Table extends Component {
             }
             arr.push(obj)
         }
-        const beforeStartYear = moment(startYear).add(-10, 'Y').format('Y')
-        const nextStartYear = moment(startYear).add(-1, 'Y').format('Y')
-        const afterEndYear = moment(endYear).add(1, 'Y').format('Y')
-        const nextEndYear = moment(endYear).add(10, 'Y').format('Y')
+        const beforeStartYear = moment(startYear, 'Y').add(-10, 'Y').format('Y')
+        const nextStartYear = moment(startYear, 'Y').add(-1, 'Y').format('Y')
+        const afterEndYear = moment(endYear, 'Y').add(1, 'Y').format('Y')
+        const nextEndYear = moment(endYear, 'Y').add(10, 'Y').format('Y')
         arr.unshift({
             newYear: `${beforeStartYear}-${nextStartYear}`,
             isInRange: false,
