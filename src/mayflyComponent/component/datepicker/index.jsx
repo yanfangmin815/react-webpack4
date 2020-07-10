@@ -70,6 +70,8 @@ export default class Table extends Component {
     }
 
     getCustomStartMonth = (str) => {
+        console.log(str, moment('0000-09', 'YYYY-MM').startOf('month'), '}}}}}}}}}}}}}}}}')
+
         return moment(str).startOf('month')
     }
 
@@ -284,14 +286,14 @@ export default class Table extends Component {
         const arr = []
         for (let i = 0; i <= 9; i++) {
             const obj = {
-                newYear: year == 0 ? i : String(year) + i,
+                newYear: Number(startYear) + i,
                 isInRange: true,
                 type
             }
             arr.push(obj)
         }
-        const beforeYear = moment(startYear).add(-1, 'Y').format('Y')
-        const nextYear = moment(endYear).add(1, 'Y').format('Y')
+        const beforeYear = moment(startYear, 'Y').add(-1, 'Y').format('Y')
+        const nextYear = moment(endYear, 'Y').add(1, 'Y').format('Y')
         arr.unshift({
             newYear: beforeYear,
             isInRange: false,
@@ -313,10 +315,21 @@ export default class Table extends Component {
 
     getNewStr = (item, month) => {
         const { type, newYear } = item
-        const { year } = this.state
+
+        console.log(type, '?????????????')
+        let yearStr = ''
+        let monthStr = ''
         switch (type) {
             case 'year':
-                const newStr = `${newYear}-${month}`
+                const yearLen = String(newYear).length
+                const monthLen = (String(month)).length
+                for (let i = yearLen; i < 4; i++) {
+                    yearStr += '0'
+                }
+                for (let i = monthLen; i < 2; i++) {
+                    monthStr += '0'
+                }
+                const newStr = `${yearStr}${newYear}-${monthStr}${month}`
                 this.setState({
                     dataType: 'day'
                 })
@@ -326,9 +339,11 @@ export default class Table extends Component {
                 let index = 0
                 let startTime = !newYear.split('-')[index].length ? `-${newYear.split('-')[index + 1]}` : newYear.split('-')[index]
                 // const startTime = newYear.split('-')[0]
-                const yearChoosen = startTime.slice(0, -1)
+                const yearChoosen = startTime.length === 1 ? startTime : startTime.slice(0, -1)
                 const startYear = yearChoosen == 0 ? yearChoosen : `${yearChoosen}0`
-                const endYear = yearChoosen == 0 ? 9 : `${yearChoosen}9`
+
+                const endYear = yearChoosen == 0 ? 9 : `${Number(startYear) + 9}`
+                // console.log(yearChoosen, startYear, endYear, type, '<<<<<<<<<>>>>>>>>>>>>>')
                 const allYear = this.getAllYear(startYear, endYear, yearChoosen, 'fromYearBetween')
                 this.setState({
                     year: `${startYear}-${endYear}`,
@@ -343,7 +358,17 @@ export default class Table extends Component {
                 })
                 break;
             case 'toYear':
-                const date = `${year}-${newYear.slice(0, -1)}`
+                let { year } = this.state
+                const yearLen = String(year).length
+                const monthLen = newYear.slice(0, -1).length
+                for (let i = yearLen; i < 4; i++) {
+                    yearStr += '0'
+                }
+                for (let i = monthLen; i < 2; i++) {
+                    monthStr += '0'
+                }
+                // console.log(4, Number(String(year).length), '???????????')
+                const date = `${yearStr}${year}-${monthStr}${newYear.slice(0, -1)}`
                 this.setState({
                     dataType: 'day'
                 })
