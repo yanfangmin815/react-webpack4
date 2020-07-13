@@ -256,16 +256,6 @@ export default class Table extends Component {
             year: newYear
         }, () => {
             const { year, month } = this.state
-            // let yearLen = String(year).length
-            // let monthLen = String(month).length
-            // let yearStr = ''
-            // let monthStr = ''
-            // for (let i = yearLen; i < 4; i++) {
-            //     yearStr += '0'
-            // }
-            // for (let i = monthLen; i < 2; i++) {
-            //     monthStr += '0'
-            // }
             const newStr = `${year}-${month}`
             this.momentHandle(newStr)
         })
@@ -279,16 +269,6 @@ export default class Table extends Component {
             year: newYear
         }, () => {
             const { year, month } = this.state
-            // let yearLen = String(year).length
-            // let monthLen = String(month).length
-            // let yearStr = ''
-            // let monthStr = ''
-            // for (let i = yearLen; i < 4; i++) {
-            //     yearStr += '0'
-            // }
-            // for (let i = monthLen; i < 2; i++) {
-            //     monthStr += '0'
-            // }
             const newStr = `${year}-${month}`
             this.momentHandle(newStr)
         })
@@ -342,12 +322,8 @@ export default class Table extends Component {
         const { type, newYear } = item
         let { year } = this.state
         console.log(type, 'type-TYPE')
-        let yearStr = ''
-        let monthStr = ''
         let newYearStr = ''
         let yearArr = String(newYear).indexOf('-') !== -1 && newYear.split('-')
-        let yearLen
-        let monthLen
         let newStr
         let index = 0
         let startTime
@@ -359,14 +335,6 @@ export default class Table extends Component {
         let date
         switch (type) {
             case 'year':
-                // yearLen = String(newYear).length
-                // monthLen = (String(month)).length
-                // for (let i = yearLen; i < 4; i++) {
-                //     yearStr += '0'
-                // }
-                // for (let i = monthLen; i < 2; i++) {
-                //     monthStr += '0'
-                // }
                 newStr = `${newYear}-${month}`
                 this.setState({
                     dataType: 'day'
@@ -375,7 +343,6 @@ export default class Table extends Component {
                 break;
             case 'yearBetween':
                 startTime = !yearArr[index].length ? `-${yearArr[index + 1]}` : yearArr[index]
-                // const startTime = newYear.split('-')[0]
                 yearChoosen = startTime.length === 1 ? startTime : startTime.slice(0, -1)
                 startYear = yearChoosen == 0 ? yearChoosen : `${yearChoosen}0`
                 endYear = yearChoosen == 0 ? 9 : `${Number(startYear) + 9}`
@@ -396,10 +363,6 @@ export default class Table extends Component {
             case 'toYear':
                 // 兼容负值
                 newYearStr = Math.abs(year)
-                // yearLen = String(newYearStr).length
-                // monthLen = newYear.slice(0, -1).length
-                // for (let i = yearLen; i < 4; i++) { yearStr += '0' }
-                // for (let i = monthLen; i < 2; i++) { monthStr += '0' }
                 date = Number(year) > 0
                     ? `${newYearStr}-${newYear.slice(0, -1)}`
                     : `-${newYearStr}-${newYear.slice(0, -1)}`
