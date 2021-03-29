@@ -2,19 +2,19 @@
 const config = {
   test: {
     "baseUrl": "//localhost:3001/",
-    "uisUrl": "//mtest.picclife.cn/uis/"
+    "uisUrl": "//mtest.abc"
   },
   development: {
     "baseUrl": "//localhost:3001/",
-    "uisUrl": "//mdev.picclife.cn/uis/"
+    "uisUrl": "//mdev.abc"
   },
   integrate: {
     "baseUrl": "//localhost:3001/",
-    "uisUrl": "//mintegrate.picclife.cn/uis/"
+    "uisUrl": "//mintegrate.abc"
   },
   production: {
     "baseUrl": "//localhost:3001/",
-    "uisUrl": "//m.picclife.cn/uis/"
+    "uisUrl": "//m.abc"
   }
 }
 
